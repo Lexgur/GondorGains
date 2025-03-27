@@ -2,11 +2,10 @@
 
 declare(strict_types=1);
 
-use GondorGains\Database\Connection;
-use GondorGains\Template;
 use Lexgur\Gondorgains\DependencyInjection\Container;
 use Lexgur\Gondorgains\Exception\CircularDependencyException;
 use Lexgur\Gondorgains\Exception\MissingDependencyParameterException;
+use Lexgur\Gondorgains\Exception\ServiceInstantiationException;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
@@ -52,7 +51,7 @@ class ContainerTest extends TestCase
 
         if ($expectedException) {
             // Service should throw out MissingDependencyParameterException.
-            $this->expectException(MissingDependencyParameterException::class);
+            $this->expectException(ServiceInstantiationException::class);
             $container->get($serviceClass);
         } else {
             // Test if service is initiated successfully - instance exists.
@@ -87,7 +86,7 @@ class ContainerTest extends TestCase
         // Test if service is not yet initialized.
         $this->assertFalse($container->has(ServiceWithCircularDependencies::class));
         // Service should throw out CircularDependencyException.
-        $this->expectException(CircularDependencyException::class);
+        $this->expectException(ServiceInstantiationException::class);
         $container->get($serviceClass);
         $this->assertTrue($container->has($serviceClass));
     }
@@ -108,12 +107,12 @@ class ContainerTest extends TestCase
 
         $this->assertFalse($container->has('NonExistentService'));
 
-        $this->expectException(ReflectionException::class);
+        $this->expectException(ServiceInstantiationException::class);
 
         $container->get('NonExistentService');
     }
 
-    #[DataProvider('provideContainerModelReflectionClassExceptionData')]
+    #[DataProvider('provideContainerModelServiceInstantiationExceptionData')]
     final public function testContainerModelReflectionClassException(string $serviceClass): void
     {
 
@@ -121,13 +120,13 @@ class ContainerTest extends TestCase
 
         $this->assertFalse($container->has($serviceClass));
 
-        $this->expectException(ReflectionException::class);
+        $this->expectException(ServiceInstantiationException::class);
 
         $this->assertInstanceOf($serviceClass, $container->get($serviceClass));
         $this->assertTrue($container->has($serviceClass));
     }
 
-    public static function provideContainerModelReflectionClassExceptionData(): array
+    public static function provideContainerModelServiceInstantiationExceptionData(): array
     {
         return [
             [User::class],

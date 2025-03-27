@@ -6,6 +6,7 @@ namespace Lexgur\Gondorgains\DependencyInjection;
 
 use Lexgur\Gondorgains\Exception\CircularDependencyException;
 use Lexgur\Gondorgains\Exception\MissingDependencyParameterException;
+use Lexgur\Gondorgains\Exception\ServiceInstantiationException;
 use Psr\Container\ContainerInterface;
 
 class Container implements ContainerInterface
@@ -67,7 +68,7 @@ class Container implements ContainerInterface
      */
     public function get(string $serviceClass): object
     {
-        if (str_starts_with($serviceClass, 'GondorGains\Model')) {
+        if (str_starts_with($serviceClass, 'Lexgur\GondorGains\Model')) {
             throw new \ReflectionException("Skipping Model classes: {$serviceClass}");
         }
 
@@ -101,8 +102,8 @@ class Container implements ContainerInterface
             unset($this->instantiating[$serviceClass]);
 
             return $instance;
-        } catch (\ReflectionException $e) {
-            throw new \ReflectionException("Cannot instantiate {$serviceClass}: ".$e->getMessage());
+        } catch (\Throwable $e) {
+            throw new ServiceInstantiationException("Cannot instantiate {$serviceClass}: ".$e->getMessage());
         }
     }
 
