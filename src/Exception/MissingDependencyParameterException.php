@@ -1,6 +1,6 @@
 <?php
 
-namespace GondorGains\Exception;
+namespace Lexgur\Gondorgains\Exception;
 
 class MissingDependencyParameterException extends \Exception
 {

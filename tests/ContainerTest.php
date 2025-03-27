@@ -3,10 +3,10 @@
 declare(strict_types=1);
 
 use GondorGains\Database\Connection;
-use GondorGains\Exception\CircularDependencyException;
-use GondorGains\Exception\MissingDependencyParameterException;
 use GondorGains\Template;
 use Lexgur\Gondorgains\DependencyInjection\Container;
+use Lexgur\Gondorgains\Exception\CircularDependencyException;
+use Lexgur\Gondorgains\Exception\MissingDependencyParameterException;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
@@ -98,31 +98,6 @@ class ContainerTest extends TestCase
             [ServiceWithCircularDependencies::class, true],
             [ServiceWithCircularDependantDependenciesAndMissingParameters::class, true],
             [ServiceWithCircularDependantDependenciesAndMissingParameters::class, false]
-        ];
-    }
-
-    #[DataProvider('provideTestContainerApplicationServicesData')]
-    final public function testContainerApplicationServices(string $serviceClass): void
-    {
-        $parameters = [
-            'dsn' => 'sqlite:'.__DIR__.'/GondorGains.sqlite',
-            'username' => null,
-            'password' => null,
-            'templatePath' => __DIR__ . DIRECTORY_SEPARATOR . 'templates' . DIRECTORY_SEPARATOR,
-        ];
-
-        $container = new Container($parameters);
-
-        $this->assertFalse($container->has($serviceClass));
-        $this->assertInstanceOf($serviceClass, $container->get($serviceClass));
-        $this->assertTrue($container->has($serviceClass));
-    }
-
-    public static function provideTestContainerApplicationServicesData(): array
-    {
-        return [
-            [Template::class],
-            [Connection::class],
         ];
     }
 

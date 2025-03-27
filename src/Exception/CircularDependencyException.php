@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace GondorGains\Exception;
+namespace Lexgur\Gondorgains\Exception;
 
 class CircularDependencyException extends \Exception
 {
