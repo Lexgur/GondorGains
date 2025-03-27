@@ -11,6 +11,9 @@
             "email": "edgaras.malukas@gmail.com"
         }
     ],
+    "require": {
+        "psr/container": "^2.0"
+    },
     "require-dev": {
         "phpmd/phpmd": "^2.15",
         "phpstan/phpstan": "^2.1",
