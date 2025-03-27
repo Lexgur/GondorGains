@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Lexgur\GondorGains\DependencyInjection;
 
-use Lexgur\Gondorgains\Exception\CircularDependencyException;
-use Lexgur\Gondorgains\Exception\MissingDependencyParameterException;
-use Lexgur\Gondorgains\Exception\ServiceInstantiationException;
+use Lexgur\GondorGains\Exception\CircularDependencyException;
+use Lexgur\GondorGains\Exception\MissingDependencyParameterException;
+use Lexgur\GondorGains\Exception\ServiceInstantiationException;
 use Psr\Container\ContainerInterface;
 
 class Container implements ContainerInterface
