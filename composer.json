@@ -1,0 +1,15 @@
+{
+    "name": "lexgur/gondorgains",
+    "autoload": {
+        "psr-4": {
+            "Lexgur\\Gondorgains\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Lexgur",
+            "email": "edgaras.malukas@gmail.com"
+        }
+    ],
+    "require": {}
+}
