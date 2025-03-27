@@ -10,10 +10,23 @@ use Psr\Container\ContainerInterface;
 
 class Container implements ContainerInterface
 {
+    /**
+     * @var array<string, object> Stores instantiated service objects.
+     */
     private array $services;
+    /**
+     * @var array<string, string|int|bool|float> Stores configuration parameters.
+     */
     private array $parameters;
+    /**
+     * @var array<string, bool> Tracks services currently being instantiated to prevent circular dependencies.
+     */
     private array $instantiating = [];
 
+    /**
+     * @param array<string, string|int|bool|float> $parameters Configuration parameters like DB credentials or paths.
+     * @param array<string, object> $services Pre-instantiated services, mapped by class name.
+     */
     public function __construct(array $parameters = [], array $services = [])
     {
         $this->parameters = $parameters;
