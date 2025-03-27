@@ -16,5 +16,13 @@
         "phpstan/phpstan": "^2.1",
         "friendsofphp/php-cs-fixer": "^3.73",
         "phpunit/phpunit": "^11.5"
+    },
+    "scripts": {
+        "code-check": [
+            "phpmd src/ text ruleset.xml",
+            "phpmd tests/ text ruleset.xml",
+            "./vendor/bin/php-cs-fixer check",
+            "vendor/bin/phpstan"
+        ]
     }
 }
