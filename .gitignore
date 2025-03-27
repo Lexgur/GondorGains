@@ -1,0 +1,15 @@
+[Dd]esktop.ini
+.DS_Store
+Thumbs.db
+
+vendor
+
+.idea
+.vscode
+
+config.php
+*.config.php
+
+*.sqlite
+*.sql
+*.cache
