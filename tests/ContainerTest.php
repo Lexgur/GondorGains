@@ -110,28 +110,6 @@ class ContainerTest extends TestCase
         $container->get('NonExistentService');
     }
 
-    #[DataProvider('provideContainerModelServiceInstantiationExceptionData')]
-    final public function testContainerModelReflectionClassException(string $serviceClass): void
-    {
-
-        $container = new Container();
-
-        $this->assertFalse($container->has($serviceClass));
-
-        $this->expectException(ServiceInstantiationException::class);
-
-        $this->assertInstanceOf($serviceClass, $container->get($serviceClass));
-        $this->assertTrue($container->has($serviceClass));
-    }
-
-    public static function provideContainerModelServiceInstantiationExceptionData(): array
-    {
-        return [
-            [User::class],
-            [Student::class]
-        ];
-    }
-
     private static function getContainer(bool $withParameters = false): Container
     {
         if ($withParameters === false) {

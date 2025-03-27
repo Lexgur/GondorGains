@@ -62,14 +62,12 @@ class Container implements ContainerInterface
     }
 
     /**
-     * @throws CircularDependencyException
-     * @throws MissingDependencyParameterException
-     * @throws \ReflectionException
+     * @throws CircularDependencyException|ServiceInstantiationException
      */
     public function get(string $serviceClass): object
     {
         if (str_starts_with($serviceClass, 'Lexgur\GondorGains\Model')) {
-            throw new \ReflectionException("Skipping Model classes: {$serviceClass}");
+            throw new ServiceInstantiationException("Skipping Model classes: {$serviceClass}");
         }
 
         if ($this->has($serviceClass)) {
