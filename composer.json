@@ -2,7 +2,7 @@
     "name": "lexgur/gondorgains",
     "autoload": {
         "psr-4": {
-            "Lexgur\\Gondorgains\\": "src/"
+            "Lexgur\\GondorGains\\": "src/"
         }
     },
     "authors": [

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Lexgur\Gondorgains\Exception;
+namespace Lexgur\GondorGains\Exception;
 
 class MissingDependencyParameterException extends \Exception
 {

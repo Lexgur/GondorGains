@@ -2,9 +2,7 @@
 
 declare(strict_types=1);
 
-use Lexgur\Gondorgains\DependencyInjection\Container;
-use Lexgur\Gondorgains\Exception\CircularDependencyException;
-use Lexgur\Gondorgains\Exception\MissingDependencyParameterException;
+use Lexgur\GondorGains\DependencyInjection\Container;
 use Lexgur\Gondorgains\Exception\ServiceInstantiationException;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;

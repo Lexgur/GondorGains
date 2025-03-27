@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Lexgur\Gondorgains\DependencyInjection;
+namespace Lexgur\GondorGains\DependencyInjection;
 
 use Lexgur\Gondorgains\Exception\CircularDependencyException;
 use Lexgur\Gondorgains\Exception\MissingDependencyParameterException;
