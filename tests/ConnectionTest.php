@@ -4,6 +4,8 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
+ *
+ * @coversNothing
  */
 class ConnectionTest extends TestCase
 {
@@ -18,6 +20,16 @@ class ConnectionTest extends TestCase
             unlink($this->testDbPath);
         }
     }
+
+    protected function tearDown(): void
+    {
+        $this->pdo = null;
+
+        if (file_exists($this->testDbPath)) {
+            unlink($this->testDbPath);
+        }
+    }
+
     public function testSuccessfulConnection(): void
     {
         $this->pdo = new PDO('sqlite:'.$this->testDbPath);
@@ -32,14 +44,4 @@ class ConnectionTest extends TestCase
 
         new PDO('sqlite:/invalid/path/to/non_existent.sqlite');
     }
-
-    protected function tearDown(): void
-    {
-        $this->pdo = null;
-
-        if (file_exists($this->testDbPath)) {
-            unlink($this->testDbPath);
-        }
-    }
-
 }
