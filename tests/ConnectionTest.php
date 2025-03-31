@@ -12,7 +12,7 @@ class ConnectionTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->testDbPath = __DIR__.'/test_database.sqlite';
+        $this->testDbPath = __DIR__.'/tmp/test_database.sqlite';
 
         if (file_exists($this->testDbPath)) {
             unlink($this->testDbPath);
