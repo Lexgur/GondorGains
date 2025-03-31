@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-use Controller\TestUserRegisterControllerRouting;
 use Lexgur\GondorGains\Controller\UserRegisterController;
 use Lexgur\GondorGains\Core\Router;
 use Lexgur\GondorGains\Exception\IncorrectRoutePathException;
@@ -12,6 +11,7 @@ use PHPUnit\Framework\TestCase;
 /**
  * @internal
  *
+ * @coversNothing
  */
 class RouterTest extends TestCase
 {
@@ -51,7 +51,7 @@ class RouterTest extends TestCase
 
     final public function testGetFullClassName(): void
     {
-        $filePath = __DIR__ . '/../src/Controller/UserRegisterController.php';
+        $filePath = __DIR__.'/../src/Controller/UserRegisterController.php';
         $result = $this->router->getFullClassName($filePath);
 
         $this->assertSame('Lexgur\GondorGains\Controller\UserRegisterController', $result);

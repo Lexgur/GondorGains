@@ -7,7 +7,4 @@ namespace Lexgur\GondorGains\Controller;
 use Lexgur\GondorGains\Attribute\Path;
 
 #[Path('/register')]
-class UserRegisterController
-{
-
-}
+class UserRegisterController {}
