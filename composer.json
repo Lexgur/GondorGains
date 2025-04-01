@@ -27,8 +27,7 @@
             "phpmd tests/ text ruleset.xml"
         ],
         "phpstan": "vendor/bin/phpstan",
-        "php-cs-fixer": "./vendor/bin/php-cs-fixer check",
-        "php-cs-fixer-fix": "./vendor/bin/php-cs-fixer fix",
+        "php-cs-fixer": "./vendor/bin/php-cs-fixer fix --dry-run",
         "code-style": [
             "@phpmd",
             "@phpstan",
