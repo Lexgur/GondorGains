@@ -4,7 +4,9 @@ namespace Lexgur\GondorGains;
 
 use FilesystemIterator;
 use Lexgur\GondorGains\Attribute\Path;
+use Lexgur\GondorGains\Exception\FilePathReadException;
 use Lexgur\GondorGains\Exception\IncorrectRoutePathException;
+use Lexgur\GondorGains\Exception\RegisterControllerException;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use ReflectionClass;
@@ -41,7 +43,7 @@ class Router
                     $this->routes[$routePath] = $className;
                 }
             } catch (Throwable $e) {
-                throw new RuntimeException('An error occurred while registering controllers: ' . $e->getMessage());
+                throw new RegisterControllerException('An error occurred while registering controllers: ' . $e->getMessage());
             }
         }
     }
@@ -64,7 +66,7 @@ class Router
     {
         $content = file_get_contents($filePath);
         if ('' === $content) {
-            throw new RuntimeException("Failed to read file: {$filePath}");
+            throw new FilePathReadException("Failed to read file: {$filePath}");
         }
 
         $namespace = null;
