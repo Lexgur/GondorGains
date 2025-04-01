@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Lexgur\GondorGains;
 
 use PDO;
-use PDOException;
 
 class Connection
 {

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Lexgur\GondorGains\Connection;
 use PHPUnit\Framework\TestCase;
 
