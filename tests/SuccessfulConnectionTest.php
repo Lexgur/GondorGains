@@ -10,14 +10,16 @@ use PHPUnit\Framework\TestCase;
  */
 class SuccessfulConnectionTest extends TestCase
 {
+    private string $testDatabaseFile;
     protected function setUp(): void
     {
-        $this->database = 'sqlite:';
+        $testName = $this->name();
+        $this->testDatabaseFile = sprintf('./tmp/%s%s.sqlite', $testName, uniqid('test_', true));
     }
 
     public function testSuccessfulConnection(): void
     {
-        $connection = new Connection($this->database . './tmp/testSuccessfulConnection.sqlite');
+        $connection = new Connection(sprintf('sqlite:' . $this->testDatabaseFile));
         $validConnection = $connection->connect();
 
         $this->assertInstanceOf(PDO::class, $validConnection);
@@ -25,9 +27,6 @@ class SuccessfulConnectionTest extends TestCase
 
     public function tearDown(): void
     {
-
-        if (file_exists('./tmp/testSuccessfulConnection.sqlite')) {
-            unlink('./tmp/testSuccessfulConnection.sqlite');
-        }
+            unlink($this->testDatabaseFile);
     }
 }
