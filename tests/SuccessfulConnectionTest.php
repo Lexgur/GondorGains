@@ -12,8 +12,7 @@ class SuccessfulConnectionTest extends TestCase
 {
     protected function setUp(): void
     {
-        $this->dbFile = './tmp/SuccessfulConnectionTest.sqlite';
-        $this->connection = new Connection('sqlite:' . $this->dbFile);
+        $this->connection = new Connection('sqlite:./tmp/SuccessfulConnectionTest.sqlite');
     }
 
     public function testSuccessfulConnection(): void
@@ -28,8 +27,8 @@ class SuccessfulConnectionTest extends TestCase
     {
         $this->connection = null;
 
-        if (file_exists($this->dbFile)) {
-            unlink($this->dbFile);
+        if (file_exists('./tmp/SuccessfulConnectionTest.sqlite')) {
+            unlink('./tmp/SuccessfulConnectionTest.sqlite');
         }
     }
 }
