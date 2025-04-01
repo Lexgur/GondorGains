@@ -5,11 +5,6 @@ declare(strict_types=1);
 use Lexgur\GondorGains\Connection;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @internal
- *
- * @coversNothing
- */
 class SuccessfulConnectionTest extends TestCase
 {
     private string $testDatabaseFile;
