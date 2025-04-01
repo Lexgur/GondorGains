@@ -77,7 +77,7 @@ class RouterTest extends TestCase
     public static function provideTestGetControllerThrowsIncorrectRoutePathException(): array
     {
         return [
-            ['/ss', AboutProjectController::class],
+            ['/incorrectPath', AboutProjectController::class],
         ];
     }
 }
