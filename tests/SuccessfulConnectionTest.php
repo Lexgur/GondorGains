@@ -27,7 +27,7 @@ class SuccessfulConnectionTest extends TestCase
 
     public function testSuccessfulConnection(): void
     {
-        $connection = new Connection(sprintf('sqlite:'.$this->testDatabaseFile));
+        $connection = new Connection(sprintf('sqlite:%s', $this->testDatabaseFile));
         $validConnection = $connection->connect();
 
         $this->assertInstanceOf(PDO::class, $validConnection);
