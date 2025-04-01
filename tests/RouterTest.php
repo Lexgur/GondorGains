@@ -72,6 +72,7 @@ class RouterTest extends TestCase
         }
     }
 
+    /** @return array<int, array<int,string>> */
     public static function provideTestGetControllerData(): array
     {
         return [
@@ -79,6 +80,7 @@ class RouterTest extends TestCase
         ];
     }
 
+    /** @return array<int, array<int, string>> */
     public static function provideTestGetControllerThrowsIncorrectRoutePathException(): array
     {
         return [
