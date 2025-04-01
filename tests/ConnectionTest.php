@@ -8,20 +8,11 @@ use PHPUnit\Framework\TestCase;
  */
 class ConnectionTest extends TestCase
 {
-    private string $testDbPath;
-    private Connection $connection;
-
-
-    protected function setUp(): void
-    {
-        $this->testDbPath = __DIR__ . '/tmp/test_database.sqlite';
-
-        $this->connection = new Connection('sqlite:'.$this->testDbPath);
-    }
-
     public function testSuccessfulConnection(): void
     {
-        $databaseConnection = $this->connection->connect();
+        $connection = new Connection('sqlite:/tmp/test_database.sqlite');
+
+        $databaseConnection = $connection->connect();
 
         $this->assertInstanceOf(\PDO::class, $databaseConnection);
     }
@@ -36,8 +27,8 @@ class ConnectionTest extends TestCase
 
     protected function tearDown(): void
     {
-        if (file_exists($this->testDbPath)) {
-            unlink($this->testDbPath);
+        if (file_exists('/tmp/test_database.sqlite')) {
+            unlink('/tmp/test_database.sqlite');
         }
     }
 
