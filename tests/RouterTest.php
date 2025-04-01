@@ -56,14 +56,14 @@ class RouterTest extends TestCase
     {
         $routes = $this->router->getRoutes();
 
-        $this->assertNotEmpty($routes, 'No routes were registered. Ensure controllers have #[Path] attributes.');
+        $this->assertNotEmpty($routes);
 
         $expectedRoutes = [
             '/about',
         ];
 
         foreach ($expectedRoutes as $route) {
-            $this->assertArrayHasKey($route, $routes, "Route '{$route}' was not registered.");
+            $this->assertArrayHasKey($route, $routes);
         }
     }
 
@@ -77,7 +77,7 @@ class RouterTest extends TestCase
     public static function provideTestGetControllerThrowsIncorrectRoutePathException(): array
     {
         return [
-            ['/ss', UserRegisterController::class],
+            ['/ss', AboutProjectController::class],
         ];
     }
 }
