@@ -28,6 +28,7 @@ class ContainerTest extends TestCase
         $this->assertTrue($container->has($serviceClass));
     }
 
+    /** @return array<int, list<string>> */
     public static function provideTestContainerData(): array
     {
         return [
@@ -64,6 +65,7 @@ class ContainerTest extends TestCase
         }
     }
 
+    /** @return array<array{string, bool}> */
     public static function provideTestContainerWithoutRequiredParametersData(): array
     {
         return [
@@ -94,6 +96,7 @@ class ContainerTest extends TestCase
         $this->assertTrue($container->has($serviceClass));
     }
 
+    /** @return array<array{string, bool}> */
     public static function provideTestCircularDependencyInServiceContainerData(): array
     {
         return [
@@ -114,7 +117,7 @@ class ContainerTest extends TestCase
         $container->get('NonExistentService');
     }
 
-    private static function getContainer(bool $withParameters = false): Container
+    public static function getContainer(bool $withParameters = false): Container
     {
         if (false === $withParameters) {
             return new Container();
@@ -128,101 +131,128 @@ class ContainerTest extends TestCase
     }
 }
 
-readonly class ServiceWithNoDependencies
+class ServiceWithNoDependencies
 {
     public function __construct() {}
 }
 
-readonly class ServiceWithNoDependenciesAndNoConstruct {}
+class ServiceWithNoDependenciesAndNoConstruct
+{
 
-readonly class ServiceWithSingleDependency
+}
+class ServiceWithSingleDependency
 {
     public function __construct(
+        /** @phpstan-ignore property.onlyWritten */
         private ServiceWithNoDependencies $serviceWithNoDependencies
     ) {}
 }
 
-readonly class ServiceWithMultipleDependencies
+class ServiceWithMultipleDependencies
 {
     public function __construct(
+        /** @phpstan-ignore property.onlyWritten */
         private ServiceWithNoDependencies $serviceWithNoDependenciesFirst,
+        /** @phpstan-ignore property.onlyWritten */
         private ServiceWithNoDependencies $serviceWithNoDependenciesSecond,
     ) {}
 }
 
-readonly class ServiceWithMultipleDependantDependencies
+class ServiceWithMultipleDependantDependencies
 {
     public function __construct(
+        /** @phpstan-ignore property.onlyWritten */
         private ServiceWithNoDependencies $serviceWithNoDependenciesFirst,
+        /** @phpstan-ignore property.onlyWritten */
         private ServiceWithSingleDependency $serviceWithSingleDependency,
+        /** @phpstan-ignore property.onlyWritten */
         private ServiceWithMultipleDependencies $serviceWithMultipleDependencies,
     ) {}
 }
-abstract readonly class AbstractServiceWithSingleDependency
+abstract class AbstractServiceWithSingleDependency
 {
     public function __construct(
+        /** @phpstan-ignore property.onlyWritten */
         private ServiceWithNoDependencies $serviceWithNoDependencies
     ) {}
 }
 
-readonly class ServiceWithMultipleDependenciesExtendingAbstractService extends AbstractServiceWithSingleDependency
+class ServiceWithMultipleDependenciesExtendingAbstractService extends AbstractServiceWithSingleDependency
 {
     public function __construct(
+        /** @phpstan-ignore property.onlyWritten */
         private ServiceWithNoDependencies $serviceWithNoDependencies,
+        /** @phpstan-ignore property.onlyWritten */
         private ServiceWithSingleDependency $serviceWithSingleDependency,
+        /** @phpstan-ignore property.onlyWritten */
         private ServiceWithMultipleDependencies $serviceWithMultipleDependencies,
+        /** @phpstan-ignore property.onlyWritten */
         private ServiceWithMultipleDependantDependencies $serviceWithMultipleDependenciesSecond,
     ) {
         parent::__construct($serviceWithNoDependencies);
     }
 }
 
-readonly class ServiceWithSingleParameterDependency
+class ServiceWithSingleParameterDependency
 {
     public function __construct(
+        /** @phpstan-ignore property.onlyWritten */
         private string $stringParameter,
     ) {}
 }
 
-readonly class ServiceWithMultipleParameterDependencies
+class ServiceWithMultipleParameterDependencies
 {
     public function __construct(
+        /** @phpstan-ignore property.onlyWritten */
         private string $stringParameter,
+        /** @phpstan-ignore property.onlyWritten */
         private int $integerParameter,
+        /** @phpstan-ignore property.onlyWritten */
         private bool $booleanParameter,
     ) {}
 }
 
-readonly class ServiceWithSingleDependencyAndParameterDependency
+class ServiceWithSingleDependencyAndParameterDependency
 {
     public function __construct(
+        /** @phpstan-ignore property.onlyWritten */
         private ServiceWithMultipleDependenciesExtendingAbstractService $serviceWithMultipleDependenciesExtendingAbstractService,
+        /** @phpstan-ignore property.onlyWritten */
         private string $stringParameter,
     ) {}
 }
 
-readonly class ServiceWithMultipleDependenciesAndParameterDependencies
+class ServiceWithMultipleDependenciesAndParameterDependencies
 {
     public function __construct(
+        /** @phpstan-ignore property.onlyWritten */
         private ServiceWithMultipleDependenciesExtendingAbstractService $serviceWithMultipleDependenciesExtendingAbstractService,
+        /** @phpstan-ignore property.onlyWritten */
         private ServiceWithMultipleParameterDependencies $serviceWithMultipleParameterDependencies,
+        /** @phpstan-ignore property.onlyWritten */
         private string $stringParameter,
+        /** @phpstan-ignore property.onlyWritten */
         private bool $booleanParameter,
+        /** @phpstan-ignore property.onlyWritten */
         private int $integerParameter,
     ) {}
 }
 
-readonly class ServiceWithCircularDependencies
+class ServiceWithCircularDependencies
 {
     public function __construct(
+        /** @phpstan-ignore property.onlyWritten */
         private ServiceWithCircularDependencies $serviceWithCircularDependencies,
     ) {}
 }
 
-readonly class ServiceWithCircularDependantDependenciesAndMissingParameters
+class ServiceWithCircularDependantDependenciesAndMissingParameters
 {
     public function __construct(
+        /** @phpstan-ignore property.onlyWritten */
         private ServiceWithCircularDependencies $serviceWithCircularDependencies,
+        /** @phpstan-ignore property.onlyWritten */
         private string $stringParameter,
     ) {}
 }
