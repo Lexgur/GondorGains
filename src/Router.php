@@ -11,7 +11,6 @@ use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use ReflectionClass;
 use RegexIterator;
-use RuntimeException;
 use SplFileInfo;
 use Throwable;
 
@@ -39,7 +38,7 @@ class Router
                 $reflectionClass = new ReflectionClass($className);
                 $classAttributes = $reflectionClass->getAttributes(Path::class);
                 $routePath = $classAttributes[0]?->newInstance()->getPath();
-                if ('' !== $routePath) {
+                if (!empty($routePath)) {
                     $this->routes[$routePath] = $className;
                 }
             } catch (Throwable $e) {
@@ -65,7 +64,7 @@ class Router
     public function getFullClassName(string $filePath): ?string
     {
         $content = file_get_contents($filePath);
-        if ('' === $content) {
+        if (empty($content)) {
             throw new FilePathReadException("Failed to read file: {$filePath}");
         }
 
