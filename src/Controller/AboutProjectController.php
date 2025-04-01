@@ -6,5 +6,8 @@ namespace Lexgur\GondorGains\Controller;
 
 use Lexgur\GondorGains\Attribute\Path;
 
-#[Path('/register')]
-class UserRegisterController {}
+#[Path('/about')]
+class AboutProjectController
+{
+
+}

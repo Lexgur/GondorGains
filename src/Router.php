@@ -1,6 +1,6 @@
 <?php
 
-namespace Lexgur\GondorGains\Core;
+namespace Lexgur\GondorGains;
 
 use FilesystemIterator;
 use Lexgur\GondorGains\Attribute\Path;
@@ -15,7 +15,7 @@ use Throwable;
 
 class Router
 {
-    private const CONTROLLER_DIR = __DIR__ . '/../Controller';
+    private const CONTROLLER_DIR = __DIR__ . '/Controller';
 
     /**
      * @var array<string, string>
@@ -36,12 +36,9 @@ class Router
                 $className = $this->getFullClassName($filePath);
                 $reflectionClass = new ReflectionClass($className);
                 $classAttributes = $reflectionClass->getAttributes(Path::class);
-                if (!empty($classAttributes)) {
-                    $routePath = $classAttributes[0]->newInstance()->getPath();
-
-                    if ('' !== $routePath) {
-                        $this->routes[$routePath] = $className;
-                    }
+                $routePath = $classAttributes[0]?->newInstance()->getPath();
+                if ('' !== $routePath) {
+                    $this->routes[$routePath] = $className;
                 }
             } catch (Throwable $e) {
                 throw new RuntimeException('An error occurred while registering controllers: ' . $e->getMessage());

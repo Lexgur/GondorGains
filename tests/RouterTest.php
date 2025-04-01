@@ -2,17 +2,12 @@
 
 declare(strict_types=1);
 
-use Lexgur\GondorGains\Controller\UserRegisterController;
-use Lexgur\GondorGains\Core\Router;
+use Lexgur\GondorGains\Controller\AboutProjectController;
 use Lexgur\GondorGains\Exception\IncorrectRoutePathException;
+use Lexgur\GondorGains\Router;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @internal
- *
- * @coversNothing
- */
 class RouterTest extends TestCase
 {
     private Router $router;
@@ -51,10 +46,10 @@ class RouterTest extends TestCase
 
     final public function testGetFullClassName(): void
     {
-        $filePath = __DIR__.'/../src/Controller/UserRegisterController.php';
+        $filePath = __DIR__.'/../src/Controller/AboutProjectController.php';
         $result = $this->router->getFullClassName($filePath);
 
-        $this->assertSame('Lexgur\GondorGains\Controller\UserRegisterController', $result);
+        $this->assertSame('Lexgur\GondorGains\Controller\AboutProjectController', $result);
     }
 
     final public function testRegisterControllers(): void
@@ -64,7 +59,7 @@ class RouterTest extends TestCase
         $this->assertNotEmpty($routes, 'No routes were registered. Ensure controllers have #[Path] attributes.');
 
         $expectedRoutes = [
-            '/register',
+            '/about',
         ];
 
         foreach ($expectedRoutes as $route) {
@@ -75,7 +70,7 @@ class RouterTest extends TestCase
     public static function provideTestGetControllerData(): array
     {
         return [
-            ['/register', UserRegisterController::class],
+            ['/about', AboutProjectController::class],
         ];
     }
 
