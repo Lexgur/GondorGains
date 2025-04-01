@@ -27,7 +27,7 @@ class Connection
     {
         if (null === $this->pdo) {
             try {
-                $this->pdo = new \PDO($this->dsn, null, null, $this->options);
+                $this->pdo = new \PDO(dsn: $this->dsn, options: $this->options);
             } catch (\PDOException $e) {
                 throw new \PDOException('Database connection failed: '.$e->getMessage(), 0, $e);
             }
