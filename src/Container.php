@@ -89,9 +89,11 @@ class Container implements ContainerInterface
             $constructor = $reflectionClass->getConstructor();
             $arguments = $constructor?->getParameters() ?? [];
             foreach ($arguments as $argument) {
+                /** @phpstan-ignore method.notFound*/
                 if ($argument->getType()->isBuiltin()) {
                     $dependencies[] = $this->resolveParameter($argument->getName());
                 } else {
+                    /** @phpstan-ignore method.notFound*/
                     $dependencies[] = $this->get($argument->getType()->getName());
                 }
             }

@@ -5,11 +5,6 @@ declare(strict_types=1);
 use Lexgur\GondorGains\Attribute\Path;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @internal
- *
- * @coversNothing
- */
 class PathAttributeTest extends TestCase
 {
     public function testGetPath(): void
