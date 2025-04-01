@@ -7,26 +7,29 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
+ *
+ * @coversNothing
  */
 class SuccessfulConnectionTest extends TestCase
 {
     private string $testDatabaseFile;
+
     protected function setUp(): void
     {
         $testName = $this->name();
         $this->testDatabaseFile = sprintf('../tmp/tests/%s%s.sqlite', $testName, uniqid('test_', true));
     }
 
+    public function tearDown(): void
+    {
+        unlink($this->testDatabaseFile);
+    }
+
     public function testSuccessfulConnection(): void
     {
-        $connection = new Connection(sprintf('sqlite:' . $this->testDatabaseFile));
+        $connection = new Connection(sprintf('sqlite:'.$this->testDatabaseFile));
         $validConnection = $connection->connect();
 
         $this->assertInstanceOf(PDO::class, $validConnection);
-    }
-
-    public function tearDown(): void
-    {
-            unlink($this->testDatabaseFile);
     }
 }

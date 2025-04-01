@@ -1,9 +1,13 @@
 <?php
 
-
 use Lexgur\GondorGains\Connection;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @internal
+ *
+ * @coversNothing
+ */
 class FailedConnectionThrowsExceptionTest extends TestCase
 {
     public function testFailedConnection(): void

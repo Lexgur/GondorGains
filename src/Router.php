@@ -2,21 +2,14 @@
 
 namespace Lexgur\GondorGains;
 
-use FilesystemIterator;
 use Lexgur\GondorGains\Attribute\Path;
 use Lexgur\GondorGains\Exception\FilePathReadException;
 use Lexgur\GondorGains\Exception\IncorrectRoutePathException;
 use Lexgur\GondorGains\Exception\RegisterControllerException;
-use RecursiveDirectoryIterator;
-use RecursiveIteratorIterator;
-use ReflectionClass;
-use RegexIterator;
-use SplFileInfo;
-use Throwable;
 
 class Router
 {
-    private const CONTROLLER_DIR = __DIR__ . '/Controller';
+    private const CONTROLLER_DIR = __DIR__.'/Controller';
 
     /**
      * @var array<string, string>
@@ -32,33 +25,31 @@ class Router
 
         foreach ($phpFiles as $file) {
             try {
-                $file = new SplFileInfo($file);
+                $file = new \SplFileInfo($file);
                 $filePath = $file->getPathname();
                 $className = $this->getFullClassName($filePath);
-                $reflectionClass = new ReflectionClass($className);
+                $reflectionClass = new \ReflectionClass($className);
                 $classAttributes = $reflectionClass->getAttributes(Path::class);
-                $routePath = $classAttributes[0]?->newInstance()->getPath();
+                $routePath = $classAttributes[0]->newInstance()->getPath();
                 if (!empty($routePath)) {
                     $this->routes[$routePath] = $className;
                 }
-            } catch (Throwable $e) {
-                throw new RegisterControllerException('An error occurred while registering controllers: ' . $e->getMessage());
+            } catch (\Throwable $e) {
+                throw new RegisterControllerException('An error occurred while registering controllers: '.$e->getMessage());
             }
         }
     }
 
     /**
-     * @return RegexIterator<int, SplFileInfo, RecursiveIteratorIterator<RecursiveDirectoryIterator>>
+     * @return \RegexIterator<int, \SplFileInfo, \RecursiveIteratorIterator<\RecursiveDirectoryIterator>>
      */
-    public function getPhpFiles(): RegexIterator
+    public function getPhpFiles(): \RegexIterator
     {
-        $directoryIterator = new RecursiveDirectoryIterator(self::CONTROLLER_DIR, FilesystemIterator::SKIP_DOTS);
-        $iterator = new RecursiveIteratorIterator($directoryIterator);
+        $directoryIterator = new \RecursiveDirectoryIterator(self::CONTROLLER_DIR, \FilesystemIterator::SKIP_DOTS);
+        $iterator = new \RecursiveIteratorIterator($directoryIterator);
 
-        /** @var RegexIterator<int, SplFileInfo, RecursiveIteratorIterator<RecursiveDirectoryIterator>> $regexIterator */
-        $regexIterator = new RegexIterator($iterator, '/\.php$/i', RegexIterator::MATCH);
-
-        return $regexIterator;
+        /** @var \RegexIterator<int, \SplFileInfo, \RecursiveIteratorIterator<\RecursiveDirectoryIterator>> $regexIterator */
+        return new \RegexIterator($iterator, '/\.php$/i', \RegexIterator::MATCH);
     }
 
     public function getFullClassName(string $filePath): ?string
@@ -75,17 +66,17 @@ class Router
         if (preg_match('/class\s+([^\s{]+)/', $content, $classMatch)) {
             $className = trim($classMatch[1]);
 
-            return $namespace ? $namespace . '\\' . $className : $className;
+            return $namespace ? $namespace.'\\'.$className : $className;
         }
 
-        throw new IncorrectRoutePathException('Class not found: ' . $filePath);
+        throw new IncorrectRoutePathException('Class not found: '.$filePath);
     }
 
     public function getController(string $routePath): string
     {
         foreach ($this->routes as $routePattern => $controllerClass) {
             $regexPattern = preg_replace('/:(\w+)/', '(?P<$1>\d+)', $routePattern);
-            $regexPattern = '#^' . $regexPattern . '$#';
+            $regexPattern = '#^'.$regexPattern.'$#';
 
             if (preg_match($regexPattern, $routePath)) {
                 return $controllerClass;

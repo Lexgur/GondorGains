@@ -8,6 +8,11 @@ use Lexgur\GondorGains\Router;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @internal
+ *
+ * @coversNothing
+ */
 class RouterTest extends TestCase
 {
     private Router $router;
