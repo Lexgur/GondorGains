@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Lexgur\GondorGains\DependencyInjection\Container;
+use Lexgur\GondorGains\Container;
 use Lexgur\GondorGains\Exception\ServiceInstantiationException;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
