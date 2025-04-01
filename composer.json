@@ -12,7 +12,8 @@
         }
     ],
     "require": {
-        "psr/container": "^2.0"
+        "psr/container": "^2.0",
+      "ext-pdo": "*"
     },
     "require-dev": {
         "phpmd/phpmd": "^2.15",

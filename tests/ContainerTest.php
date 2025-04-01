@@ -7,6 +7,11 @@ use Lexgur\GondorGains\Exception\ServiceInstantiationException;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @internal
+ *
+ * @coversNothing
+ */
 class ContainerTest extends TestCase
 {
     #[DataProvider('provideTestContainerData')]
@@ -94,13 +99,12 @@ class ContainerTest extends TestCase
         return [
             [ServiceWithCircularDependencies::class, true],
             [ServiceWithCircularDependantDependenciesAndMissingParameters::class, true],
-            [ServiceWithCircularDependantDependenciesAndMissingParameters::class, false]
+            [ServiceWithCircularDependantDependenciesAndMissingParameters::class, false],
         ];
     }
 
     final public function testContainerThrowsReflectionClassExceptionWithNonExistentService(): void
     {
-
         $container = static::getContainer();
 
         $this->assertFalse($container->has('NonExistentService'));
@@ -112,7 +116,7 @@ class ContainerTest extends TestCase
 
     private static function getContainer(bool $withParameters = false): Container
     {
-        if ($withParameters === false) {
+        if (false === $withParameters) {
             return new Container();
         }
 
@@ -126,21 +130,16 @@ class ContainerTest extends TestCase
 
 readonly class ServiceWithNoDependencies
 {
-    public function __construct()
-    {
-    }
+    public function __construct() {}
 }
 
-readonly class ServiceWithNoDependenciesAndNoConstruct
-{
-}
+readonly class ServiceWithNoDependenciesAndNoConstruct {}
 
 readonly class ServiceWithSingleDependency
 {
     public function __construct(
         private ServiceWithNoDependencies $serviceWithNoDependencies
-    ) {
-    }
+    ) {}
 }
 
 readonly class ServiceWithMultipleDependencies
@@ -148,8 +147,7 @@ readonly class ServiceWithMultipleDependencies
     public function __construct(
         private ServiceWithNoDependencies $serviceWithNoDependenciesFirst,
         private ServiceWithNoDependencies $serviceWithNoDependenciesSecond,
-    ) {
-    }
+    ) {}
 }
 
 readonly class ServiceWithMultipleDependantDependencies
@@ -158,15 +156,13 @@ readonly class ServiceWithMultipleDependantDependencies
         private ServiceWithNoDependencies $serviceWithNoDependenciesFirst,
         private ServiceWithSingleDependency $serviceWithSingleDependency,
         private ServiceWithMultipleDependencies $serviceWithMultipleDependencies,
-    ) {
-    }
+    ) {}
 }
 abstract readonly class AbstractServiceWithSingleDependency
 {
     public function __construct(
         private ServiceWithNoDependencies $serviceWithNoDependencies
-    ) {
-    }
+    ) {}
 }
 
 readonly class ServiceWithMultipleDependenciesExtendingAbstractService extends AbstractServiceWithSingleDependency
@@ -185,8 +181,7 @@ readonly class ServiceWithSingleParameterDependency
 {
     public function __construct(
         private string $stringParameter,
-    ) {
-    }
+    ) {}
 }
 
 readonly class ServiceWithMultipleParameterDependencies
@@ -195,8 +190,7 @@ readonly class ServiceWithMultipleParameterDependencies
         private string $stringParameter,
         private int $integerParameter,
         private bool $booleanParameter,
-    ) {
-    }
+    ) {}
 }
 
 readonly class ServiceWithSingleDependencyAndParameterDependency
@@ -204,8 +198,7 @@ readonly class ServiceWithSingleDependencyAndParameterDependency
     public function __construct(
         private ServiceWithMultipleDependenciesExtendingAbstractService $serviceWithMultipleDependenciesExtendingAbstractService,
         private string $stringParameter,
-    ) {
-    }
+    ) {}
 }
 
 readonly class ServiceWithMultipleDependenciesAndParameterDependencies
@@ -216,16 +209,14 @@ readonly class ServiceWithMultipleDependenciesAndParameterDependencies
         private string $stringParameter,
         private bool $booleanParameter,
         private int $integerParameter,
-    ) {
-    }
+    ) {}
 }
 
 readonly class ServiceWithCircularDependencies
 {
     public function __construct(
         private ServiceWithCircularDependencies $serviceWithCircularDependencies,
-    ) {
-    }
+    ) {}
 }
 
 readonly class ServiceWithCircularDependantDependenciesAndMissingParameters
@@ -233,6 +224,5 @@ readonly class ServiceWithCircularDependantDependenciesAndMissingParameters
     public function __construct(
         private ServiceWithCircularDependencies $serviceWithCircularDependencies,
         private string $stringParameter,
-    ) {
-    }
+    ) {}
 }
