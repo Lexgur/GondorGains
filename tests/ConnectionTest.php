@@ -1,47 +1,44 @@
 <?php
 
+use Lexgur\GondorGains\Connection;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
- *
- * @coversNothing
  */
 class ConnectionTest extends TestCase
 {
     private string $testDbPath;
-    private ?PDO $pdo = null;
+    private Connection $connection;
+
 
     protected function setUp(): void
     {
-        $this->testDbPath = __DIR__.'/tmp/test_database.sqlite';
+        $this->testDbPath = __DIR__ . '/tmp/test_database.sqlite';
 
-        if (file_exists($this->testDbPath)) {
-            unlink($this->testDbPath);
-        }
-    }
-
-    protected function tearDown(): void
-    {
-        $this->pdo = null;
-
-        if (file_exists($this->testDbPath)) {
-            unlink($this->testDbPath);
-        }
+        $this->connection = new Connection('sqlite:'.$this->testDbPath);
     }
 
     public function testSuccessfulConnection(): void
     {
-        $this->pdo = new PDO('sqlite:'.$this->testDbPath);
-        $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $databaseConnection = $this->connection->connect();
 
-        $this->assertNotNull($this->pdo);
+        $this->assertInstanceOf(\PDO::class, $databaseConnection);
     }
 
     public function testFailedConnection(): void
     {
         $this->expectException(PDOException::class);
 
-        new PDO('sqlite:/invalid/path/to/non_existent.sqlite');
+        $invalidConnection = new Connection('sqlite:/invalid/path/to/non_existent.sqlite');
+        $invalidConnection->connect();
     }
+
+    protected function tearDown(): void
+    {
+        if (file_exists($this->testDbPath)) {
+            unlink($this->testDbPath);
+        }
+    }
+
 }
