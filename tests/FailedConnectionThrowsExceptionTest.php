@@ -6,14 +6,12 @@ use PHPUnit\Framework\TestCase;
 
 class FailedConnectionThrowsExceptionTest extends TestCase
 {
-    protected function setUp(): void
-    {
-        $this->connection = new Connection('sqlite:/invalid/path/to/FailedConnectionThrowsExceptionTest.sqlite');
-    }
     public function testFailedConnection(): void
     {
+        $connection = new Connection('sqlite:/invalid/path/to/FailedConnectionThrowsExceptionTest.sqlite');
+
         $this->expectException(PDOException::class);
 
-        $this->connection->connect();
+        $connection->connect();
     }
 }

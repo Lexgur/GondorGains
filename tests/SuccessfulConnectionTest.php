@@ -12,23 +12,22 @@ class SuccessfulConnectionTest extends TestCase
 {
     protected function setUp(): void
     {
-        $this->connection = new Connection('sqlite:./tmp/SuccessfulConnectionTest.sqlite');
+        $this->database = 'sqlite:';
     }
 
     public function testSuccessfulConnection(): void
     {
-
-        $validConnection = $this->connection->connect();
+        $connection = new Connection($this->database . './tmp/testSuccessfulConnection.sqlite');
+        $validConnection = $connection->connect();
 
         $this->assertInstanceOf(PDO::class, $validConnection);
     }
 
     public function tearDown(): void
     {
-        $this->connection = null;
 
-        if (file_exists('./tmp/SuccessfulConnectionTest.sqlite')) {
-            unlink('./tmp/SuccessfulConnectionTest.sqlite');
+        if (file_exists('./tmp/testSuccessfulConnection.sqlite')) {
+            unlink('./tmp/testSuccessfulConnection.sqlite');
         }
     }
 }
