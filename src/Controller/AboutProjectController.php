@@ -9,5 +9,8 @@ use Lexgur\GondorGains\Attribute\Path;
 #[Path('/about')]
 class AboutProjectController
 {
-
+    public function about(): string
+    {
+        return 'This is about the project';
+    }
 }
