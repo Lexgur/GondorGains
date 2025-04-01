@@ -91,7 +91,7 @@ class Router
             }
         }
 
-        throw new IncorrectRoutePathException("Route path '{$routePath}' not found.");
+        throw new IncorrectRoutePathException("404, Not Found: The route '{$routePath}' does not exist.");
     }
 
     /**
