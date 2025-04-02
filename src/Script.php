@@ -21,7 +21,7 @@ class Script {
         $className = $this->getClassName($scriptClass);
         $service = $this->container->get($className);
 
-        print $service->run();
+        $service->run();
     }
 
     public function getClassName(string $scriptClass): string

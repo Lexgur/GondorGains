@@ -6,6 +6,6 @@ class HelloWorldScript implements ScriptInterface {
     public function run(): int
     {
         echo 'Hello world';
-        exit(1);
+        return 1;
     }
 }
