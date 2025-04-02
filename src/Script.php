@@ -18,12 +18,20 @@ class Script {
 
     public function run(string $scriptClass): void
     {
-        $className = '\\' . str_replace('/', '\\', $scriptClass);
+        $className = $this->getClassName($scriptClass);
         $service = $this->container->get($className);
 
-        if (!$service instanceof ScriptInterface) {
-            throw new ScriptFailedToRunException('Script does not belong to ScriptInterface');
-        }
         print $service->run();
+    }
+
+    public function getClassName(string $scriptClass): string
+    {
+        $className = '\\' . str_replace('/', '\\', $scriptClass);
+
+        $service = $this->container->get($className);
+        if (!$service instanceof ScriptInterface) {
+            throw new ScriptFailedToRunException('Script not found');
+        }
+        return $className;
     }
 }

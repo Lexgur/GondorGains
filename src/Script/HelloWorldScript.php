@@ -3,8 +3,9 @@
 namespace Lexgur\GondorGains\Script;
 
 class HelloWorldScript implements ScriptInterface {
-    public function run(): string
+    public function run(): int
     {
-        return 'Hello world';
+        echo 'Hello world';
+        exit(1);
     }
 }

@@ -6,5 +6,5 @@ namespace Lexgur\GondorGains\Script;
 
 interface ScriptInterface
 {
-    public function run(): string;
+    public function run(): int;
 }
