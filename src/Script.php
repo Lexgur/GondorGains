@@ -6,6 +6,8 @@ namespace Lexgur\GondorGains;
 
 use Lexgur\GondorGains\Exception\ScriptFailedToRunException;
 use Lexgur\GondorGains\Script\ScriptInterface;
+use Lexgur\GondorGains\Validation\ScriptNameValidation;
+use Throwable;
 
 class Script {
 
@@ -18,13 +20,19 @@ class Script {
 
     public function run(string $scriptClass): int
     {
+        try {
+
+        ScriptNameValidation::validate($scriptClass);
+
         $className = $this->getClassName($scriptClass);
         $service = $this->container->get($className);
         if (!$service instanceof ScriptInterface) {
             throw new ScriptFailedToRunException('Script not found');
         }
-
-        return $service->run();
+            return $service->run();
+        } catch (Throwable $e) {
+            throw new ScriptFailedToRunException($e->getMessage());
+        }
     }
 
     private function getClassName(string $scriptClass): string
