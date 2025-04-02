@@ -18,6 +18,7 @@ class ScriptNameValidationTest extends TestCase {
         $scriptClass = 'Lexgur/GondorGains/Script/HelloWorldScript';
         $this->validation->validate($scriptClass);
 
+        /** @phpstan-ignore method.alreadyNarrowedType */
         $this->assertTrue(true);
     }
 

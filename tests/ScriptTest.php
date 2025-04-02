@@ -8,6 +8,8 @@ use PHPUnit\Framework\TestCase;
 
 class ScriptTest extends TestCase
 {
+    private string $tmpTestDir;
+
     protected function setUp(): void {
         parent::setUp();
 
