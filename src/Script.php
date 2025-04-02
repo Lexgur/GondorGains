@@ -24,6 +24,6 @@ class Script {
         if (!$service instanceof ScriptInterface) {
             throw new ScriptFailedToRunException('Script does not belong to ScriptInterface');
         }
-        echo $service->run();
+        print $service->run();
     }
 }
