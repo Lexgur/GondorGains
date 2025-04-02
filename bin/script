@@ -8,7 +8,7 @@ require_once __DIR__ . '/../vendor/autoload.php';
 use Lexgur\GondorGains\Exception\ScriptFailedToRunException;
 use Lexgur\GondorGains\Script;
 
-$scriptClass = $argv[1] ?? '';
+$scriptClass = $argv[1] ?? null;
 if (empty($scriptClass)) {
     throw new ScriptFailedToRunException('No script provided');
 }
