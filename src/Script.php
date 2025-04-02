@@ -16,22 +16,19 @@ class Script {
         $this->container = new Container();
     }
 
-    public function run(string $scriptClass): void
+    public function run(string $scriptClass): int
     {
         $className = $this->getClassName($scriptClass);
-        $service = $this->container->get($className);
-
-        $service->run();
-    }
-
-    public function getClassName(string $scriptClass): string
-    {
-        $className = '\\' . str_replace('/', '\\', $scriptClass);
-
         $service = $this->container->get($className);
         if (!$service instanceof ScriptInterface) {
             throw new ScriptFailedToRunException('Script not found');
         }
-        return $className;
+
+        return $service->run();
+    }
+
+    private function getClassName(string $scriptClass): string
+    {
+        return '\\' . str_replace('/', '\\', $scriptClass);
     }
 }

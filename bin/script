@@ -13,6 +13,4 @@ if (empty($scriptClass)) {
     throw new ScriptFailedToRunException('No script provided');
 }
 $script = new Script();
-$script->run($scriptClass);
-
-exit();
+exit($script->run($scriptClass));
