@@ -8,8 +8,7 @@ use Lexgur\GondorGains\Exception\IncorrectScriptNameException;
 
 class ScriptNameValidation
 {
-    public static function validate(string $scriptName): bool
-    {
+    public static function validate(string $scriptName): bool {
         $scriptName = trim($scriptName);
         $scriptName = preg_replace('/\/+/', '/', $scriptName);
 

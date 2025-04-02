@@ -8,15 +8,13 @@ use PHPUnit\Framework\TestCase;
 
 class ScriptTest extends TestCase
 {
-    protected function setUp(): void
-    {
+    protected function setUp(): void {
         parent::setUp();
 
         $this->tmpTestDir = __DIR__ . '/../tmp/tests/';
     }
 
-    public function testRunValidScript(): void
-    {
+    public function testRunValidScript(): void {
         $scriptClass = 'Lexgur/GondorGains/Script/TempTestScript';
         $filePath = $this->tmpTestDir . 'TempTestScript.php';
 
@@ -45,16 +43,14 @@ class ScriptTest extends TestCase
         $this->assertSame(1, $result);
     }
 
-    public function testRunInvalidScriptThrowsScriptFailedToRunException(): void
-    {
+    public function testRunInvalidScriptThrowsScriptFailedToRunException(): void {
         $this->expectException(ScriptFailedToRunException::class);
 
         $script = new Script();
         $script->run('Lexgur/GondorGains/Script/NonExistentScript');
     }
 
-    protected function tearDown(): void
-    {
+    protected function tearDown(): void {
         parent::tearDown();
         array_map('unlink', glob($this->tmpTestDir . '*.php'));
     }

@@ -18,8 +18,7 @@ class Script {
         $this->container = new Container();
     }
 
-    public function run(string $scriptClass): int
-    {
+    public function run(string $scriptClass): int {
         try {
 
         ScriptNameValidation::validate($scriptClass);
@@ -35,8 +34,7 @@ class Script {
         }
     }
 
-    private function getClassName(string $scriptClass): string
-    {
+    private function getClassName(string $scriptClass): string {
         return '\\' . str_replace('/', '\\', $scriptClass);
     }
 }
