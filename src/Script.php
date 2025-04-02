@@ -10,5 +10,4 @@ class Script {
     {
         echo 'Hello world';
     }
-
 }

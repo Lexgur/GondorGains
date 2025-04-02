@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Lexgur\GondorGains\Script;
 
-interface ScriptInterface {
-
+interface ScriptInterface
+{
+    public function run(): string;
 }
