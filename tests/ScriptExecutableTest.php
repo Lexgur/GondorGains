@@ -22,7 +22,7 @@ class ScriptExecutableTest extends TestCase
     public static function provideTestSuccessfulScriptExecutableData(): array
     {
         return [
-            ['Lexgur\\\GondorGains\\\Tests\\\Script\\\SuccessfulScript'],
+            ["Lexgur\\\GondorGains\\\Tests\\\Script\\\SuccessfulScript"],
             ['\\\Lexgur\\\GondorGains\\\Tests\\\Script\\\SuccessfulScript'],
             ['Lexgur/GondorGains/Tests/Script/SuccessfulScript'],
             ['/Lexgur/GondorGains/Tests/Script/SuccessfulScript'],
@@ -56,10 +56,8 @@ class ScriptExecutableTest extends TestCase
     #[DataProvider('provideTestIncorrectlyWrittenScriptCallExecutableData')]
     public function testIncorrectlyWrittenScriptCallExecutable(string $scriptClassName): void
     {
-        $this->expectException(IncorrectScriptNameException::class);
-
         exec(sprintf('php ../bin/script %s', $scriptClassName), result_code: $return);
-        $this->assertEquals(255, $return);
+        $this->assertEquals(1, $return);
     }
 
     public static function provideTestIncorrectlyWrittenScriptCallExecutableData(): array

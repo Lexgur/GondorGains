@@ -65,8 +65,6 @@ class ScriptTest extends TestCase
         $this->expectException(IncorrectScriptNameException::class);
 
         $this->script->run($scriptClassName);
-
-        $this->expectException(ServiceInstantiationException::class);
     }
 
     public static function provideTestScriptFailedToRunExceptionData(): array
