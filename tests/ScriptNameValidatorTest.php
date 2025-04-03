@@ -17,8 +17,14 @@ class ScriptNameValidatorTest extends TestCase {
     }
 
     public function testSuccessfulValidation(): void {
-        $scriptClass =  'Lexgur\\GondorGains\\Tests\\Script\\SuccessfulScript';
-        $this->validator->validate($scriptClass);
+        $scriptName = 'Lexgur\\GondorGains\\Tests\\Script\\SuccessfulScript';
+        $this->validator->validate($scriptName);
+
+        /** @phpstan-ignore method.alreadyNarrowedType */
+        $this->assertTrue(true);
+
+        $scriptName2 = '\\Lexgur\\GondorGains\\Tests\\Script\\SuccessfulScript';
+        $this->validator->validate($scriptName2);
 
         /** @phpstan-ignore method.alreadyNarrowedType */
         $this->assertTrue(true);
@@ -28,15 +34,15 @@ class ScriptNameValidatorTest extends TestCase {
         $this->expectException(IncorrectScriptNameException::class);
         $this->expectExceptionMessage('Invalid namespace');
 
-        $scriptClass = '//Lexgur/GondorGains/Script/';
-        $this->validator->validate($scriptClass);
+        $scriptName = '//Lexgur/GondorGains/Script/';
+        $this->validator->validate($scriptName);
     }
 
     public function testValidationWithoutSpecifiedScriptThrowsIncorrectScriptNameException(): void {
         $this->expectException(IncorrectScriptNameException::class);
         $this->expectExceptionMessage('Invalid namespace');
 
-        $scriptClass = 'Lexgur/GondorGains/Script/';
-        $this->validator->validate($scriptClass);
+        $scriptName = 'Lexgur/GondorGains/Script/';
+        $this->validator->validate($scriptName);
     }
 }

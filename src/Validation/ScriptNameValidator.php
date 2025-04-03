@@ -10,10 +10,9 @@ class ScriptNameValidator
 {
     public static function validate(string $scriptName): bool
     {
-        if (preg_match('/^\?[A-Za-z_][A-Za-z0-9_]*(?:[\/][A-Za-z_][A-Za-z0-9_]*)*$/', $scriptName)) {
-            return true;
+        if (!preg_match('/^\\?(\\?[A-Za-z_][A-Za-z0-9_]*)([\\\/][A-Za-z_][A-Za-z0-9_]*)*$/', $scriptName)) {
+            throw new IncorrectScriptNameException('Invalid namespace');
         }
-
-        throw new IncorrectScriptNameException('Invalid namespace');
+        return true;
     }
 }
