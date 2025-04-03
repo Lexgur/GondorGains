@@ -1,6 +1,9 @@
 <?php
 
+namespace Lexgur\GondorGains\Tests;
+
 use Lexgur\GondorGains\Connection;
+use PDOException;
 use PHPUnit\Framework\TestCase;
 
 class FailedConnectionThrowsExceptionTest extends TestCase

@@ -6,11 +6,10 @@ namespace Lexgur\GondorGains;
 
 use Lexgur\GondorGains\Exception\ScriptFailedToRunException;
 use Lexgur\GondorGains\Script\ScriptInterface;
-use Lexgur\GondorGains\Validation\ScriptNameValidation;
-use Throwable;
+use Lexgur\GondorGains\Validation\ScriptNameValidator;
 
-class Script {
-
+class Script
+{
     protected Container $container;
 
     public function __construct()
@@ -18,23 +17,23 @@ class Script {
         $this->container = new Container();
     }
 
-    public function run(string $scriptClass): int {
-        try {
+    public function run(string $scriptClass): int
+    {
+            $className = $this->getClassName($scriptClass);
+            $service = $this->container->get($className);
 
-        ScriptNameValidation::validate($scriptClass);
+            if (!$service instanceof ScriptInterface) {
+                throw new ScriptFailedToRunException('Script not found');
+            }
 
-        $className = $this->getClassName($scriptClass);
-        $service = $this->container->get($className);
-        if (!$service instanceof ScriptInterface) {
-            throw new ScriptFailedToRunException('Script not found');
-        }
             return $service->run();
-        } catch (Throwable $e) {
-            throw new ScriptFailedToRunException($e->getMessage());
-        }
     }
 
-    private function getClassName(string $scriptClass): string {
-        return '\\' . str_replace('/', '\\', $scriptClass);
+
+    private function getClassName(string $scriptClass): string
+    {
+        ScriptNameValidator::validate($scriptClass);
+
+        return '\\'.str_replace('/', '\\', $scriptClass);
     }
 }

@@ -2,59 +2,76 @@
 
 declare(strict_types=1);
 
+namespace Lexgur\GondorGains\Tests;
+
 use Lexgur\GondorGains\Exception\ScriptFailedToRunException;
 use Lexgur\GondorGains\Script;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class ScriptTest extends TestCase
 {
-    private string $tmpTestDir;
+    private Script $script;
 
-    protected function setUp(): void {
-        parent::setUp();
-
-        $this->tmpTestDir = __DIR__ . '/../tmp/tests/';
+    protected function setUp(): void
+    {
+        $this->script = new Script();
     }
 
-    public function testRunValidScript(): void {
-        $scriptClass = 'Lexgur/GondorGains/Script/TempTestScript';
-        $filePath = $this->tmpTestDir . 'TempTestScript.php';
+    #[DataProvider('provideTestSuccessfulScriptData')]
+    public function testSuccessfulScript(string $scriptClassName): void
+    {
+        $this->expectOutputString('Hello World!');
 
-        $namespace = "Lexgur\\GondorGains\\Script";
-        $className = "TempTestScript";
+        $result = $this->script->run($scriptClassName);
 
-        $scriptContent = <<<PHP
-        <?php
-        namespace $namespace;
-
-        use Lexgur\GondorGains\Script\ScriptInterface;
-
-        class $className implements ScriptInterface {
-            public function run(): int {
-                return 1;
-            }
-        }
-        PHP;
-
-        file_put_contents($filePath, $scriptContent);
-
-        require_once $filePath;
-        $script = new Script();
-        $result = $script->run($scriptClass);
-
-        $this->assertSame(1, $result);
+        $this->assertEquals(0, $result);
     }
 
-    public function testRunInvalidScriptThrowsScriptFailedToRunException(): void {
+    public static function provideTestSuccessfulScriptData(): array
+    {
+        return [
+            ['Lexgur\GondorGains\Tests\Script\SuccessfulScript'],
+            ['\Lexgur\GondorGains\Tests\Script\SuccessfulScript'],
+            ['Lexgur/GondorGains/Tests/Script/SuccessfulScript'],
+            ['/Lexgur/GondorGains/Tests/Script/SuccessfulScript'],
+        ];
+    }
+
+    #[DataProvider('provideTestFailedScriptData')]
+    public function testFailedScript(string $scriptClassName): void
+    {
+        $this->expectOutputString('Not so hello World!');
+
+        $result = $this->script->run($scriptClassName);
+
+        $this->assertEquals(1, $result);
+    }
+
+    public static function provideTestFailedScriptData(): array
+    {
+        return [
+            ['Lexgur\GondorGains\Tests\Script\FailedScript'],
+            ['\Lexgur\GondorGains\Tests\Script\FailedScript'],
+            ['Lexgur/GondorGains/Tests/Script/FailedScript'],
+            ['/Lexgur/GondorGains/Tests/Script/FailedScript'],
+        ];
+    }
+
+    #[DataProvider('provideTestScriptFailedToRunExceptionData')]
+    public function testScriptFailedToRunException(string $scriptClassName): void
+    {
         $this->expectException(ScriptFailedToRunException::class);
 
-        $script = new Script();
-        $script->run('Lexgur/GondorGains/Script/NonExistentScript');
+        $this->script->run($scriptClassName);
     }
 
-    protected function tearDown(): void {
-        parent::tearDown();
-        array_map('unlink', glob($this->tmpTestDir . '*.php'));
+    public static function provideTestScriptFailedToRunExceptionData(): array
+    {
+        return [
+            ['LexgurGondorGainsTestsScriptFailedScript'],
+            ['Lexgur/GondorGains/Tests/Script//FailedScript'],
+            ['//Lexgur/GondorGains/Tests/Script/FailedScript'],
+        ];
     }
-
 }

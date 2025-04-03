@@ -4,19 +4,20 @@ declare(strict_types=1);
 
 use Lexgur\GondorGains\Exception\IncorrectScriptNameException;
 use Lexgur\GondorGains\Validation\ScriptNameValidation;
+use Lexgur\GondorGains\Validation\ScriptNameValidator;
 use PHPUnit\Framework\TestCase;
 
 class ScriptNameValidationTest extends TestCase {
-    private ScriptNameValidation $validation;
+    private ScriptNameValidator $validator;
 
     protected function setUp(): void
     {
-        $this->validation = new ScriptNameValidation();
+        $this->validator = new ScriptNameValidator();
     }
 
     public function testSuccessfulValidation(): void {
         $scriptClass = 'Lexgur/GondorGains/Script/HelloWorldScript';
-        $this->validation->validate($scriptClass);
+        $this->validator->validate($scriptClass);
 
         /** @phpstan-ignore method.alreadyNarrowedType */
         $this->assertTrue(true);
@@ -27,7 +28,7 @@ class ScriptNameValidationTest extends TestCase {
         $this->expectExceptionMessage('Script should start with Lexgur/GondorGains/Script/');
 
         $scriptClass = '//Lexgur/GondorGains/Script/';
-        $this->validation->validate($scriptClass);
+        $this->validator->validate($scriptClass);
     }
 
     public function testValidationWithoutSpecifiedScriptThrowsIncorrectScriptNameException(): void {
@@ -35,6 +36,6 @@ class ScriptNameValidationTest extends TestCase {
         $this->expectExceptionMessage('Script name must include a valid class after Lexgur/GondorGains/Script/');
 
         $scriptClass = 'Lexgur/GondorGains/Script/';
-        $this->validation->validate($scriptClass);
+        $this->validator->validate($scriptClass);
     }
 }
