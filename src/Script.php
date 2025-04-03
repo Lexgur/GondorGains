@@ -32,8 +32,8 @@ class Script
 
     private function getClassName(string $scriptClass): string
     {
-        ScriptNameValidator::validate($scriptClass);
 
-        return '\\'.str_replace('/', '\\', $scriptClass);
+        ScriptNameValidator::validate($scriptClass);
+        return str_replace('/', '\\', $scriptClass);
     }
 }
