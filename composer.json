@@ -3,7 +3,7 @@
     "autoload": {
         "psr-4": {
             "Lexgur\\GondorGains\\": "src/",
-            "Lexgur\\GondorGains\\Tests": "tests/"
+            "Lexgur\\GondorGains\\Tests\\": "tests/"
         }
     },
     "authors": [

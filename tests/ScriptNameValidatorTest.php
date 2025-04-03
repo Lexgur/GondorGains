@@ -17,13 +17,13 @@ class ScriptNameValidatorTest extends TestCase {
     }
 
     public function testSuccessfulValidation(): void {
-        $scriptName = 'Lexgur\\GondorGains\\Tests\\Script\\SuccessfulScript';
+        $scriptName = "Lexgur\\GondorGains\\Tests\\Script\\SuccessfulScript";
         $this->validator->validate($scriptName);
 
         /** @phpstan-ignore method.alreadyNarrowedType */
         $this->assertTrue(true);
 
-        $scriptName2 = '\\Lexgur\\GondorGains\\Tests\\Script\\SuccessfulScript';
+        $scriptName2 = "\\Lexgur\\GondorGains\\Tests\\Script\\SuccessfulScript";
         $this->validator->validate($scriptName2);
 
         /** @phpstan-ignore method.alreadyNarrowedType */
