@@ -28,7 +28,7 @@
             "phpmd tests/ text ruleset.xml"
         ],
         "phpstan": "vendor/bin/phpstan",
-        "php-cs-fixer": "PHP_CS_FIXER_IGNORE_ENV=1 vendor/bin/php-cs-fixer check -v --diff --show-progress=none",
+        "php-cs-fixer": "set PHP_CS_FIXER_IGNORE_ENV=1 vendor/bin/php-cs-fixer check -v --diff --show-progress=none",
         "code-style": [
             "@phpmd",
             "@phpstan",

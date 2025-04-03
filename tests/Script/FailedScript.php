@@ -10,6 +10,7 @@ class FailedScript implements ScriptInterface {
     public function run(): int
     {
         echo 'Not so hello World!';
+
         return 1;
     }
 }

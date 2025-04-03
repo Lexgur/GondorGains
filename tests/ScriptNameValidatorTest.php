@@ -4,45 +4,37 @@ declare(strict_types=1);
 
 namespace Lexgur\GondorGains\Tests;
 
-use Lexgur\GondorGains\Exception\IncorrectScriptNameException;
 use Lexgur\GondorGains\Validation\ScriptNameValidator;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class ScriptNameValidatorTest extends TestCase {
-    private ScriptNameValidator $validator;
 
     protected function setUp(): void
     {
         $this->validator = new ScriptNameValidator();
     }
 
-    public function testSuccessfulValidation(): void {
-        $scriptName = "Lexgur\\GondorGains\\Tests\\Script\\SuccessfulScript";
-        $this->validator->validate($scriptName);
+    #[DataProvider('provideTestNamespaceRegexData')]
+    public function testNamespaceRegex(string $scriptClassName, int $expected): void
+    {
+        $actual = $this->validator->validate($scriptClassName);
 
-        /** @phpstan-ignore method.alreadyNarrowedType */
-        $this->assertTrue(true);
-
-        $scriptName2 = "\\Lexgur\\GondorGains\\Tests\\Script\\SuccessfulScript";
-        $this->validator->validate($scriptName2);
-
-        /** @phpstan-ignore method.alreadyNarrowedType */
-        $this->assertTrue(true);
+        $this->assertEquals($expected, $actual);
     }
 
-    public function testValidationWithIncorrectScriptStartThrowsIncorrectScriptNameException(): void {
-        $this->expectException(IncorrectScriptNameException::class);
-        $this->expectExceptionMessage('Invalid namespace');
-
-        $scriptName = '//Lexgur/GondorGains/Script/';
-        $this->validator->validate($scriptName);
+    public static function provideTestNamespaceRegexData(): array
+    {
+        return [
+            ["Lexgur\GondorGains\Tests\Script\FailedScript", 1],
+            ["\Lexgur\GondorGains\Tests\Script\FailedScript", 1],
+            ['Lexgur\\GondorGains\\Tests\\Script\\FailedScript', 1],
+            ['\\Lexgur\\GondorGains\\Tests\\Script\\FailedScript', 1],
+            ['Lexgur/GondorGains/Tests/Script/FailedScript', 1],
+            ['/Lexgur/GondorGains/Tests/Script/FailedScript', 1],
+            ["Lexgur\\\GondorGains\Tests\Script\FailedScript", 0],
+            ["\\\Lexgur\GondorGains\Tests\Script\FailedScript", 0],
+        ];
     }
 
-    public function testValidationWithoutSpecifiedScriptThrowsIncorrectScriptNameException(): void {
-        $this->expectException(IncorrectScriptNameException::class);
-        $this->expectExceptionMessage('Invalid namespace');
-
-        $scriptName = 'Lexgur/GondorGains/Script/';
-        $this->validator->validate($scriptName);
-    }
 }
