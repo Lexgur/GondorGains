@@ -2,12 +2,13 @@
 
 declare(strict_types=1);
 
+namespace Lexgur\GondorGains\Tests;
+
 use Lexgur\GondorGains\Exception\IncorrectScriptNameException;
-use Lexgur\GondorGains\Validation\ScriptNameValidation;
 use Lexgur\GondorGains\Validation\ScriptNameValidator;
 use PHPUnit\Framework\TestCase;
 
-class ScriptNameValidationTest extends TestCase {
+class ScriptNameValidatorTest extends TestCase {
     private ScriptNameValidator $validator;
 
     protected function setUp(): void
@@ -16,7 +17,7 @@ class ScriptNameValidationTest extends TestCase {
     }
 
     public function testSuccessfulValidation(): void {
-        $scriptClass = 'Lexgur/GondorGains/Script/HelloWorldScript';
+        $scriptClass =  'Lexgur\\GondorGains\\Tests\\Script\\SuccessfulScript';
         $this->validator->validate($scriptClass);
 
         /** @phpstan-ignore method.alreadyNarrowedType */
@@ -25,7 +26,7 @@ class ScriptNameValidationTest extends TestCase {
 
     public function testValidationWithIncorrectScriptStartThrowsIncorrectScriptNameException(): void {
         $this->expectException(IncorrectScriptNameException::class);
-        $this->expectExceptionMessage('Script should start with Lexgur/GondorGains/Script/');
+        $this->expectExceptionMessage('Invalid namespace');
 
         $scriptClass = '//Lexgur/GondorGains/Script/';
         $this->validator->validate($scriptClass);
@@ -33,7 +34,7 @@ class ScriptNameValidationTest extends TestCase {
 
     public function testValidationWithoutSpecifiedScriptThrowsIncorrectScriptNameException(): void {
         $this->expectException(IncorrectScriptNameException::class);
-        $this->expectExceptionMessage('Script name must include a valid class after Lexgur/GondorGains/Script/');
+        $this->expectExceptionMessage('Invalid namespace');
 
         $scriptClass = 'Lexgur/GondorGains/Script/';
         $this->validator->validate($scriptClass);

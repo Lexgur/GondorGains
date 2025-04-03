@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Lexgur\GondorGains\Tests;
 
-use Lexgur\GondorGains\Exception\ScriptFailedToRunException;
+use Lexgur\GondorGains\Exception\IncorrectScriptNameException;
 use Lexgur\GondorGains\Script;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
@@ -61,7 +61,7 @@ class ScriptTest extends TestCase
     #[DataProvider('provideTestScriptFailedToRunExceptionData')]
     public function testScriptFailedToRunException(string $scriptClassName): void
     {
-        $this->expectException(ScriptFailedToRunException::class);
+        $this->expectException(IncorrectScriptNameException::class);
 
         $this->script->run($scriptClassName);
     }

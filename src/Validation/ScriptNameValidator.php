@@ -8,13 +8,12 @@ use Lexgur\GondorGains\Exception\IncorrectScriptNameException;
 
 class ScriptNameValidator
 {
-    public static function validate(string $scriptName): bool {
-        $scriptName = trim($scriptName);
-
-        if (str_starts_with($scriptName, ".") || str_starts_with($scriptName, "/")) {
-            throw new IncorrectScriptNameException('Script should start with Lexgur/GondorGains/Script/');
+    public static function validate(string $scriptName): bool
+    {
+        if (preg_match('/^\?[A-Za-z_][A-Za-z0-9_]*(?:[\/][A-Za-z_][A-Za-z0-9_]*)*$/', $scriptName)) {
+            return true;
         }
 
-        return true;
+        throw new IncorrectScriptNameException('Invalid namespace');
     }
 }
