@@ -57,7 +57,7 @@ class ScriptExecutableTest extends TestCase
     public function testIncorrectlyWrittenScriptCallExecutable(string $scriptClassName): void
     {
         exec(sprintf('php ../bin/script %s', $scriptClassName), result_code: $return);
-        $this->assertEquals(1, $return);
+        $this->assertEquals(255, $return);
     }
 
     public static function provideTestIncorrectlyWrittenScriptCallExecutableData(): array
