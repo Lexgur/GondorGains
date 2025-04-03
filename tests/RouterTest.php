@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Lexgur\GondorGains\Tests;
+
 use Lexgur\GondorGains\Controller\AboutProjectController;
 use Lexgur\GondorGains\Exception\IncorrectRoutePathException;
 use Lexgur\GondorGains\Router;

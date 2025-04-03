@@ -2,7 +2,8 @@
     "name": "lexgur/gondorgains",
     "autoload": {
         "psr-4": {
-            "Lexgur\\GondorGains\\": "src/"
+            "Lexgur\\GondorGains\\": "src/",
+            "Lexgur\\GondorGains\\Tests\\": "tests/"
         }
     },
     "authors": [
@@ -27,7 +28,7 @@
             "phpmd tests/ text ruleset.xml"
         ],
         "phpstan": "vendor/bin/phpstan",
-        "php-cs-fixer": "./vendor/bin/php-cs-fixer fix --dry-run",
+        "php-cs-fixer": "set PHP_CS_FIXER_IGNORE_ENV=1 vendor/bin/php-cs-fixer check -v --diff --show-progress=none",
         "code-style": [
             "@phpmd",
             "@phpstan",

@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Lexgur\GondorGains\Tests;
+
 use Lexgur\GondorGains\Container;
 use Lexgur\GondorGains\Exception\ServiceInstantiationException;
 use PHPUnit\Framework\Attributes\DataProvider;

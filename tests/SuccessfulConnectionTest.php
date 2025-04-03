@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Lexgur\GondorGains\Tests;
+
 use Lexgur\GondorGains\Connection;
 use PHPUnit\Framework\TestCase;
 
