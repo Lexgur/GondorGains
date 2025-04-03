@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Lexgur\GondorGains\Tests;
 
+use Lexgur\GondorGains\Exception\IncorrectScriptNameException;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 class ScriptExecutableTest extends TestCase
@@ -11,7 +12,7 @@ class ScriptExecutableTest extends TestCase
     #[DataProvider('provideTestSuccessfulScriptExecutableData')]
     public function testSuccessfulScriptExecutable(string $scriptClassName): void
     {
-        exec(sprintf("../bin/script %s", $scriptClassName), $output, $return);
+        exec(sprintf("php ../bin/script %s", $scriptClassName), $output, $return);
 
         $this->assertEquals(0, $return);
         $this->assertCount(1, $output);
@@ -33,7 +34,7 @@ class ScriptExecutableTest extends TestCase
     #[DataProvider('provideTestFailedScriptExecutableData')]
     public function testFailedScriptExecutable(string $scriptClassName): void
     {
-        exec(sprintf('../bin/script %s', $scriptClassName), $output, $return);
+        exec(sprintf('php ../bin/script %s', $scriptClassName), $output, $return);
 
         $this->assertEquals(1, $return);
         $this->assertCount(1, $output);
@@ -55,7 +56,9 @@ class ScriptExecutableTest extends TestCase
     #[DataProvider('provideTestIncorrectlyWrittenScriptCallExecutableData')]
     public function testIncorrectlyWrittenScriptCallExecutable(string $scriptClassName): void
     {
-        exec(sprintf('../bin/script %s', $scriptClassName), result_code: $return);
+        $this->expectException(IncorrectScriptNameException::class);
+
+        exec(sprintf('php ../bin/script %s', $scriptClassName), result_code: $return);
         $this->assertEquals(255, $return);
     }
 

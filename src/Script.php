@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Lexgur\GondorGains;
 
+use Lexgur\GondorGains\Exception\IncorrectScriptNameException;
 use Lexgur\GondorGains\Exception\ScriptFailedToRunException;
 use Lexgur\GondorGains\Script\ScriptInterface;
 use Lexgur\GondorGains\Validation\ScriptNameValidator;
@@ -34,6 +35,7 @@ class Script
     {
 
         ScriptNameValidator::validate($scriptClass);
+
         return str_replace('/', '\\', $scriptClass);
     }
 }
