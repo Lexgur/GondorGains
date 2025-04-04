@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Lexgur\GondorGains\Tests;
 
 use Lexgur\GondorGains\Exception\IncorrectScriptNameException;
-use Lexgur\GondorGains\Exception\ServiceInstantiationException;
 use Lexgur\GondorGains\Script;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
@@ -29,6 +28,7 @@ class ScriptTest extends TestCase
         $this->assertEquals(0, $result);
     }
 
+    /** @return array<array{string}> */
     public static function provideTestSuccessfulScriptData(): array
     {
         return [
@@ -49,6 +49,7 @@ class ScriptTest extends TestCase
         $this->assertEquals(1, $result);
     }
 
+    /** @return array<array{string}> */
     public static function provideTestFailedScriptData(): array
     {
         return [
@@ -67,6 +68,7 @@ class ScriptTest extends TestCase
         $this->script->run($scriptClassName);
     }
 
+    /** @return array<array{string}> */
     public static function provideTestScriptFailedToRunExceptionData(): array
     {
         return [

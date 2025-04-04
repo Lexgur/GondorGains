@@ -18,6 +18,7 @@ class ScriptExecutableTest extends TestCase
         $this->assertEquals('Hello World!', $output[0]);
     }
 
+    /** @return array<array{string}> */
     public static function provideTestSuccessfulScriptExecutableData(): array
     {
         return [
@@ -40,6 +41,7 @@ class ScriptExecutableTest extends TestCase
         $this->assertEquals('Not so hello World!', $output[0]);
     }
 
+    /** @return array<array{string}> */
     public static function provideTestFailedScriptExecutableData(): array
     {
         return [
@@ -56,11 +58,12 @@ class ScriptExecutableTest extends TestCase
     public function testIncorrectlyWrittenScriptCallExecutable(string $scriptClassName): void
     {
         $this->markTestSkipped('This test works on linux, but not on windows and should be skipped.');
-
+        /** @phpstan-ignore deadCode.unreachable */
         exec(sprintf('php ../bin/script %s', $scriptClassName), result_code: $return);
         $this->assertEquals(255, $return);
     }
 
+    /** @return array<array{string}> */
     public static function provideTestIncorrectlyWrittenScriptCallExecutableData(): array
     {
         return [

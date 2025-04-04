@@ -33,13 +33,15 @@ class Script
     private function getClassName(string $scriptClass): string
     {
         if (str_contains($scriptClass, '//')) {
+
             throw new IncorrectScriptNameException("Consecutive forward slashes are not allowed.");
         }
         if (str_contains($scriptClass, '\\') && str_contains($scriptClass, '/')) {
+
             throw new IncorrectScriptNameException("Mixed separators (\\ and /) are not allowed.");
         }
 
-        $scriptClass = preg_replace('/\\\\+/', '\\', $scriptClass);
+        $scriptClass = preg_replace('/\\\+/', '\\', $scriptClass);
         $scriptClass = str_replace('/', '\\', $scriptClass);
 
         ScriptNameValidator::validate($scriptClass);
