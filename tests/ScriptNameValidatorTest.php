@@ -10,6 +10,8 @@ use PHPUnit\Framework\TestCase;
 
 class ScriptNameValidatorTest extends TestCase {
 
+    private ScriptNameValidator $validator;
+
     protected function setUp(): void
     {
         $this->validator = new ScriptNameValidator();
@@ -23,6 +25,7 @@ class ScriptNameValidatorTest extends TestCase {
         $this->assertEquals($expected, $actual);
     }
 
+    /** @return array<array{string, int}> */
     public static function provideTestNamespaceRegexData(): array
     {
         return [

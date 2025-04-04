@@ -49,7 +49,8 @@ class Router
         $iterator = new \RecursiveIteratorIterator($directoryIterator);
 
         /** @var \RegexIterator<int, \SplFileInfo, \RecursiveIteratorIterator<\RecursiveDirectoryIterator>> $regexIterator */
-        return new \RegexIterator($iterator, '/\.php$/i', \RegexIterator::MATCH);
+        $regexIterator = new \RegexIterator($iterator, '/\.php$/i', \RegexIterator::MATCH);
+        return $regexIterator;
     }
 
     public function getFullClassName(string $filePath): ?string
