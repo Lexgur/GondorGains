@@ -28,6 +28,7 @@ class ScriptTest extends TestCase
         $this->assertEquals(0, $result);
     }
 
+    /** @return array<array{string}> */
     public static function provideTestSuccessfulScriptData(): array
     {
         return [
@@ -48,6 +49,7 @@ class ScriptTest extends TestCase
         $this->assertEquals(1, $result);
     }
 
+    /** @return array<array{string}> */
     public static function provideTestFailedScriptData(): array
     {
         return [
@@ -66,6 +68,7 @@ class ScriptTest extends TestCase
         $this->script->run($scriptClassName);
     }
 
+    /** @return array<array{string}> */
     public static function provideTestScriptFailedToRunExceptionData(): array
     {
         return [
