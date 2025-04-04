@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Lexgur\GondorGains\Tests;
 
 use Lexgur\GondorGains\Connection;
+use PDO;
 use PHPUnit\Framework\TestCase;
 
 class SuccessfulConnectionTest extends TestCase

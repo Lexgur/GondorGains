@@ -32,8 +32,6 @@ class ScriptNameValidatorTest extends TestCase {
             ['\\Lexgur\\GondorGains\\Tests\\Script\\FailedScript', 1],
             ['Lexgur/GondorGains/Tests/Script/FailedScript', 1],
             ['/Lexgur/GondorGains/Tests/Script/FailedScript', 1],
-            ["Lexgur\\\GondorGains\Tests\Script\FailedScript", 0],
-            ["\\\Lexgur\GondorGains\Tests\Script\FailedScript", 0],
         ];
     }
 

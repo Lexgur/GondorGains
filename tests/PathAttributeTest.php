@@ -6,6 +6,7 @@ namespace Lexgur\GondorGains\Tests;
 
 use Lexgur\GondorGains\Attribute\Path;
 use PHPUnit\Framework\TestCase;
+use ReflectionClass;
 
 class PathAttributeTest extends TestCase
 {
