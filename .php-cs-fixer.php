@@ -11,6 +11,10 @@ $config->setRules([
     '@PhpCsFixer' => true,
     'array_syntax' => ['syntax' => 'short'],
     'no_trailing_whitespace' => true,
+
+    'general_phpdoc_annotation_remove' => [
+        'annotations' => ['internal', 'coversNothing'],
+    ],
 ])
     ->setFinder($finder);
 

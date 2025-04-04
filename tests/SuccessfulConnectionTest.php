@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Lexgur\GondorGains\Tests;
 
 use Lexgur\GondorGains\Connection;
-use PDO;
 use PHPUnit\Framework\TestCase;
 
 class SuccessfulConnectionTest extends TestCase
@@ -28,6 +27,6 @@ class SuccessfulConnectionTest extends TestCase
         $connection = new Connection(sprintf('sqlite:%s', $this->testDatabaseFile));
         $validConnection = $connection->connect();
 
-        $this->assertInstanceOf(PDO::class, $validConnection);
+        $this->assertInstanceOf(\PDO::class, $validConnection);
     }
 }

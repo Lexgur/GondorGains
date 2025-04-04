@@ -9,11 +9,6 @@ use Lexgur\GondorGains\Exception\ServiceInstantiationException;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @internal
- *
- * @coversNothing
- */
 class ContainerTest extends TestCase
 {
     #[DataProvider('provideTestContainerData')]
@@ -138,10 +133,7 @@ class ServiceWithNoDependencies
     public function __construct() {}
 }
 
-class ServiceWithNoDependenciesAndNoConstruct
-{
-
-}
+class ServiceWithNoDependenciesAndNoConstruct {}
 class ServiceWithSingleDependency
 {
     public function __construct(

@@ -14,7 +14,7 @@ class ScriptNameValidator
             throw new IncorrectScriptNameException("Invalid script name: {$scriptName}");
         }
 
-        if (!preg_match('/^((\\\\?|\/?)[A-Za-z_]\w*)([\\\\\/][A-Za-z_]\w*)*$/', $scriptName)) {
+        if (!preg_match('/^((\\\?|\/?)[A-Za-z_]\w*)([\\\\\/][A-Za-z_]\w*)*$/', $scriptName)) {
             throw new IncorrectScriptNameException("Invalid namespace format: {$scriptName}");
         }
 

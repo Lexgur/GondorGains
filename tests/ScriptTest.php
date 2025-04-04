@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Lexgur\GondorGains\Tests;
 
 use Lexgur\GondorGains\Exception\IncorrectScriptNameException;
-use Lexgur\GondorGains\Exception\ServiceInstantiationException;
 use Lexgur\GondorGains\Script;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
