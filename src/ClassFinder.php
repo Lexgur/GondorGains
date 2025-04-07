@@ -6,6 +6,7 @@ namespace Lexgur\GondorGains;
 
 use Exception;
 use Lexgur\GondorGains\Exception\FilePathReadException;
+use Lexgur\GondorGains\Exception\FindClassesInNamespaceException;
 use Lexgur\GondorGains\Exception\FindingClassesImplementingInterfaceException;
 use Lexgur\GondorGains\Exception\IncorrectRoutePathException;
 
@@ -22,6 +23,11 @@ class ClassFinder
      * @var array<string, string>
      */
     private array $extendingClasses = [];
+
+    /**
+     * @var array<string, string>
+     */
+    private array $namespaceClasses = [];
 
     private string $path;
 
@@ -76,6 +82,7 @@ class ClassFinder
 
                 $className = $this->getFullClassName($path);
 
+
                 if (!$className || !class_exists($className) && !interface_exists($className)) {
                     continue;
                 }
@@ -99,9 +106,35 @@ class ClassFinder
         return $this->extendingClasses;
     }
 
-    public function findClassesInNamespace(string $value) : array
+    public function findClassesInNamespace(string $namespace) : array
     {
-        throw new Exception('Not good');
+        $phpFiles = $this->getPhpFiles();
+        $this->namespaceClasses = [];
+
+        foreach ($phpFiles as $file) {
+            try {
+                $fileInfo = $file;
+                $path = $fileInfo->getPathname();
+
+                $className = $this->getFullClassName($path);
+                if (!$className){
+                    continue;
+                }
+                $reflectionClass = new \ReflectionClass($className);
+                $classNamespace = $reflectionClass->getNamespaceName();
+
+                if ($classNamespace === $namespace || str_contains($classNamespace, $namespace . '\\')) {
+                    $this->namespaceClasses[] = $className;
+                }
+            } catch (\Throwable $e) {
+                throw new FindClassesInNamespaceException(
+                    'Error while scanning file "' . $file . '": ' . $e->getMessage()
+                );
+            }
+        }
+        sort($this->namespaceClasses);
+
+        return $this->namespaceClasses;
     }
 
     /**
@@ -128,7 +161,7 @@ class ClassFinder
         if (preg_match('/namespace\s+(.+);/', $content, $namespaceMatch)) {
             $namespace = trim($namespaceMatch[1]);
         }
-        if (preg_match('/(?:class|interface)\s+([^\s{]+)(\s+(extends|implements)\s+[^\s{]+)?/', $content, $classMatch)) {
+        if (preg_match('/(?:class|interface|trait|enum)\s+([^\s{]+)(\s+(extends|implements)\s+[^\s{]+)?/', $content, $classMatch)) {
             $className = trim($classMatch[1]);
 
             return $namespace ? $namespace . '\\' . $className : $className;

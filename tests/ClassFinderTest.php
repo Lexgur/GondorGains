@@ -106,6 +106,8 @@ class ClassFinderTest extends TestCase
     public function testFindClassesInNamespace(string $value, array $expected): void
     {
         $actual = $this->classFinder->findClassesInNamespace($value);
+        sort($expected);
+
         $this->assertEquals($expected, $actual);
     }
 
