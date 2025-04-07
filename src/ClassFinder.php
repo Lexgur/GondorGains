@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Lexgur\GondorGains;
 
-use Exception;
 use Lexgur\GondorGains\Exception\FilePathReadException;
 use Lexgur\GondorGains\Exception\FindClassesInNamespaceException;
 use Lexgur\GondorGains\Exception\FindingClassesImplementingInterfaceException;
