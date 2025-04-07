@@ -4,136 +4,40 @@ declare(strict_types=1);
 
 namespace Lexgur\GondorGains;
 
+use Lexgur\GondorGains\Exception\ClassFinderFailedToRunException;
 use Lexgur\GondorGains\Exception\FilePathReadException;
-use Lexgur\GondorGains\Exception\FindClassesInNamespaceException;
-use Lexgur\GondorGains\Exception\FindingClassesImplementingInterfaceException;
 use Lexgur\GondorGains\Exception\IncorrectRoutePathException;
 
 class ClassFinder
 {
-    private const DIR = __DIR__;
-
-    /**
-     * @var array<string, string>
-     */
-    private array $implementingClasses = [];
-
-    /**
-     * @var array<string, string>
-     */
-    private array $extendingClasses = [];
-
-    /**
-     * @var array<string, string>
-     */
-    private array $namespaceClasses = [];
-
     private string $path;
 
-    public function __construct($path = self::DIR)
+    public function __construct($path = __DIR__)
     {
         $this->path = $path;
     }
 
-    /**
-     * @throws FindingClassesImplementingInterfaceException
-     */
     public function findClassesImplementing(string $interface): array
     {
-        $phpFiles = $this->getPhpFiles();
-        $this->implementingClasses = [];
-
-        foreach ($phpFiles as $file) {
-            try {
-                $fileInfo = $file;
-                $path = $fileInfo->getPathname();
-
-                $className = $this->getFullClassName($path);
-
-                if (!$className || !class_exists($className)) {
-                    continue;
-                }
-
-                $reflectionClass = new \ReflectionClass($className);
-
-                if ($reflectionClass->implementsInterface($interface)) {
-                    $this->implementingClasses[] = $className;
-                }
-            } catch (\Throwable $e) {
-                throw new FindingClassesImplementingInterfaceException(
-                    'Error while scanning file "' . $file . '": ' . $e->getMessage()
-                );
-            }
-        }
-
-        return $this->implementingClasses;
+        return $this->processPhpFiles(function (\ReflectionClass $reflectionClass, string $className) use ($interface) : bool {
+            return class_exists($className) && $reflectionClass->implementsInterface($interface);
+        });
     }
 
-    public function findClassesExtending(string $abstractClass) : array
+    public function findClassesExtending(string $abstractClass): array
     {
-        $phpFiles = $this->getPhpFiles();
-        $this->extendingClasses = [];
-
-        foreach ($phpFiles as $file) {
-            try {
-                $fileInfo = $file;
-                $path = $fileInfo->getPathname();
-
-                $className = $this->getFullClassName($path);
-
-
-                if (!$className || !class_exists($className) && !interface_exists($className)) {
-                    continue;
-                }
-
-                $reflectionClass = new \ReflectionClass($className);
-
-                if ($reflectionClass->isSubclassOf($abstractClass)) {
-                    $this->extendingClasses[] = $className;
-                } elseif ($reflectionClass->isInterface()) {
-                    if (is_subclass_of($className, $abstractClass)) {
-                        $this->extendingClasses[] = $className;
-                    }
-                }
-            } catch (\Throwable $e) {
-                throw new FindingClassesImplementingInterfaceException(
-                    'Error while scanning file "' . $file . '": ' . $e->getMessage()
-                );
-            }
-        }
-
-        return $this->extendingClasses;
+        return $this->processPhpFiles(function (\ReflectionClass $reflectionClass) use ($abstractClass) : bool {
+            return $reflectionClass->isSubclassOf($abstractClass)
+                || ($reflectionClass->isInterface() && is_subclass_of($reflectionClass->getName(), $abstractClass));
+        });
     }
 
-    public function findClassesInNamespace(string $namespace) : array
+    public function findClassesInNamespace(string $namespace): array
     {
-        $phpFiles = $this->getPhpFiles();
-        $this->namespaceClasses = [];
-
-        foreach ($phpFiles as $file) {
-            try {
-                $fileInfo = $file;
-                $path = $fileInfo->getPathname();
-
-                $className = $this->getFullClassName($path);
-                if (!$className){
-                    continue;
-                }
-                $reflectionClass = new \ReflectionClass($className);
-                $classNamespace = $reflectionClass->getNamespaceName();
-
-                if ($classNamespace === $namespace || str_contains($classNamespace, $namespace . '\\')) {
-                    $this->namespaceClasses[] = $className;
-                }
-            } catch (\Throwable $e) {
-                throw new FindClassesInNamespaceException(
-                    'Error while scanning file "' . $file . '": ' . $e->getMessage()
-                );
-            }
-        }
-        sort($this->namespaceClasses);
-
-        return $this->namespaceClasses;
+        return $this->processPhpFiles(function (\ReflectionClass $reflectionClass) use ($namespace) : bool {
+            $classNamespace = $reflectionClass->getNamespaceName();
+            return $classNamespace === $namespace || str_starts_with($classNamespace, $namespace . '\\');
+        });
     }
 
     /**
@@ -167,5 +71,34 @@ class ClassFinder
         }
 
         throw new IncorrectRoutePathException('Class not found: '.$path);
+    }
+
+    private function processPhpFiles(callable $condition): array
+    {
+        $phpFiles = $this->getPhpFiles();
+        $results = [];
+
+        foreach ($phpFiles as $file) {
+            try {
+                $path = $file->getPathname();
+                $className = $this->getFullClassName($path);
+
+                if (!$className) {
+                    continue;
+                }
+
+                $reflectionClass = new \ReflectionClass($className);
+
+                if ($condition($reflectionClass, $className)) {
+                    $results[] = $className;
+                }
+
+            } catch (\Throwable $e) {
+                throw new ClassFinderFailedToRunException(
+                    'Error while scanning file "' . $file . '": ' . $e->getMessage()
+                );
+            }
+        }
+        return $results;
     }
 }
