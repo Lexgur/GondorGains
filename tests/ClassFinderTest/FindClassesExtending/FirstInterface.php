@@ -2,6 +2,4 @@
 
 namespace Lexgur\GondorGains\Tests\ClassFinderTest\FindClassesExtending;
 
-interface FirstInterface extends AbstractInterface {
-
-}
+interface FirstInterface extends AbstractInterface {}

@@ -12,11 +12,12 @@ class ClassFinder
 {
     private string $path;
 
-    public function __construct($path = __DIR__)
+    public function __construct(string $path = __DIR__)
     {
         $this->path = $path;
     }
 
+    /** @return list<string> */
     public function findClassesImplementing(string $interface): array
     {
         return $this->processPhpFiles(function (\ReflectionClass $reflectionClass, string $className) use ($interface) : bool {
@@ -24,6 +25,7 @@ class ClassFinder
         });
     }
 
+    /** @return list<string> */
     public function findClassesExtending(string $abstractClass): array
     {
         return $this->processPhpFiles(function (\ReflectionClass $reflectionClass) use ($abstractClass) : bool {
@@ -32,6 +34,7 @@ class ClassFinder
         });
     }
 
+    /** @return list<string> */
     public function findClassesInNamespace(string $namespace): array
     {
         return $this->processPhpFiles(function (\ReflectionClass $reflectionClass) use ($namespace) : bool {
@@ -73,6 +76,7 @@ class ClassFinder
         throw new IncorrectRoutePathException('Class not found: '.$path);
     }
 
+    /** @return list<string> */
     private function processPhpFiles(callable $condition): array
     {
         $phpFiles = $this->getPhpFiles();

@@ -2,6 +2,4 @@
 
 namespace Lexgur\GondorGains\Tests\ClassFinderTest\FindClassesImplementing;
 
-interface NotUsedClassInterface {
-
-}
+interface NotUsedClassInterface {}

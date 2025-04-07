@@ -2,6 +2,4 @@
 
 namespace Lexgur\GondorGains\Tests\ClassFinderTest\FindClassesExtending;
 
-class AbstractNotExtendedExample {
-
-}
+class AbstractNotExtendedExample {}

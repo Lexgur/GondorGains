@@ -2,6 +2,4 @@
 
 namespace Lexgur\GondorGains\Tests\ClassFinderTest\FindClassesImplementing;
 
-class FirstClass implements ExampleInterface{
-
-}
+class FirstClass implements ExampleInterface {}

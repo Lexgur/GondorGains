@@ -30,6 +30,7 @@ class ClassFinderTest extends TestCase
         $this->classFinder = new ClassFinder(__DIR__);
     }
 
+    /** @param class-string[] $expected */
     #[DataProvider('provideTestFindClassesImplementingData')]
     public function testFindClassesImplementing(string $value, array $expected): void
     {
@@ -69,6 +70,7 @@ class ClassFinderTest extends TestCase
         ];
     }
 
+    /** @param class-string[] $expected */
     #[DataProvider('provideTestFindClassesExtendingData')]
     public function testFindClassesExtending(string $value, array $expected): void
     {
@@ -76,6 +78,7 @@ class ClassFinderTest extends TestCase
         $this->assertEquals($expected, $actual);
     }
 
+    /** @return list<array{class-string, list<class-string>}> */
     public static function provideTestFindClassesExtendingData(): array
     {
         return [
@@ -102,6 +105,7 @@ class ClassFinderTest extends TestCase
         ];
     }
 
+    /** @param class-string[] $expected */
     #[DataProvider('provideTestFindClassesInNamespaceData')]
     public function testFindClassesInNamespace(string $value, array $expected): void
     {
@@ -111,6 +115,7 @@ class ClassFinderTest extends TestCase
         $this->assertEquals($expected, $actual);
     }
 
+    /** @return  array<int, list<list<string>|string>> */
     public static function provideTestFindClassesInNamespaceData(): array
     {
         return [
@@ -153,5 +158,4 @@ class ClassFinderTest extends TestCase
             ],
         ];
     }
-
 }
