@@ -64,9 +64,39 @@ class ClassFinder
         return $this->implementingClasses;
     }
 
-    public function findClassesExtending(string $value) : array
+    public function findClassesExtending(string $abstractClass) : array
     {
-        throw new Exception('Uh-oh');
+        $phpFiles = $this->getPhpFiles();
+        $this->extendingClasses = [];
+
+        foreach ($phpFiles as $file) {
+            try {
+                $fileInfo = $file;
+                $path = $fileInfo->getPathname();
+
+                $className = $this->getFullClassName($path);
+
+                if (!$className || !class_exists($className) && !interface_exists($className)) {
+                    continue;
+                }
+
+                $reflectionClass = new \ReflectionClass($className);
+
+                if ($reflectionClass->isSubclassOf($abstractClass)) {
+                    $this->extendingClasses[] = $className;
+                } elseif ($reflectionClass->isInterface()) {
+                    if (is_subclass_of($className, $abstractClass)) {
+                        $this->extendingClasses[] = $className;
+                    }
+                }
+            } catch (\Throwable $e) {
+                throw new FindingClassesImplementingInterfaceException(
+                    'Error while scanning file "' . $file . '": ' . $e->getMessage()
+                );
+            }
+        }
+
+        return $this->extendingClasses;
     }
 
     public function findClassesInNamespace(string $value) : array
@@ -98,10 +128,10 @@ class ClassFinder
         if (preg_match('/namespace\s+(.+);/', $content, $namespaceMatch)) {
             $namespace = trim($namespaceMatch[1]);
         }
-        if (preg_match('/(?:class|interface|trait)\s+([^\s{]+)/', $content, $classMatch)) {
+        if (preg_match('/(?:class|interface)\s+([^\s{]+)(\s+(extends|implements)\s+[^\s{]+)?/', $content, $classMatch)) {
             $className = trim($classMatch[1]);
 
-            return $namespace ? $namespace.'\\'.$className : $className;
+            return $namespace ? $namespace . '\\' . $className : $className;
         }
 
         throw new IncorrectRoutePathException('Class not found: '.$path);
