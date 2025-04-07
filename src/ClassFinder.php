@@ -4,10 +4,19 @@ declare(strict_types=1);
 
 namespace Lexgur\GondorGains;
 
-use _PHPStan_f2f2ddf44\Nette\Neon\Exception;
+use Exception;
 
 class ClassFinder
 {
+    private const DIR = __DIR__;
+
+    private string $path;
+
+    public function __construct($path = self::DIR)
+    {
+        $this->path = $path;
+    }
+
     public function findClassesImplementing(string $value) : array
     {
         throw new Exception('Ooopsie');
