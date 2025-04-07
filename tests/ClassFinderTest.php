@@ -33,7 +33,7 @@ class ClassFinderTest extends TestCase
     #[DataProvider('provideTestFindClassesImplementingData')]
     public function testFindClassesImplementing(string $value, array $expected): void
     {
-        $actual = $this->classFinder->findClassesImplementing($value);
+        $actual = $this->classFinder->findClassesImplementing();
         $this->assertEquals($expected, $actual);
     }
 
@@ -153,5 +153,3 @@ class ClassFinderTest extends TestCase
     }
 
 }
-ClassFinderTest.php
-6 KB
