@@ -15,7 +15,9 @@ class ClassFinder
         $this->path = $path;
     }
 
-    /** @return list<string> */
+    /** @return list<string>
+     * @throws ReflectionException
+     */
     public function findClassesImplementing(string $interface): array
     {
         return $this->processPhpFiles(function (\ReflectionClass $reflectionClass) use ($interface) : bool {
@@ -23,7 +25,9 @@ class ClassFinder
         });
     }
 
-    /** @return list<string> */
+    /** @return list<string>
+     * @throws ReflectionException
+     */
     public function findClassesExtending(string $abstractClass): array
     {
         return $this->processPhpFiles(function (\ReflectionClass $reflectionClass) use ($abstractClass) : bool {
@@ -31,7 +35,9 @@ class ClassFinder
         });
     }
 
-    /** @return list<string> */
+    /** @return list<string>
+     * @throws ReflectionException
+     */
     public function findClassesInNamespace(string $namespace): array
     {
         return $this->processPhpFiles(function (\ReflectionClass $reflectionClass) use ($namespace) : bool {
