@@ -12,7 +12,7 @@ class ClassFinder
 {
     private string $path;
 
-    public function __construct(string $path = __DIR__)
+    public function __construct(string $path)
     {
         $this->path = $path;
     }
@@ -20,8 +20,8 @@ class ClassFinder
     /** @return list<string> */
     public function findClassesImplementing(string $interface): array
     {
-        return $this->processPhpFiles(function (\ReflectionClass $reflectionClass, string $className) use ($interface) : bool {
-            return class_exists($className) && $reflectionClass->implementsInterface($interface);
+        return $this->processPhpFiles(function (\ReflectionClass $reflectionClass) use ($interface) : bool {
+            return !$reflectionClass->isInterface() && $reflectionClass->implementsInterface($interface);
         });
     }
 
@@ -29,8 +29,7 @@ class ClassFinder
     public function findClassesExtending(string $abstractClass): array
     {
         return $this->processPhpFiles(function (\ReflectionClass $reflectionClass) use ($abstractClass) : bool {
-            return $reflectionClass->isSubclassOf($abstractClass)
-                || ($reflectionClass->isInterface() && is_subclass_of($reflectionClass->getName(), $abstractClass));
+            return $reflectionClass->isSubclassOf($abstractClass);
         });
     }
 
@@ -39,7 +38,7 @@ class ClassFinder
     {
         return $this->processPhpFiles(function (\ReflectionClass $reflectionClass) use ($namespace) : bool {
             $classNamespace = $reflectionClass->getNamespaceName();
-            return $classNamespace === $namespace || str_starts_with($classNamespace, $namespace . '\\');
+            return $classNamespace === $namespace || str_starts_with($classNamespace, $namespace);
         });
     }
 
