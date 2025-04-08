@@ -2,4 +2,6 @@
 
 namespace Lexgur\GondorGains\Tests\Script\RunMigrationsScriptTest\RunOnce;
 
-class FirstMigration {}
+use Lexgur\GondorGains\Script\MigrationInterface;
+
+class FirstMigration implements MigrationInterface {}

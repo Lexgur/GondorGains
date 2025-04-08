@@ -2,4 +2,11 @@
 
 namespace Lexgur\GondorGains\Tests\Script\RunMigrationsScriptTest\FailedMigrate;
 
-class FirstMigration {}
+use Lexgur\GondorGains\Script\MigrationInterface;
+
+class FirstMigration implements MigrationInterface {
+    public function run(): int
+    {
+        return 0;
+    }
+}

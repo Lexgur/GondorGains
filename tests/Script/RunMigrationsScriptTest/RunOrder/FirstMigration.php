@@ -2,4 +2,13 @@
 
 namespace Lexgur\GondorGains\Tests\Script\RunMigrationsScriptTest\RunOrder;
 
-class FirstMigration {}
+use Lexgur\GondorGains\Script\MigrationInterface;
+
+class FirstMigration implements MigrationInterface
+
+{
+    public function run(): int
+    {
+        return 0;
+    }
+}
