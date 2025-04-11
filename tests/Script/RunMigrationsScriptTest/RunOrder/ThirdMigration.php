@@ -7,8 +7,13 @@ use Lexgur\GondorGains\Script\MigrationInterface;
 class ThirdMigration implements MigrationInterface
 
 {
-    public function run(): int
+    public function order(): int
     {
-        return 0;
+        return 3;
+    }
+
+    public function migrate(): void
+    {
+        echo static::class . PHP_EOL;
     }
 }
