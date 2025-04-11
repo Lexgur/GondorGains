@@ -73,8 +73,6 @@ class RunMigrationsScript implements ScriptInterface
         if (!file_exists($this->getMigratedRegistryPath())) {
             return [];
         }
-        $migratedMigrations[] = json_decode(file_get_contents($this->getMigratedRegistryPath()), true);
-
-        return $migratedMigrations;
+        return json_decode(file_get_contents($this->getMigratedRegistryPath()), true);
     }
 }
