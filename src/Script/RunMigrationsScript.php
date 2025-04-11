@@ -50,8 +50,8 @@ class RunMigrationsScript implements ScriptInterface
             $migrations[] = $migration;
         }
 
-        usort($migrations, function (MigrationInterface $a, MigrationInterface $b) {
-            return $a->order() <=> $b->order();
+        usort($migrations, function (MigrationInterface $returnValueA, MigrationInterface $returnValueB) {
+            return $returnValueA->order() <=> $returnValueB->order();
         });
 
         foreach ($migrations as $migration) {
