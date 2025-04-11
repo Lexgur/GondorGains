@@ -43,8 +43,8 @@ class RunMigrationsScript implements ScriptInterface
             return 1;
         }
 
-        foreach ($migrationClasses as $migrationClass) {
-            $migration = $this->container->get($migrationClass);
+        foreach ($pendingMigrations as $pendingMigration) {
+            $migration = $this->container->get($pendingMigration);
             $migrations[] = $migration;
         }
 
