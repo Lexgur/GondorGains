@@ -10,8 +10,6 @@ use Lexgur\GondorGains\Container;
 class RunMigrationsScript implements ScriptInterface
 {
 
-    protected ClassFinder $classFinder;
-
     private string $directory;
 
     private string $migratedRegistryPath;
@@ -32,8 +30,8 @@ class RunMigrationsScript implements ScriptInterface
      */
     public function run(): int
     {
-        $this->classFinder = new ClassFinder($this->directory);
-        $migrationClasses = $this->classFinder->findClassesImplementing(MigrationInterface::class);
+        $classFinder = new ClassFinder($this->directory);
+        $migrationClasses = $classFinder->findClassesImplementing(MigrationInterface::class);
 
         $migrations = [];
         $successfulMigrations = $this->getMigratedMigrations();
