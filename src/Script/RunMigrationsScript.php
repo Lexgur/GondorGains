@@ -68,6 +68,7 @@ class RunMigrationsScript implements ScriptInterface
         return $this->migratedRegistryPath;
     }
 
+    /** @return array<string> */
     private function getMigratedMigrations(): array
     {
         if (!file_exists($this->getMigratedRegistryPath())) {
