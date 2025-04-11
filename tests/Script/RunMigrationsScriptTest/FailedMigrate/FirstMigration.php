@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Lexgur\GondorGains\Tests\Script\RunMigrationsScriptTest\FailedMigrate;
 
 use Lexgur\GondorGains\Script\MigrationInterface;
