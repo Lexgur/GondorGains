@@ -15,9 +15,12 @@ use PHPUnit\Framework\TestCase;
 
 class RunMigrationsScriptTest extends TestCase
 {
+    /** @var array<string>  */
+    private array $testConfig;
     private string $migratedRegistryPath;
     public function setUp(): void
     {
+        $this->testConfig = require __DIR__ . '/../../config.php';
         $this->migratedRegistryPath = uniqid('', true);
         mkdir(str_replace( $this->migratedRegistryPath .'.json', '', $this->getMigratedRegistryPath()), recursive: true);
     }
@@ -86,7 +89,7 @@ class RunMigrationsScriptTest extends TestCase
         $test = explode("\\", $testClass);
         $testCase = end($test);
 
-        return __DIR__ . '/../../tmp/' . $testCase . '/' . $this->name() . '/' . $this->migratedRegistryPath . '.json';
+        return $this->testConfig['filesystem'] . '/' . $testCase . '/' . $this->name() . '/' . $this->migratedRegistryPath . '.json';
     }
 
 }
