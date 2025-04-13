@@ -9,7 +9,8 @@ vendor
 .idea
 .vscode
 
-config.php
+!test.config.php
+dev.config.php
 *.config.php
 
 *.sqlite
