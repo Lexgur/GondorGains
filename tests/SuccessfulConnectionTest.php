@@ -9,6 +9,7 @@ use PHPUnit\Framework\TestCase;
 
 class SuccessfulConnectionTest extends TestCase
 {
+    /** @var array<string>  */
     private array $testConfig;
     private string $testDatabaseFile;
 

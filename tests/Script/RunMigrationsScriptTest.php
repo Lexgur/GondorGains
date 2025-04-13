@@ -15,6 +15,7 @@ use PHPUnit\Framework\TestCase;
 
 class RunMigrationsScriptTest extends TestCase
 {
+    /** @var array<string>  */
     private array $testConfig;
     private string $migratedRegistryPath;
     public function setUp(): void
