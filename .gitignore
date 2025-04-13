@@ -10,7 +10,6 @@ vendor
 .vscode
 
 !test.config.php
-dev.config.php
 *.config.php
 
 *.sqlite
