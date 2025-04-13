@@ -72,6 +72,10 @@ class Container implements ContainerInterface
             throw new ServiceInstantiationException("Skipping Model classes: {$serviceClass}");
         }
 
+        if ($serviceClass === Container::class) {
+            return $this;
+        }
+
         if ($this->has($serviceClass)) {
             return $this->services[$serviceClass];
         }

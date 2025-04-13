@@ -16,11 +16,11 @@ class RunMigrationsScript implements ScriptInterface
 
     private Container $container;
 
-    public function __construct(string $directory, string $migratedRegistryPath)
+    public function __construct(string $directory, string $migratedRegistryPath, Container $container)
     {
         $this->directory = $directory;
         $this->migratedRegistryPath = $migratedRegistryPath;
-        $this->container = new Container();
+        $this->container = $container;
     }
 
     /**
