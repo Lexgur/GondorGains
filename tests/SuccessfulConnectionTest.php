@@ -14,7 +14,7 @@ class SuccessfulConnectionTest extends TestCase
     protected function setUp(): void
     {
         $testName = $this->name();
-        $this->testDatabaseFile = sprintf('../tmp/tests/%s%s.sqlite', $testName, uniqid('test_', true));
+        $this->testDatabaseFile = sprintf('../tmp/test/%s%s.sqlite', $testName, uniqid('test_', true));
     }
 
     public function tearDown(): void

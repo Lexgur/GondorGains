@@ -86,7 +86,7 @@ class RunMigrationsScriptTest extends TestCase
         $test = explode("\\", $testClass);
         $testCase = end($test);
 
-        return __DIR__ . '/../../tmp/' . $testCase . '/' . $this->name() . '/' . $this->migratedRegistryPath . '.json';
+        return __DIR__ . '/../../tmp/test/' . $testCase . '/' . $this->name() . '/' . $this->migratedRegistryPath . '.json';
     }
 
 }
