@@ -19,7 +19,7 @@ class RunMigrationsScriptTest extends TestCase
     private string $migratedRegistryPath;
     public function setUp(): void
     {
-        $this->testConfig = require __DIR__ . '/../../test.config.php';
+        $this->testConfig = require __DIR__ . '/../../config.php';
         $this->migratedRegistryPath = uniqid('', true);
         mkdir(str_replace( $this->migratedRegistryPath .'.json', '', $this->getMigratedRegistryPath()), recursive: true);
     }

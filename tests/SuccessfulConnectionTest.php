@@ -9,12 +9,15 @@ use PHPUnit\Framework\TestCase;
 
 class SuccessfulConnectionTest extends TestCase
 {
+    private array $testConfig;
     private string $testDatabaseFile;
 
     protected function setUp(): void
     {
+        $this->testConfig = require __DIR__ . '/../config.php';
         $testName = $this->name();
-        $this->testDatabaseFile = sprintf('../tmp/test/%s%s.sqlite', $testName, uniqid('test_', true));
+        $testDir = ($this->testConfig['filesystem']);
+        $this->testDatabaseFile = sprintf('%s/%s_%s.sqlite', $testDir, $testName, uniqid('test_', true));
     }
 
     public function tearDown(): void
