@@ -10,18 +10,18 @@ use Lexgur\GondorGains\Connection;
 
 class CreateDatabaseScript implements ScriptInterface
 {
-    private array $config;
+    private string $dsn;
 
     private Connection $connection;
 
-    public function __construct(Connection $connection)
+    public function __construct(Connection $connection, string $dsn)
     {
-        $this->config = require __DIR__ . '/../../config.php';
+        $this->dsn = $dsn;
         $this->connection = $connection;
     }
     public function run(): int
     {
-        $parsedDsn = parse_url($this->config['dsn']);
+        $parsedDsn = parse_url($this->dsn);
         $dbPath = $parsedDsn['path'];
 
         if (file_exists($dbPath)) {
