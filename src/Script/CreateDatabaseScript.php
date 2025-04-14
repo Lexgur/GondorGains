@@ -16,7 +16,7 @@ class CreateDatabaseScript implements ScriptInterface
 
     public function __construct(Connection $connection)
     {
-        $this->config = require __DIR__ . '/../config.php';
+        $this->config = require __DIR__ . '/../../config.php';
         $this->connection = $connection;
     }
     public function run(): int
