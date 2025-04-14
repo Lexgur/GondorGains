@@ -13,9 +13,12 @@ class Script
 {
     protected Container $container;
 
+    private array $config;
+
     public function __construct()
     {
-        $this->container = new Container();
+        $this->config = require __DIR__ . '/../config.php';
+        $this->container = new Container($this->config);
     }
 
     public function run(string $scriptClass): int
