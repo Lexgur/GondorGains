@@ -13,6 +13,7 @@ class Script
 {
     protected Container $container;
 
+    /** @var array<string> */
     private array $config;
 
     public function __construct()
