@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Lexgur\GondorGains\Repository;
 
 use Lexgur\GondorGains\Model\User;
-use Lexgur\GondorGains\Factory\UserModelFactory;
 use Lexgur\GondorGains\Exception\IncorrectUserIdException;
 use PDO;
 
@@ -45,7 +44,7 @@ class UserModelRepository extends BaseRepository implements UserModelRepositoryI
         if (!$row) {
             throw new IncorrectUserIdException('Asked id does not exist');
         }
-        return UserModelFactory::create($row);
+        return self::create($row);
     }
 
     public function findByEmail(string $userEmail): ?User
@@ -57,7 +56,7 @@ class UserModelRepository extends BaseRepository implements UserModelRepositoryI
         if (!$row) {
             return null;
         }
-        return UserModelFactory::create($row);
+        return self::create($row);
     }
 
 
@@ -96,6 +95,16 @@ class UserModelRepository extends BaseRepository implements UserModelRepositoryI
             return null;
         }
 
-        return UserModelFactory::create($row);
+        return self::create($row);
+    }
+
+    public static function create(array $data): User
+    {
+        return new User(
+            userEmail: $data['email'] ?? '',
+            username: $data['username'] ?? '',
+            userPassword: $data['password'] ?? '',
+            userId: $data['id'] ?? null
+        );
     }
 }
