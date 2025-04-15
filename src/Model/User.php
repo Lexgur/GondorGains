@@ -8,11 +8,11 @@ class User
 {
     private ?int $userId = null;
 
-    private $userEmail;
+    private string $userEmail;
 
-    private $userPassword;
+    private string $userPassword;
 
-    private $username;
+    private string $username;
 
     public function __construct(string $userEmail, string $username, string $userPassword, ?int $userId = null)
     {
@@ -57,6 +57,14 @@ class User
         return $this->userId;
     }
 
+    /**
+     * @param array{
+     *     email: string,
+     *     username: string,
+     *     password: string,
+     *     id?: int|null
+     * } $data
+     */
     public static function create(array $data): User
     {
         return new User(

@@ -11,7 +11,7 @@ use TypeError;
 class UserTest extends TestCase
 
 {
-    public function testIfUserAttributesAreSetCorrectly(): void
+    public function testConstructorSetsPropertiesWhenValidArgumentsProvided(): void
     {
         $userId = 1;
         $username = "coco";
@@ -25,14 +25,15 @@ class UserTest extends TestCase
         $this->assertEquals($userPassword, $user->getUserPassword());
     }
 
-    public function testWrongAttributesThrowException(): void
+    public function testConstructorThrowsTypeErrorWhenInvalidArgumentIsProvided(): void
     {
         $this->expectException(TypeError::class);
 
         $userId = '11';
-        $userEmail = "";
-        $username = "";
+        $userEmail = "test@test.com";
+        $username = "test";
         $userPassword = '123456';
-        $user = new User($userEmail, $username, $userPassword, $userId);
+        /** @phpstan-ignore-next-line argument.type */
+        new User($userEmail, $username, $userPassword, $userId);
     }
 }
