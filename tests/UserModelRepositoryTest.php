@@ -23,10 +23,10 @@ class UserModelRepositoryTest extends TestCase
         $container = new Container($config);
         $this->database = $container->get(Connection::class);
 
-        $this->database->connect()->exec('DROP TABLE IF EXISTS users');
-
         $runMigrations = $container->get(RunMigrationsScript::class);
         $runMigrations->run();
+
+        $this->database->connect()->exec('DELETE FROM users');
 
         $this->repository = $container->get(UserModelRepository::class);
     }
@@ -52,6 +52,17 @@ class UserModelRepositoryTest extends TestCase
         $this->database->connect()->exec("INSERT INTO users (email, username, password) VALUES ('Test@test.com', 'test', 'User12345')");
         $userId = (int)$this->database->connect()->lastInsertId();
         $user = $this->repository->fetchById($userId);
+
+        $this->assertEquals($userId, $user->getUserId());
+    }
+
+    public function testIfFetchByIdWithIncorrectIdThrowsUserNotFoundException(): void
+    {
+        $this->expectException(UserNotFoundException::class);
+
+        $this->database->connect()->exec("INSERT INTO users (email, username, password) VALUES ('Test@test.com', 'test', 'User12345')");
+        $userId = (int)$this->database->connect()->lastInsertId();
+        $user = $this->repository->fetchById(123);
 
         $this->assertEquals($userId, $user->getUserId());
     }
