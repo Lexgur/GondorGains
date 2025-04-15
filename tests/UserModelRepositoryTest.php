@@ -9,7 +9,8 @@ use Lexgur\GondorGains\Container;
 use Lexgur\GondorGains\Repository\UserModelRepository;
 use Lexgur\GondorGains\Connection;
 use Lexgur\GondorGains\Model\User;
-use Lexgur\GondorGains\Exception\IncorrectUserIdException;
+use Lexgur\GondorGains\Exception\UserNotFoundException;
+use Lexgur\GondorGains\Script\RunMigrationsScript;
 
 class UserModelRepositoryTest extends TestCase
 {
@@ -18,34 +19,19 @@ class UserModelRepositoryTest extends TestCase
 
     public function setUp(): void
     {
-        $testConfig = require __DIR__ . '/../config.php';
-        $dsn = $testConfig['dsn'];
-        $parameters = [
-            'dsn' => $dsn,
-            'username' => '',
-            'password' => '',
-        ];
-        $container = new Container($parameters);
-
+        $config = require __DIR__ . '/../config.php';
+        $container = new Container($config);
         $this->database = $container->get(Connection::class);
-        $this->repository = $container->get(UserModelRepository::class);
 
-        $this->database->connect()->exec("
-            CREATE TABLE IF NOT EXISTS users (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                email TEXT NOT NULL UNIQUE,
-                username TEXT NOT NULL,
-                password TEXT NOT NULL
-            );
-        ");
-    }
-
-    public function tearDown(): void
-    {
         $this->database->connect()->exec('DROP TABLE IF EXISTS users');
+
+        $runMigrations = $container->get(RunMigrationsScript::class);
+        $runMigrations->run();
+
+        $this->repository = $container->get(UserModelRepository::class);
     }
 
-    public function testIfInsertingNewSavesUser(): void
+    public function testIfInsertIsSuccessful(): void
     {
         $user = new User(
             userEmail: 'dave@gmail.com',
@@ -60,7 +46,7 @@ class UserModelRepositoryTest extends TestCase
         $this->assertEquals($user->getUserPassword(), $insertedUser->getUserPassword());
     }
 
-    public function testIfFetchesById(): void
+    public function testIfFetchByIdIsSuccessful(): void
     {
 
         $this->database->connect()->exec("INSERT INTO users (email, username, password) VALUES ('Test@test.com', 'test', 'User12345')");
@@ -70,7 +56,7 @@ class UserModelRepositoryTest extends TestCase
         $this->assertEquals($userId, $user->getUserId());
     }
 
-    public function testIfFindByEmail(): void
+    public function testIfFindByEmailIsSuccessful(): void
     {
 
         $this->database->connect()->exec("INSERT INTO users (email, username, password) VALUES ('Test@test.com', 'test', 'User12345')");
@@ -80,7 +66,7 @@ class UserModelRepositoryTest extends TestCase
         $this->assertEquals($user->getUserEmail(), 'Test@test.com');
     }
 
-    public function testIfFailsToFetchWithIncorrectTypeId(): void
+    public function testIfLastInsertIdWithIncorrectAttributeThrowsPDOException(): void
     {
         $this->expectException(\PDOException::class);
 
@@ -89,21 +75,7 @@ class UserModelRepositoryTest extends TestCase
         $this->repository->fetchById($userId);
     }
 
-    public function testIfInsertsNewUserWorks(): void
-    {
-        $user = new User(
-            userEmail: 'dave@gmail.com',
-            username: 'dave',
-            userPassword: '123Em778a'
-        );
-        $insertedUser = $this->repository->insert($user);
-
-        $this->assertNotNull($insertedUser->getUserId());
-        $this->assertEquals($user->getUserEmail(), $insertedUser->getUserEmail());
-        $this->assertEquals($user->getUserPassword(), $insertedUser->getUserPassword());
-    }
-
-    public function testIfInsertingMultipleUsersWorkCorrectly(): void
+    public function testIfInsertingMultipleUsersIsSuccessful(): void
     {
         $user1 = new User(
             userEmail: 'test@test.com',
@@ -120,16 +92,18 @@ class UserModelRepositoryTest extends TestCase
 
         $this->assertNotNull($insertedUser1->getUserId());
         $this->assertEquals($insertedUser1->getUserEmail(), $user1->getUserEmail());
+        $this->assertEquals($insertedUser1->getUsername(), $user1->getUsername());
         $this->assertEquals($insertedUser1->getUserPassword(), $user1->getUserPassword());
 
         $this->assertNotNull($insertedUser2->getUserId());
         $this->assertEquals($insertedUser2->getUserEmail(), $user2->getUserEmail());
+        $this->assertEquals($insertedUser2->getUsername(), $user2->getUsername());
         $this->assertEquals($insertedUser2->getUserPassword(), $user2->getUserPassword());
 
         $this->assertNotEquals($insertedUser1->getUserId(), $insertedUser2->getUserId());
     }
 
-    public function testIfUpdateWorks(): void
+    public function testIfUpdateUserIsSuccessful(): void
     {
         $user = new User(
             userEmail: 'dave@gmail.com',
@@ -150,19 +124,19 @@ class UserModelRepositoryTest extends TestCase
         $this->assertEquals('newPassword123', $updatedUser->getUserPassword());
     }
 
-    public function testIfDeleteWorks(): void
-    {
-        $this->expectException(IncorrectUserIdException::class);
-
-        $user = new User(
-            userEmail: 'dave@gmail.com',
-            username: 'dave',
-            userPassword: '123Em778a'
-        );
-        $insertedUser = $this->repository->save($user);
-        $this->repository->delete($insertedUser->getUserId());
-        $userAfterDelete = $this->repository->fetchById($insertedUser->getUserId());
-
-        $this->assertNull($userAfterDelete);
-    }
+    public function testIfDeleteUserIsSuccessful(): void
+{
+    $user = new User(
+        userEmail: 'dave@gmail.com',
+        username: 'dave',
+        userPassword: '123Em778a'
+    );
+    $insertedUser = $this->repository->save($user);
+    $userId = $insertedUser->getUserId();
+    
+    $this->repository->delete($userId);
+    
+    $this->expectException(UserNotFoundException::class);
+    $this->repository->fetchById($userId);
+}
 }

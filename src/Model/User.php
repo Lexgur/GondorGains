@@ -56,4 +56,14 @@ class User
     {
         return $this->userId;
     }
+
+    public static function create(array $data): User
+    {
+        return new User(
+            userEmail: $data['email'],
+            username: $data['username'],
+            userPassword: $data['password'],
+            userId: $data['id'] ?? null
+        );
+    }
 }
