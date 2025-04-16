@@ -8,7 +8,6 @@ use Lexgur\GondorGains\Attribute\Path;
 use Lexgur\GondorGains\Exception\BadRequestException;
 use Lexgur\GondorGains\Exception\UnauthorizedException;
 use Lexgur\GondorGains\Exception\ForbiddenException;
-use Lexgur\GondorGains\Exception\IncorrectRoutePathException;
 use Lexgur\GondorGains\Exception\NotFoundException;
 use Lexgur\GondorGains\TemplateProvider;
 

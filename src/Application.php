@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Lexgur\GondorGains;
 
 use Lexgur\GondorGains\Controller\ErrorController;
-use Lexgur\GondorGains\Exception\NotFoundException;
+use Lexgur\GondorGains\Controller\AboutProjectController;
 
 class Application
 {
@@ -19,7 +19,7 @@ class Application
     {
         $this->config = require __DIR__ . '/../config.php';
         $this->container = new Container($this->config);
-        $this->router = new Router();
+        $this->router = $this->container->get(Router::class);
     }
 
     public function run(): void
@@ -27,10 +27,10 @@ class Application
         try {
             $this->router->registerControllers();
             $routePath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-            error_log('Parsed route path: ' . $routePath);
 
             if (empty($routePath) || $routePath === '/') {
-                header('Location: /about');
+                $defaultController = $this->container->get(AboutProjectController::class);
+                print $defaultController();
                 return;
             }
 
@@ -42,7 +42,7 @@ class Application
 
         } catch (\Throwable $e) {
             $errorController = $this->container->get(ErrorController::class);
-            echo $errorController($e);
+            print $errorController($e);
         }
     }
 }
