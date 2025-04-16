@@ -14,7 +14,7 @@ class TemplateProviderTest extends TestCase
     {
 
         $config = require __DIR__ . '/../config.php';
-        $config['templatePath'] = __DIR__ . '/templates/';
+        $config['templatePath'] = $config['root'] . '/tests/TemplateProviderTest/templates/';
         $container = new Container($config);
         $templateProvider = $container->get(TemplateProvider::class);
 
