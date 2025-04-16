@@ -4,7 +4,7 @@ namespace Lexgur\GondorGains;
 
 use Lexgur\GondorGains\Attribute\Path;
 use Lexgur\GondorGains\Exception\FilePathReadException;
-use Lexgur\GondorGains\Exception\IncorrectRoutePathException;
+use Lexgur\GondorGains\Exception\NotFoundException;
 use Lexgur\GondorGains\Exception\RegisterControllerException;
 
 class Router
@@ -17,7 +17,7 @@ class Router
     private array $routes = [];
 
     /**
-     * @throws IncorrectRoutePathException
+     * @throws NotFoundException
      */
     public function registerControllers(): void
     {
@@ -70,7 +70,7 @@ class Router
             return $namespace ? $namespace.'\\'.$className : $className;
         }
 
-        throw new IncorrectRoutePathException('Class not found: '.$filePath);
+        throw new NotFoundException('Class not found: '.$filePath);
     }
 
     public function getController(string $routePath): string
@@ -84,7 +84,7 @@ class Router
             }
         }
 
-        throw new IncorrectRoutePathException("404, Not Found: The route '{$routePath}' does not exist.");
+        throw new NotFoundException("404, Not Found: The route '{$routePath}' does not exist.");
     }
 
     /**
