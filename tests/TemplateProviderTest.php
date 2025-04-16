@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
 
 class TemplateProviderTest extends TestCase
 {
-    final public function testContainerCreatesTwigEnvironmentAndRendersTemplate(): void
+    public function testContainerCreatesTwigEnvironmentAndRendersTemplate(): void
     {
 
         $config = require __DIR__ . '/../config.php';
