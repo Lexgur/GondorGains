@@ -114,6 +114,39 @@ class ContainerTest extends TestCase
         $container->get('NonExistentService');
     }
 
+    final public function testContainerCreatesTwigEnvironmentAndRendersTemplate(): void
+    {
+        $config = require __DIR__ . '/../config.php';
+
+        $container = new Container(
+            [
+                'templatepath' => $config['templatepath'],
+                'cache' => $config['cache'],
+            ],
+            [
+                \Twig\Loader\FilesystemLoader::class => new \Twig\Loader\FilesystemLoader($config['templatepath']),
+                \Twig\Environment::class => new \Twig\Environment(
+                    new \Twig\Loader\FilesystemLoader($config['templatepath']),
+                    [
+                        'cache' => $config['cache'],
+                    ]
+                )
+            ]
+        );
+
+        $this->assertTrue($container->has(\Twig\Environment::class));
+
+        $twigEnvironment = $container->get(\Twig\Environment::class);
+
+        $this->assertInstanceOf(\Twig\Environment::class, $twigEnvironment);
+
+        $templateContent = 'Hello, {{ name }}!';
+        $template = $twigEnvironment->createTemplate($templateContent);
+        $output = $template->render(['name' => 'World']);
+
+        $this->assertSame('Hello, World!', $output);
+    }
+
     public static function getContainer(bool $withParameters = false): Container
     {
         if (false === $withParameters) {
