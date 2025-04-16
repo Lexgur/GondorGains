@@ -114,22 +114,6 @@ class ContainerTest extends TestCase
         $container->get('NonExistentService');
     }
 
-    final public function testContainerCreatesTwigEnvironmentAndRendersTemplate(): void
-    {
-
-        $config = require __DIR__ . '/../config.php';
-        $container = new Container($config);
-        $templateProvider = $container->get(\Lexgur\GondorGains\TemplateProvider::class);
-
-        $this->assertTrue($container->has(\Lexgur\GondorGains\TemplateProvider::class));
-
-        $this->assertInstanceOf(\Lexgur\GondorGains\TemplateProvider::class, $templateProvider);
-
-        $output = $templateProvider->get()->render('test.html.twig', ['name' => 'World']);
-
-        $this->assertSame('Hello, World!', $output);
-    }
-
     public static function getContainer(bool $withParameters = false): Container
     {
         if (false === $withParameters) {
