@@ -24,6 +24,5 @@ class TemplateProviderTest extends TestCase
         $output = $templateProvider->get()->render('test.html.twig', ['name' => 'World']);
 
         $this->assertSame('Hello, World!', $output);
-    }
-    
+    } 
 }
