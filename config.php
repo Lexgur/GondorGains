@@ -8,7 +8,7 @@ $environment = $_SERVER['APP_ENV'] ?? 'dev';
 $config = [
     'root' => $root,
     'filesystem' => $root . '/tmp/' . $environment,
-    'templatepath' => $root . '/templates',
+    'templatePath' => $root . '/templates/',
     'cache' => $root . '/tmp/' . $environment . '/twig/',      
 ];
 

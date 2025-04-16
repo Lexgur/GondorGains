@@ -116,33 +116,16 @@ class ContainerTest extends TestCase
 
     final public function testContainerCreatesTwigEnvironmentAndRendersTemplate(): void
     {
+
         $config = require __DIR__ . '/../config.php';
+        $container = new Container($config);
+        $templateProvider = $container->get(\Lexgur\GondorGains\TemplateProvider::class);
 
-        $container = new Container(
-            [
-                'templatepath' => $config['templatepath'],
-                'cache' => $config['cache'],
-            ],
-            [
-                \Twig\Loader\FilesystemLoader::class => new \Twig\Loader\FilesystemLoader($config['templatepath']),
-                \Twig\Environment::class => new \Twig\Environment(
-                    new \Twig\Loader\FilesystemLoader($config['templatepath']),
-                    [
-                        'cache' => $config['cache'],
-                    ]
-                )
-            ]
-        );
+        $this->assertTrue($container->has(\Lexgur\GondorGains\TemplateProvider::class));
 
-        $this->assertTrue($container->has(\Twig\Environment::class));
+        $this->assertInstanceOf(\Lexgur\GondorGains\TemplateProvider::class, $templateProvider);
 
-        $twigEnvironment = $container->get(\Twig\Environment::class);
-
-        $this->assertInstanceOf(\Twig\Environment::class, $twigEnvironment);
-
-        $templateContent = 'Hello, {{ name }}!';
-        $template = $twigEnvironment->createTemplate($templateContent);
-        $output = $template->render(['name' => 'World']);
+        $output = $templateProvider->get()->render('test.html.twig', ['name' => 'World']);
 
         $this->assertSame('Hello, World!', $output);
     }
