@@ -30,14 +30,11 @@ class Application
             $routePath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
             if (empty($routePath) || $routePath === '/') {
-                $defaultController = $this->container->get(AboutProjectController::class);
-                print $defaultController();
-                return;
+                $controller = $this->container->get(AboutProjectController::class);
+            } else {
+                $controllerClass = $this->router->getController($routePath);
+                $controller = $this->container->get($controllerClass);
             }
-
-            $controllerClass = $this->router->getController($routePath);
-            $controller = $this->container->get($controllerClass);
-
             http_response_code(200);
             print $controller();
 

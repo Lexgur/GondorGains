@@ -28,13 +28,25 @@ class ApplicationTest extends TestCase
         $this->router->registerControllers();
     }
 
-    public function testBadRequestException(): void
+    private function request(string $method, string $url, array $data = []): string
     {
-        $_SERVER['REQUEST_URI'] = '/test/bad-request';
+        $_SERVER['REQUEST_METHOD'] = strtoupper($method);
+        $_SERVER['REQUEST_URI'] = $url;
+
+        if ($method === 'POST') {
+            $_POST = $data;
+        } else {
+            $_GET = $data;
+        }
 
         ob_start();
         $this->app->run();
-        $output = ob_get_clean();
+        return ob_get_clean();
+    }
+
+    public function testBadRequestException(): void
+    {
+        $output = $this->request('GET', '/test/bad-request');
 
         $this->assertStringContainsString('Please check your information and try again.', $output);
         $this->assertStringContainsString('400', $output);
@@ -42,11 +54,7 @@ class ApplicationTest extends TestCase
 
     public function testUnauthorizedException(): void
     {
-        $_SERVER['REQUEST_URI'] = '/test/unauthorized';
-
-        ob_start();
-        $this->app->run();
-        $output = ob_get_clean();
+        $output = $this->request('GET', '/test/unauthorized');
 
         $this->assertStringContainsString('Please sign in', $output);
         $this->assertStringContainsString('401', $output);
@@ -54,11 +62,7 @@ class ApplicationTest extends TestCase
 
     public function testForbiddenException(): void
     {
-        $_SERVER['REQUEST_URI'] = '/test/forbidden';
-
-        ob_start();
-        $this->app->run();
-        $output = ob_get_clean();
+        $output = $this->request('GET', '/test/forbidden');
 
         $this->assertStringContainsString('Access restricted', $output);
         $this->assertStringContainsString('403', $output);
@@ -66,11 +70,7 @@ class ApplicationTest extends TestCase
 
     public function testNotFoundException(): void
     {
-        $_SERVER['REQUEST_URI'] = '/test/not-found';
-
-        ob_start();
-        $this->app->run();
-        $output = ob_get_clean();
+        $output = $this->request('GET', '/test/not-found');
 
         $this->assertStringContainsString('Page not found', $output);
         $this->assertStringContainsString('404', $output);
