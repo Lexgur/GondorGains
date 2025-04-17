@@ -11,6 +11,7 @@ class Application
 {
     private Container $container;
 
+    /** @var array<string> */
     private array $config;
 
     private Router $router;
@@ -40,9 +41,9 @@ class Application
             http_response_code(200);
             print $controller();
 
-        } catch (\Throwable $e) {
+        } catch (\Throwable $error) {
             $errorController = $this->container->get(ErrorController::class);
-            print $errorController($e);
+            print $errorController($error);
         }
     }
 }

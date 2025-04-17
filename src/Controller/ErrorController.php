@@ -13,25 +13,25 @@ use Lexgur\GondorGains\Exception\NotFoundException;
 #[Path('/error')]
 class ErrorController extends AbstractController
 {
-    public function __invoke(\Throwable $e): string
+    public function __invoke(\Throwable $error): string
     {
         $params = match (true) {
-            $e instanceof BadRequestException => [
+            $error instanceof BadRequestException => [
                 'code' => 400,
                 'title' => 'Oops! Something went wrong',
                 'message' => 'Please check your information and try again.',
             ],
-            $e instanceof UnauthorizedException => [
+            $error instanceof UnauthorizedException => [
                 'code' => 401,
                 'title' => 'Please sign in',
                 'message' => 'You need to sign in to access this page.',
             ],
-            $e instanceof ForbiddenException => [
+            $error instanceof ForbiddenException => [
                 'code' => 403,
                 'title' => 'Access restricted',
                 'message' => 'You don\'t have permission to view this content.',
             ],
-            $e instanceof NotFoundException => [
+            $error instanceof NotFoundException => [
                 'code' => 404,
                 'title' => 'Page not found',
                 'message' => 'We couldn\'t find what you\'re looking for.',

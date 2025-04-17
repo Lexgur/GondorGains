@@ -15,6 +15,7 @@ abstract class AbstractController
         $this->templateProvider = $templateProvider;
     }
 
+    /** @param array<string, mixed> $params */
     protected function render(string $template, array $params = [], int $statusCode = 200): string
     {
         http_response_code($statusCode);
