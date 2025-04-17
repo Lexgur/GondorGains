@@ -9,10 +9,15 @@ use Lexgur\GondorGains\Application;
 
 abstract class WebTestCase extends TestCase
 {
+    private Application $app;
+
+    public function setUp(): void
+    {
+        $this->app = new Application();
+    }
+
     public function request(string $method, string $url, array $data = []): string
     {
-        $app = new Application();
-        
         $_SERVER['REQUEST_METHOD'] = strtoupper($method);
         $_SERVER['REQUEST_URI'] = $url;
 
@@ -23,7 +28,7 @@ abstract class WebTestCase extends TestCase
         }
 
         ob_start();
-        $app->run();
+        $this->app->run();
         return ob_get_clean();
     }
 }
