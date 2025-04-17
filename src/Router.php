@@ -9,12 +9,19 @@ use Lexgur\GondorGains\Exception\RegisterControllerException;
 
 class Router
 {
-    private const CONTROLLER_DIR = __DIR__.'/Controller';
+    private const CONTROLLER_DIR = __DIR__ . '/Controller';
 
     /**
      * @var array<string, string>
      */
     private array $routes = [];
+
+    private string $controllerDir;
+
+    public function __construct(?string $controllerDir = null)
+    {
+        $this->controllerDir = $controllerDir ?? self::CONTROLLER_DIR;
+    }
 
     /**
      * @throws NotFoundException
@@ -35,7 +42,7 @@ class Router
                     $this->routes[$routePath] = $className;
                 }
             } catch (\Throwable $e) {
-                throw new RegisterControllerException('An error occurred while registering controllers: '.$e->getMessage());
+                throw new RegisterControllerException('An error occurred while registering controllers: ' . $e->getMessage());
             }
         }
     }
@@ -45,7 +52,7 @@ class Router
      */
     public function getPhpFiles(): \RegexIterator
     {
-        $directoryIterator = new \RecursiveDirectoryIterator(self::CONTROLLER_DIR, \FilesystemIterator::SKIP_DOTS);
+        $directoryIterator = new \RecursiveDirectoryIterator($this->controllerDir, \FilesystemIterator::SKIP_DOTS);
         $iterator = new \RecursiveIteratorIterator($directoryIterator);
 
         /** @var \RegexIterator<int, \SplFileInfo, \RecursiveIteratorIterator<\RecursiveDirectoryIterator>> $regexIterator */
@@ -67,17 +74,17 @@ class Router
         if (preg_match('/class\s+([^\s{]+)/', $content, $classMatch)) {
             $className = trim($classMatch[1]);
 
-            return $namespace ? $namespace.'\\'.$className : $className;
+            return $namespace ? $namespace . '\\' . $className : $className;
         }
 
-        throw new NotFoundException('Class not found: '.$filePath);
+        throw new NotFoundException('Class not found: ' . $filePath);
     }
 
     public function getController(string $routePath): string
     {
         foreach ($this->routes as $routePattern => $controllerClass) {
             $regexPattern = preg_replace('/:(\w+)/', '(?P<$1>\d+)', $routePattern);
-            $regexPattern = '#^'.$regexPattern.'$#';
+            $regexPattern = '#^' . $regexPattern . '$#';
 
             if (preg_match($regexPattern, $routePath)) {
                 return $controllerClass;

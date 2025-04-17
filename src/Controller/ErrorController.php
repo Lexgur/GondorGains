@@ -9,13 +9,10 @@ use Lexgur\GondorGains\Exception\BadRequestException;
 use Lexgur\GondorGains\Exception\UnauthorizedException;
 use Lexgur\GondorGains\Exception\ForbiddenException;
 use Lexgur\GondorGains\Exception\NotFoundException;
-use Lexgur\GondorGains\TemplateProvider;
 
 #[Path('/error')]
-class ErrorController
+class ErrorController extends AbstractController
 {
-    public function __construct(private TemplateProvider $templateProvider) {}
-
     public function __invoke(\Throwable $e): string
     {
         $params = match (true) {
@@ -45,14 +42,6 @@ class ErrorController
                 'message' => 'Our team has been notified. Please try again later.',
             ],
         };
-        return $this->renderError($params);
-    }
-
-    private function renderError(array $params): string
-    {
-        http_response_code($params['code']);
-        header('Content-Type: text/html; charset=UTF-8');
-        
-        return $this->templateProvider->get()->render('error.html.twig', $params);
+        return $this->render('error.html.twig', $params, $params['code']);
     }
 }
