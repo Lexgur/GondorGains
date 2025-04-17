@@ -14,12 +14,15 @@ class RouterTest extends TestCase
 {
     private Router $router;
 
+    private string $controllerDir;
+
     /**
      * @throws NotFoundException
      */
     protected function setUp(): void
     {
-        $this->router = new Router();
+        $this->controllerDir = __DIR__ . '/../src/Controller';
+        $this->router = new Router($this->controllerDir);
         $this->router->registerControllers();
     }
 

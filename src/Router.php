@@ -9,8 +9,6 @@ use Lexgur\GondorGains\Exception\RegisterControllerException;
 
 class Router
 {
-    private const CONTROLLER_DIR = __DIR__ . '/Controller';
-
     /**
      * @var array<string, string>
      */
@@ -18,9 +16,9 @@ class Router
 
     private string $controllerDir;
 
-    public function __construct(?string $controllerDir = null)
+    public function __construct(string $controllerDir)
     {
-        $this->controllerDir = $controllerDir ?? self::CONTROLLER_DIR;
+        $this->controllerDir = $controllerDir;
     }
 
     /**
