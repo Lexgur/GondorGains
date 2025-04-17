@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Lexgur\GondorGains\Tests;
 
 use Lexgur\GondorGains\Controller\AboutProjectController;
-use Lexgur\GondorGains\Exception\IncorrectRoutePathException;
+use Lexgur\GondorGains\Exception\NotFoundException;
 use Lexgur\GondorGains\Router;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
@@ -14,12 +14,15 @@ class RouterTest extends TestCase
 {
     private Router $router;
 
+    private string $controllerDir;
+
     /**
-     * @throws IncorrectRoutePathException
+     * @throws NotFoundException
      */
     protected function setUp(): void
     {
-        $this->router = new Router();
+        $this->controllerDir = __DIR__ . '/../src/Controller';
+        $this->router = new Router($this->controllerDir);
         $this->router->registerControllers();
     }
 
@@ -33,7 +36,7 @@ class RouterTest extends TestCase
     #[DataProvider('provideTestGetControllerThrowsIncorrectRoutePathException')]
     final public function testGetControllerThrowsIncorrectRoutePathException(string $routePath, string $expectedController): void
     {
-        $this->expectException(IncorrectRoutePathException::class);
+        $this->expectException(NotFoundException::class);
 
         $controller = $this->router->getController($routePath);
         $this->assertSame($expectedController, $controller);
@@ -41,7 +44,7 @@ class RouterTest extends TestCase
 
     final public function testIncorrectPathThrowsIncorrectRoutePathException(): void
     {
-        $this->expectException(IncorrectRoutePathException::class);
+        $this->expectException(NotFoundException::class);
 
         $this->router->getController('/incorrect');
     }
