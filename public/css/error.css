@@ -82,3 +82,16 @@ h1::before {
 .error-default h1::before {
     color: var(--color-default);
 }
+
+.button {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    background: var(--link);
+    color: white;
+    text-decoration: none;
+    border-radius: 6px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.button:hover {
+    background: var(--link-hover);
+}
