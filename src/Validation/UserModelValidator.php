@@ -4,16 +4,17 @@ declare(strict_types=1);
 
 namespace Lexgur\GondorGains\Validation;
 
+use Lexgur\GondorGains\Validation\ValidatorInterface;
 use Lexgur\GondorGains\Exception\EmailValidationException;
 use Lexgur\GondorGains\Exception\UsernameValidationException;
 use Lexgur\GondorGains\Model\User;
 
-class UserModelValidator
+class UserModelValidator implements ValidatorInterface
 {
-    public function validate(User $user): bool
-    {
-        $this->validateEmail($user->getUserEmail());
-        $this->validateUsername($user->getUsername());
+    public function validate(mixed $input): bool
+    {  
+        $this->validateEmail($input->getUserEmail());
+        $this->validateUsername($input->getUsername());
 
         return true;
     }
