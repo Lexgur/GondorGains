@@ -10,10 +10,10 @@ class PasswordHasher
 {
     public static function hash(string $password): string
     {
-        if(!empty($password)) {
-            return password_hash($password, PASSWORD_DEFAULT);
-        } else {
+        if (empty($password)) {
             throw new WeakPasswordException('Password is empty');
         }
+
+        return password_hash($password, PASSWORD_DEFAULT);
     }
 }
