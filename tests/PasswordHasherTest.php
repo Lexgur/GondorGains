@@ -10,7 +10,10 @@ use PHPUnit\Framework\TestCase;
 
 class PasswordHasherTest extends TestCase
 {
-    public function testPasswordHashesSuccessfuly(): void 
+    /**
+     * @throws WeakPasswordException
+     */
+    public function testPasswordHashesSuccessfully(): void
     {
         $password = 'testPassword123';
         $hashedPassword = PasswordHasher::hash($password);

@@ -3,10 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <title>Register</title>
+    <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
     <link rel="stylesheet" href="/css/register.css">
 </head>
 <body>
-    <h1>Register</h1>
+<div class="form-container">
+    <h1>REGISTER</h1>
 
     {% if error %}
         <div class="error">{{ error }}</div>
@@ -24,5 +26,6 @@
 
         <button type="submit">Register</button>
     </form>
+</div>
 </body>
 </html>
