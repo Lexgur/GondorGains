@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Lexgur\GondorGains\Tests;
 
-use Lexgur\GondorGains\Model\User;
+use Lexgur\GondorGains\Container;
 use Lexgur\GondorGains\Exception\EmailValidationException;
 use Lexgur\GondorGains\Exception\UsernameValidationException;
+use Lexgur\GondorGains\Model\User;
 use Lexgur\GondorGains\Validation\UserModelValidator;
-use Lexgur\GondorGains\Container;
 use PHPUnit\Framework\TestCase;
 
 class UserModelValidatorTest extends TestCase
@@ -19,24 +19,18 @@ class UserModelValidatorTest extends TestCase
 
     protected function setUp(): void
     {
-        $config = require __DIR__ . '/../config.php';
+        $config = require __DIR__.'/../config.php';
         $this->container = new Container($config);
         $this->validator = $this->container->get(UserModelValidator::class);
     }
 
     public function testGivenValuesValidateSuccessfully(): void
     {
-        $data = [
-            'email' => 'test@test.test',
-            'username' => 'testtest',
-            'password' => 'test123Test',
-        ];
-        $user = new User(
-            $data['email'],
-            $data['username'],
-            $data['password']
-        );
-        
+        $email = 'test@test.test';
+        $username = 'testtest';
+        $password = 'test123Test';
+        $user = new User($email, $username, $password);
+
         $this->assertTrue($this->validator->validate($user));
     }
 
@@ -44,17 +38,11 @@ class UserModelValidatorTest extends TestCase
     {
         $this->expectException(EmailValidationException::class);
 
-        $data = [
-            'email' => '',
-            'username' => 'testtest',
-            'password' => 'test123Test',
-        ];
-        $user = new User(
-            $data['email'],
-            $data['username'],
-            $data['password']
-        );
-        
+        $email = '';
+        $username = 'testtest';
+        $password = 'test123Test';
+        $user = new User($email, $username, $password);
+
         $this->validator->validate($user);
     }
 
@@ -62,17 +50,11 @@ class UserModelValidatorTest extends TestCase
     {
         $this->expectException(EmailValidationException::class);
 
-        $data = [
-            'email' => 'test$test.test',
-            'username' => 'testtest',
-            'password' => 'test123Test',
-        ];
-        $user = new User(
-            $data['email'],
-            $data['username'],
-            $data['password']
-        );
-        
+        $email = 'test%test.test';
+        $username = 'testtest';
+        $password = 'test123Test';
+        $user = new User($email, $username, $password);
+
         $this->assertTrue($this->validator->validate($user));
     }
 
@@ -80,17 +62,11 @@ class UserModelValidatorTest extends TestCase
     {
         $this->expectException(UsernameValidationException::class);
 
-        $data = [
-            'email' => 'test@test.test',
-            'username' => '',
-            'password' => 'test123Test',
-        ];
-        $user = new User(
-            $data['email'],
-            $data['username'],
-            $data['password']
-        );
-        
+        $email = 'test@test.test';
+        $username = '';
+        $password = 'test123Test';
+        $user = new User($email, $username, $password);
+
         $this->validator->validate($user);
     }
 
@@ -98,17 +74,11 @@ class UserModelValidatorTest extends TestCase
     {
         $this->expectException(UsernameValidationException::class);
 
-        $data = [
-            'email' => 'test@test.test',
-            'username' => 'testsdas___',
-            'password' => 'test123Test',
-        ];
-        $user = new User(
-            $data['email'],
-            $data['username'],
-            $data['password']
-        );
-        
+        $email = 'test@test.test';
+        $username = 'test____';
+        $password = 'test123Test';
+        $user = new User($email, $username, $password);
+
         $this->validator->validate($user);
     }
 }

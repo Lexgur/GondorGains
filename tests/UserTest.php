@@ -34,6 +34,6 @@ class UserTest extends TestCase
         $username = "test";
         $userPassword = '123456';
         /** @phpstan-ignore-next-line argument.type */
-        $user = new User($userEmail, $username, $userPassword, $userId);
+        new User($userEmail, $username, $userPassword, $userId);
     }
 }

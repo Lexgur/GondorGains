@@ -26,6 +26,6 @@ class PasswordHasherTest extends TestCase
         $this->expectException(WeakPasswordException::class);
 
         $password = '';
-        $hashedPassword = PasswordHasher::hash($password);
+        PasswordHasher::hash($password);
     }
 }

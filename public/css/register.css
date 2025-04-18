@@ -55,6 +55,7 @@ label {
 input[type="text"],
 input[type="email"],
 input[type="password"] {
+    font-family: 'Cinzel', serif;
     width: 100%;
     padding: 0.8rem;
     margin-top: 0.3rem;
