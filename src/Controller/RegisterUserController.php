@@ -6,18 +6,12 @@ namespace Lexgur\GondorGains\Controller;
 
 use Lexgur\GondorGains\Attribute\Path;
 use Lexgur\GondorGains\Validation\PasswordValidator;
-use Lexgur\GondorGains\Validation\UserModelValidator;
 use Lexgur\GondorGains\Model\User;
-use Lexgur\GondorGains\Repository\UserModelRepository;
 use Lexgur\GondorGains\Service\PasswordHasher;
 
 #[Path('/register')]
 class RegisterUserController extends AbstractController
 {
-    private UserModelValidator $validator;
-
-    private UserModelRepository $repository;
-
     public function __invoke(): string
     {
         if ($this->isPostRequest()) {

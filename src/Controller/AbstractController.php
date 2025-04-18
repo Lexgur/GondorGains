@@ -5,14 +5,23 @@ declare(strict_types=1);
 namespace Lexgur\GondorGains\Controller;
 
 use Lexgur\GondorGains\Attribute\Path;
+use Lexgur\GondorGains\Repository\UserModelRepository;
 use Lexgur\GondorGains\TemplateProvider;
+use Lexgur\GondorGains\Validation\UserModelValidator;
+
 
 #[Path('/abstract-controller')]
 abstract class AbstractController
 {
-    public function __construct(protected TemplateProvider $templateProvider) 
+    public TemplateProvider $templateProvider;
+    public UserModelValidator $validator;
+    public UserModelRepository $repository;
+
+    public function __construct(TemplateProvider $templateProvider, UserModelValidator $validator, UserModelRepository $repository)
     {
         $this->templateProvider = $templateProvider;
+        $this->validator = $validator;
+        $this->repository = $repository;
     }
 
     protected function isPostRequest(): bool
