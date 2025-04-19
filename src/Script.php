@@ -11,7 +11,9 @@ use Lexgur\GondorGains\Validation\ScriptNameValidator;
 
 class Script
 {
-    protected Container $container;
+    private Container $container;
+
+    private ScriptNameValidator $validator;
 
     /** @var array<string> */
     private array $config;
@@ -20,6 +22,7 @@ class Script
     {
         $this->config = require __DIR__ . '/../config.php';
         $this->container = new Container($this->config);
+        $this->validator = $this->container->get(ScriptNameValidator::class);
     }
 
     public function run(string $scriptClass): int
@@ -48,7 +51,7 @@ class Script
         $scriptClass = preg_replace('/\\\+/', '\\', $scriptClass);
         $scriptClass = str_replace('/', '\\', $scriptClass);
 
-        ScriptNameValidator::validate($scriptClass);
+        $this->validator->validate($scriptClass);
 
         return $scriptClass;
     }

@@ -16,6 +16,7 @@ abstract class WebTestCase extends TestCase
         $this->app = new Application();
     }
 
+    /** @param array<string, mixed> $data */
     public function request(string $method, string $url, array $data = []): string
     {
         $_SERVER['REQUEST_METHOD'] = strtoupper($method);

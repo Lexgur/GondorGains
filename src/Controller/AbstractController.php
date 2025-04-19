@@ -10,9 +10,16 @@ use Lexgur\GondorGains\TemplateProvider;
 #[Path('/abstract-controller')]
 abstract class AbstractController
 {
-    public function __construct(protected TemplateProvider $templateProvider) 
+    private TemplateProvider $templateProvider;
+
+    public function __construct(TemplateProvider $templateProvider)
     {
         $this->templateProvider = $templateProvider;
+    }
+
+    protected function isPostRequest(): bool
+    {
+        return $_SERVER['REQUEST_METHOD'] === 'POST';
     }
 
     /** @param array<string, mixed> $params */

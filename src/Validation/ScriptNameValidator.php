@@ -6,16 +6,16 @@ namespace Lexgur\GondorGains\Validation;
 
 use Lexgur\GondorGains\Exception\IncorrectScriptNameException;
 
-class ScriptNameValidator
+class ScriptNameValidator implements ValidatorInterface
 {
-    public static function validate(string $scriptName): bool
+    public function validate(mixed $input): bool
     {
-        if (!strpbrk($scriptName, '/\\')) {
-            throw new IncorrectScriptNameException("Invalid script name: {$scriptName}");
+        if (!strpbrk($input, '/\\')) {
+            throw new IncorrectScriptNameException("Invalid script name: {$input}");
         }
 
-        if (!preg_match('/^((\\\?|\/?)[A-Za-z_]\w*)([\\\\\/][A-Za-z_]\w*)*$/', $scriptName)) {
-            throw new IncorrectScriptNameException("Invalid namespace format: {$scriptName}");
+        if (!preg_match('/^((\\\?|\/?)[A-Za-z_]\w*)([\\\\\/][A-Za-z_]\w*)*$/', $input)) {
+            throw new IncorrectScriptNameException("Invalid namespace format: {$input}");
         }
 
         return true;

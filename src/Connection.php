@@ -26,7 +26,7 @@ class Connection
     public function connect(): \PDO
     {
         if (null === $this->pdo) {
-            $this->pdo = new \PDO($this->dsn, options: $this->options);
+            $this->pdo = new \PDO($this->dsn,null, null, options: $this->options);
         }
 
         return $this->pdo;
