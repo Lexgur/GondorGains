@@ -33,7 +33,6 @@ class DashboardController extends AbstractController
     public function __invoke(): string
     {
         try {
-                session_start();
 
             if (!isset($_SESSION['id'])) {
                 return $this->render('login.html.twig', [
