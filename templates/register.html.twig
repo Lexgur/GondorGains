@@ -11,20 +11,24 @@
     <h1>REGISTER</h1>
 
     {% if error %}
-        <div class="error">Registration failed, try again</div>
+        <div class="error">Registration failed: {{ error }}</div>
+    {% endif %}
+
+    {% if success %}
+        <div class="register-success">{{ success }}</div>
     {% endif %}
 
     <form method="POST" action="/register">
         <label for="username">Username</label>
         <input type="text" id="username" name="username" required>
 
-        <label for="email">Email</label>
+        <label for="email">EMAIL</label>
         <input type="email" id="email" name="email" required>
 
-        <label for="password">Password</label>
+        <label for="password">PASSWORD</label>
         <input type="password" id="password" name="password" required>
 
-        <button type="submit">Register</button>
+        <button type="submit">REGISTER</button>
     </form>
 </div>
 </body>
