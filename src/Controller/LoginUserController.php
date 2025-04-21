@@ -38,7 +38,7 @@ class LoginUserController extends AbstractController
                 PasswordVerifier::verify($password, $registeredUser->getUserPassword());
 
                 session_start();
-                $_SESSION['username'] = $registeredUser->getUsername();
+                $_SESSION['username'] = $registeredUser->getUserId();
 
                 return $this->render('login.html.twig', [
                     'message' => "Greetings, {$registeredUser->getUsername()}, on average you have completed X of your Y quests!",
