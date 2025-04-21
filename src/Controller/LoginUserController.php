@@ -26,10 +26,11 @@ class LoginUserController extends AbstractController
 
     public function __invoke(): string
     {
-        session_start();
-
         if ($this->isPostRequest()) {
             try {
+                if (session_status() === PHP_SESSION_NONE) {
+                    session_start();
+                }
                 $data = $_POST;
                 $password = $data['password'];
                 $email = $data['email'];
@@ -38,6 +39,7 @@ class LoginUserController extends AbstractController
                 PasswordVerifier::verify($password, $registeredUser->getUserPassword());
 
                 $_SESSION['id'] = $registeredUser->getUserId();
+                session_write_close();
 
                 header('Location: /dashboard');
                 exit;

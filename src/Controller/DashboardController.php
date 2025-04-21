@@ -13,27 +13,27 @@ class DashboardController extends AbstractController
 {
     private UserModelRepository $userRepository;
 
-    private array $quotes;
+    private array $quotes = [
+        '“All we have to decide is what to do with the time that is given us.” — Gandalf',
+        '“Even the smallest person can change the course of the future.” — Galadriel',
+        '“There is some good in this world, and it’s worth fighting for.” — Samwise Gamgee',
+        '“Deeds will not be less valiant because they are unpraised.” — Aragorn',
+        '“I would have gone with you to the end, into the very fires of Mordor.” — Frodo',
+        '“The world is indeed full of peril, and in it there are many dark places; but still there is much that is fair.” — Haldir',
+    ];
 
-    public function __construct(UserModelRepository $userRepository, TemplateProvider $templateProvider, array $quotes = null)
+    public function __construct(UserModelRepository $userRepository, TemplateProvider $templateProvider)
     {
         parent::__construct($templateProvider);
         $this->userRepository = $userRepository;
-
-        $this->quotes = $quotes ?? [
-            '“All we have to decide is what to do with the time that is given us.” — Gandalf',
-            '“Even the smallest person can change the course of the future.” — Galadriel',
-            '“There is some good in this world, and it’s worth fighting for.” — Samwise Gamgee',
-            '“Deeds will not be less valiant because they are unpraised.” — Aragorn',
-            '“I would have gone with you to the end, into the very fires of Mordor.” — Frodo',
-            '“The world is indeed full of peril, and in it there are many dark places; but still there is much that is fair.” — Haldir',
-        ];
     }
 
     public function __invoke(): string
     {
         try {
-
+            if (session_status() === PHP_SESSION_NONE) {
+                session_start();
+            }
             if (!isset($_SESSION['id'])) {
                 return $this->render('login.html.twig', [
                     'error' => 'You must be logged in to view the dashboard.'
@@ -44,7 +44,7 @@ class DashboardController extends AbstractController
 
             $user = $this->userRepository->fetchById($userId);
             if (!$user) {
-                throw new \RuntimeException("User with ID $userId not found.");
+                throw new \RuntimeException("User not found.");
             }
 
             $completedPercentageAverage = 0;
@@ -61,9 +61,11 @@ class DashboardController extends AbstractController
                 'quote' => $this->quotes[array_rand($this->quotes)]
             ]);
 
-        } catch (\Throwable) {
-            return $this->render('login.html.twig', [
-                'error' => 'An error occurred while loading the dashboard. Please try again later.'
+        } catch (\Throwable $error) {
+            return $this->render('error.html.twig', [
+                'code' => 500,
+                'title' => "We're having some trouble",
+                'message' => 'Our team has been notified. Please try again later.',
             ]);
         }
     }
