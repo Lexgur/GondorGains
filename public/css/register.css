@@ -105,7 +105,7 @@ button:hover {
     background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03));
     border-left: 6px solid #042637; /* echoing color-401 or pick a noble blue */
     color: #ffffff;
-    font-size: 1.2em;
+    font-size: 0.7em;
     margin-bottom: 20px;
     font-weight: bold;
     text-align: center;
@@ -118,7 +118,7 @@ button:hover {
 }
 
 .welcome-message::before {
-    content: '⚔️ ';
+    content: '';
     margin-right: 0.5rem;
     color: #0288d1;
 }
