@@ -9,7 +9,7 @@ $config = [
     'root' => $root,
     'filesystem' => $root . '/tmp/' . $environment,
     'templatePath' => $root . '/templates/',
-    'cache' => $root . '/tmp/' . $environment . '/twig/',   
+    'cache' => $root . '/tmp/' . $environment . '/twig/',
 ];
 
 $environmentConfigFile = $root . '/' . $environment . '.config.php';
