@@ -6,5 +6,11 @@ namespace Lexgur\GondorGains\Service;
 
 class SessionService
 {
-
+    /**
+     * @throws \Exception
+     */
+    public function handleUsers(): void
+    {
+        throw new \Exception ('Dabar jau viskas');
+    }
 }
