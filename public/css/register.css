@@ -105,7 +105,7 @@ button:hover {
     background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03));
     border-left: 6px solid #042637; /* echoing color-401 or pick a noble blue */
     color: #ffffff;
-    font-size: 1.2em;
+    font-size: 0.7em;
     margin-bottom: 20px;
     font-weight: bold;
     text-align: center;
@@ -118,7 +118,7 @@ button:hover {
 }
 
 .welcome-message::before {
-    content: '⚔️ ';
+    content: '';
     margin-right: 0.5rem;
     color: #0288d1;
 }
@@ -132,4 +132,47 @@ button:hover {
     display: block;
     text-align: right;
     opacity: 0.85;
+}
+
+.horse-container {
+    position: relative;
+    width: 100%;
+    height: 100px;
+    margin-top: 2rem;
+}
+.horse {
+    background-image: url('../images/rohanrider.png');
+    position: absolute;
+    top: 0;
+    left: -100px;
+    width: 70px;
+    height: 70px;
+    animation: horseRide 7s linear infinite;
+}
+@keyframes horseRide {
+    0% {
+        left: -100px;
+        transform: translateY(0) rotate(0deg);
+    }
+    20% {
+        transform: translateY(-5px) rotate(-2deg);
+    }
+    40% {
+        transform: translateY(3px) rotate(1deg);
+    }
+    60% {
+        transform: translateY(-3px) rotate(-1deg);
+    }
+    80% {
+        transform: translateY(2px) rotate(0.5deg);
+    }
+    100% {
+        left: 100%;
+        transform: translateY(0) rotate(0deg);
+    }
+}
+
+.horse img {
+    width: 100%;
+    height: auto;
 }

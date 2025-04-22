@@ -6,7 +6,6 @@ namespace Lexgur\GondorGains\Controller;
 
 use Lexgur\GondorGains\Attribute\Path;
 use Lexgur\GondorGains\Repository\UserModelRepository;
-use Lexgur\GondorGains\Service\PasswordHasher;
 use Lexgur\GondorGains\Service\PasswordVerifier;
 use Lexgur\GondorGains\TemplateProvider;
 use Lexgur\GondorGains\Validation\PasswordValidator;
@@ -29,28 +28,30 @@ class LoginUserController extends AbstractController
     {
         if ($this->isPostRequest()) {
             try {
+                if (session_status() === PHP_SESSION_NONE) {
+                    session_start();
+                }
                 $data = $_POST;
                 $password = $data['password'];
                 $email = $data['email'];
                 $this->passwordValidator->validate($password);
-                PasswordHasher::hash($password);
                 $registeredUser = $this->repository->findByEmail($email);
                 PasswordVerifier::verify($password, $registeredUser->getUserPassword());
 
-                session_start();
-                $_SESSION['username'] = $registeredUser->getUserId();
+                $_SESSION['id'] = $registeredUser->getUserId();
+                session_write_close();
 
-                return $this->render('login.html.twig', [
-                    'message' => "Greetings, {$registeredUser->getUsername()}, on average you have completed X of your Y quests!",
-                    'quote' => '“All we have to decide is what to do with the time that is given us.” — Gandalf'
-                ]);
+                header('Location: /dashboard');
+                return '';
 
-            } catch (\Throwable) {
+            } catch (\Throwable $error) {
+                error_log('Error in DashboardController: ' . $error->getMessage());
                 return $this->render('login.html.twig', [
                     'error' => 'Invalid login credentials. Please try again.'
                 ]);
             }
         }
-        return $this->render('login.html.twig');
+
+        return $this->render('login.html.twig', []);
     }
 }

@@ -9,32 +9,36 @@ class ApplicationTest extends WebTestCase
     public function testBadRequestException(): void
     {
         $output = $this->request('GET', '/test/bad-request');
+        $statusCode = http_response_code();
 
         $this->assertStringContainsString('Please check your information and try again.', $output);
-        $this->assertStringContainsString('400', $output);
+        $this->assertEquals(400, $statusCode);
     }
 
     public function testUnauthorizedException(): void
     {
         $output = $this->request('GET', '/test/unauthorized');
+        $statusCode = http_response_code();
 
         $this->assertStringContainsString('Please sign in', $output);
-        $this->assertStringContainsString('401', $output);
+        $this->assertEquals(401, $statusCode);
     }
 
     public function testForbiddenException(): void
     {
         $output = $this->request('GET', '/test/forbidden');
+        $statusCode = http_response_code();
 
         $this->assertStringContainsString('Access restricted', $output);
-        $this->assertStringContainsString('403', $output);
+        $this->assertEquals(403, $statusCode);
     }
 
     public function testNotFoundException(): void
     {
         $output = $this->request('GET', '/test/not-found');
+        $statusCode = http_response_code();
 
         $this->assertStringContainsString('Page not found', $output);
-        $this->assertStringContainsString('404', $output);
+        $this->assertEquals(404, $statusCode);
     }
 }
