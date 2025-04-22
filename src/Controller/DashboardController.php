@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace Lexgur\GondorGains\Controller;
 
 use Lexgur\GondorGains\Attribute\Path;
+use Lexgur\GondorGains\Exception\ForbiddenException;
+use Lexgur\GondorGains\Exception\NotFoundException;
+use Lexgur\GondorGains\Exception\UserNotFoundException;
 use Lexgur\GondorGains\Repository\UserModelRepository;
 use Lexgur\GondorGains\TemplateProvider;
 
@@ -19,23 +22,24 @@ class DashboardController extends AbstractController
         $this->userRepository = $userRepository;
     }
 
+    /**
+     * @throws ForbiddenException
+     * @throws UserNotFoundException|NotFoundException
+     */
     public function __invoke(): string
     {
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
         if (!isset($_SESSION['id'])) {
-            return $this->render('login.html.twig', [
-                'error' => 'You must be logged in to view the dashboard.'
-            ]);
+            throw new ForbiddenException();
         }
 
-        try {
             $userId = (int)$_SESSION['id'];
 
             $user = $this->userRepository->fetchById($userId);
             if (!$user) {
-                throw new \RuntimeException("User not found.");
+                throw new NotFoundException("User not found.");
             }
 
             $completedPercentageAverage = 0;
@@ -50,13 +54,5 @@ class DashboardController extends AbstractController
                 ),
                 'quote' => '“Deeds will not be less valiant because they are unpraised.” — Aragorn'
             ]);
-
-        } catch (\Throwable) {
-            return $this->render('error.html.twig', [
-                'code' => 500,
-                'title' => "We're having some trouble",
-                'message' => 'Our team has been notified. Please try again later.',
-            ]);
-        }
     }
 }

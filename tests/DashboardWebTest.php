@@ -9,15 +9,8 @@ use Lexgur\GondorGains\Container;
 use Lexgur\GondorGains\Model\User;
 use Lexgur\GondorGains\Repository\UserModelRepository;
 
-/**
- * @internal
- *
- * @coversNothing
- */
 class DashboardWebTest extends WebTestCase
 {
-    private Container $container;
-
     private Connection $connection;
 
     private UserModelRepository $repository;
@@ -27,9 +20,9 @@ class DashboardWebTest extends WebTestCase
         $_ENV['IS_WEB_TEST'] = 'true';
 
         $config = require __DIR__.'/../config.php';
-        $this->container = new Container($config);
-        $this->connection = $this->container->get(Connection::class);
-        $this->repository = $this->container->get(UserModelRepository::class);
+        $container = new Container($config);
+        $this->connection = $container->get(Connection::class);
+        $this->repository = $container->get(UserModelRepository::class);
 
         parent::setUp();
     }
@@ -39,7 +32,6 @@ class DashboardWebTest extends WebTestCase
         unset($_ENV['IS_WEB_TEST']);
 
         session_unset();
-        session_destroy();
         parent::tearDown();
     }
 
@@ -62,14 +54,8 @@ class DashboardWebTest extends WebTestCase
 
     public function testFailedAuthenticationThrowsTheCorrectErrorMessage(): void
     {
-        $username = 'testFailure';
-        $email = 'testFailure@test.com';
-        $password = 'testFailure123';
-        $user = new User($username, $email, $password);
-        $this->repository->save($user);
-
         $dashboardOutput = $this->request('GET', '/dashboard');
 
-        $this->assertStringContainsString('You must be logged in', $dashboardOutput);
+        $this->assertStringContainsString('have permission to view', $dashboardOutput);
     }
 }
