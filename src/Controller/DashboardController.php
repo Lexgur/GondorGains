@@ -41,8 +41,6 @@ class DashboardController extends AbstractController
         $completedAverage = 0;
         $totalQuests = 0;
 
-        $redirectTo = $totalQuests > 0 ? '/quests' : '/weakling';
-
         return $this->render('dashboard.html.twig', [
             'message' => sprintf(
                 "Greetings, %s, on average you have completed %d of your %d quests!",
@@ -50,7 +48,6 @@ class DashboardController extends AbstractController
                 $completedAverage,
                 $totalQuests
                 ),
-            'redirectTo' => $redirectTo,
             'quote' => '“Deeds will not be less valiant because they are unpraised.” — Aragorn'
             ]);
     }
