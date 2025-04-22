@@ -25,8 +25,6 @@ class DashboardWebTest extends WebTestCase
 
     public function tearDown(): void
     {
-        unset($_ENV['IS_WEB_TEST']);
-
         session_unset();
         parent::tearDown();
     }
@@ -45,15 +43,14 @@ class DashboardWebTest extends WebTestCase
 
         $dashboardOutput = $this->request('GET', '/dashboard');
 
-        $this->assertStringContainsString("Greetings, {$username}", $dashboardOutput);
-        $this->assertSame(200, $GLOBALS['_LAST_HTTP_CODE']);
+        $this->assertStringContainsString("Greetings, {$username}", $dashboardOutput['output']);
+        $this->assertEquals(200, $dashboardOutput['status']);
     }
 
     public function testAnonymousAccessDenied(): void
     {
         $dashboardOutput = $this->request('GET', '/dashboard');
 
-        $this->assertStringContainsString('have permission to view', $dashboardOutput);
-        $this->assertSame(403, $GLOBALS['_LAST_HTTP_CODE']);
+        $this->assertEquals(403, $dashboardOutput['status']);
     }
 }

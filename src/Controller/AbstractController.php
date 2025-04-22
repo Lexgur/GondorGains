@@ -28,9 +28,6 @@ abstract class AbstractController
         http_response_code($statusCode);
         header('Content-Type: text/html; charset=UTF-8');
 
-        if ($_ENV['IS_WEB_TEST'] ?? false) {
-            $GLOBALS['_LAST_HTTP_CODE'] = $statusCode;
-        }
         return $this->templateProvider->get()->render($template, $params);
     }
 

@@ -17,7 +17,7 @@ abstract class WebTestCase extends TestCase
     }
 
     /** @param array<string, mixed> $data */
-    public function request(string $method, string $url, array $data = []): string
+    public function request(string $method, string $url, array $data = []): array
     {
         $_SERVER['REQUEST_METHOD'] = strtoupper($method);
         $_SERVER['REQUEST_URI'] = $url;
@@ -30,6 +30,13 @@ abstract class WebTestCase extends TestCase
 
         ob_start();
         $this->app->run();
-        return ob_get_clean();
+        $output = ob_get_clean();
+
+        $status = http_response_code();
+
+        return [
+            'output' => $output,
+            'status' => $status,
+        ];
     }
 }
