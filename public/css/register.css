@@ -133,3 +133,46 @@ button:hover {
     text-align: right;
     opacity: 0.85;
 }
+
+.horse-container {
+    position: relative;
+    width: 100%;
+    height: 100px;
+    margin-top: 2rem;
+}
+.horse {
+    background-image: url('../images/rohanrider.png');
+    position: absolute;
+    top: 0;
+    left: -100px;
+    width: 70px;
+    height: 70px;
+    animation: horseRide 7s linear infinite;
+}
+@keyframes horseRide {
+    0% {
+        left: -100px;
+        transform: translateY(0) rotate(0deg);
+    }
+    20% {
+        transform: translateY(-5px) rotate(-2deg);
+    }
+    40% {
+        transform: translateY(3px) rotate(1deg);
+    }
+    60% {
+        transform: translateY(-3px) rotate(-1deg);
+    }
+    80% {
+        transform: translateY(2px) rotate(0.5deg);
+    }
+    100% {
+        left: 100%;
+        transform: translateY(0) rotate(0deg);
+    }
+}
+
+.horse img {
+    width: 100%;
+    height: auto;
+}

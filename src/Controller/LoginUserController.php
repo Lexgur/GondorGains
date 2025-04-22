@@ -42,7 +42,7 @@ class LoginUserController extends AbstractController
                 session_write_close();
 
                 header('Location: /dashboard');
-                exit;
+                return '';
 
             } catch (\Throwable $error) {
                 error_log('Error in DashboardController: ' . $error->getMessage());

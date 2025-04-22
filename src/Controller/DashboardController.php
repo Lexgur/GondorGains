@@ -21,7 +21,6 @@ class DashboardController extends AbstractController
         parent::__construct($templateProvider);
         $this->userRepository = $userRepository;
     }
-
     /**
      * @throws ForbiddenException
      * @throws UserNotFoundException|NotFoundException
@@ -34,25 +33,25 @@ class DashboardController extends AbstractController
         if (!isset($_SESSION['id'])) {
             throw new ForbiddenException();
         }
+        $userId = (int)$_SESSION['id'];
+        $user = $this->userRepository->fetchById($userId);
+        if (!$user) {
+            throw new NotFoundException("User not found.");
+        }
+        $completedAverage = 0;
+        $totalQuests = 0;
 
-            $userId = (int)$_SESSION['id'];
+        $redirectTo = $totalQuests > 0 ? '/quests' : '/weakling';
 
-            $user = $this->userRepository->fetchById($userId);
-            if (!$user) {
-                throw new NotFoundException("User not found.");
-            }
-
-            $completedPercentageAverage = 0;
-            $totalQuests = 0;
-
-            return $this->render('dashboard.html.twig', [
-                'message' => sprintf(
-                    "Greetings, %s, on average you have completed %d of your %d quests!",
-                    $user->getUsername(),
-                    $completedPercentageAverage,
-                    $totalQuests
+        return $this->render('dashboard.html.twig', [
+            'message' => sprintf(
+                "Greetings, %s, on average you have completed %d of your %d quests!",
+                $user->getUsername(),
+                $completedAverage,
+                $totalQuests
                 ),
-                'quote' => '“Deeds will not be less valiant because they are unpraised.” — Aragorn'
+            'redirectTo' => $redirectTo,
+            'quote' => '“Deeds will not be less valiant because they are unpraised.” — Aragorn'
             ]);
     }
 }

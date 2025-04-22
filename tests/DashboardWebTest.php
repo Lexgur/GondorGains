@@ -4,15 +4,12 @@ declare(strict_types=1);
 
 namespace Lexgur\GondorGains\Tests;
 
-use Lexgur\GondorGains\Connection;
 use Lexgur\GondorGains\Container;
 use Lexgur\GondorGains\Model\User;
 use Lexgur\GondorGains\Repository\UserModelRepository;
 
 class DashboardWebTest extends WebTestCase
 {
-    private Connection $connection;
-
     private UserModelRepository $repository;
 
     public function setUp(): void
@@ -21,7 +18,6 @@ class DashboardWebTest extends WebTestCase
 
         $config = require __DIR__.'/../config.php';
         $container = new Container($config);
-        $this->connection = $container->get(Connection::class);
         $this->repository = $container->get(UserModelRepository::class);
 
         parent::setUp();
@@ -35,7 +31,7 @@ class DashboardWebTest extends WebTestCase
         parent::tearDown();
     }
 
-    public function testSuccessfulAuthentication(): void
+    public function testLoggedInSuccess(): void
     {
         $username = 'testSuccess';
         $email = 'testSuccess@test.com';
@@ -50,12 +46,14 @@ class DashboardWebTest extends WebTestCase
         $dashboardOutput = $this->request('GET', '/dashboard');
 
         $this->assertStringContainsString("Greetings, {$username}", $dashboardOutput);
+        $this->assertSame(200, $GLOBALS['_LAST_HTTP_CODE']);
     }
 
-    public function testFailedAuthenticationThrowsTheCorrectErrorMessage(): void
+    public function testAnonymousAccessDenied(): void
     {
         $dashboardOutput = $this->request('GET', '/dashboard');
 
         $this->assertStringContainsString('have permission to view', $dashboardOutput);
+        $this->assertSame(403, $GLOBALS['_LAST_HTTP_CODE']);
     }
 }
