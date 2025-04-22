@@ -10,6 +10,8 @@ use Lexgur\GondorGains\Repository\UserModelRepository;
 
 class WeaklingWebTest extends WebTestCase
 {
+    private UserModelRepository $repository;
+
     public function setUp(): void
     {
         $_ENV['IS_WEB_TEST'] = 'true';
