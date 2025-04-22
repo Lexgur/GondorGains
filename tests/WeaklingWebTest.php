@@ -38,16 +38,18 @@ class WeaklingWebTest extends WebTestCase
         session_write_close();
 
         $dashboardOutput = $this->request('GET', '/weakling');
+        $statusCode = http_response_code();
 
-        $this->assertStringContainsString("Weakling", $dashboardOutput['output']);
-        $this->assertEquals(200, $dashboardOutput['status']);
+        $this->assertStringContainsString("Weakling", $dashboardOutput);
+        $this->assertEquals(200, $statusCode);
     }
 
     public function testAnonymousAccessDenied(): void
     {
         $dashboardOutput = $this->request('GET', '/weakling');
+        $statusCode = http_response_code();
 
-        $this->assertStringContainsString("Access restricted", $dashboardOutput['output']);
-        $this->assertEquals(403, $dashboardOutput['status']);
+        $this->assertStringContainsString("Access restricted", $dashboardOutput);
+        $this->assertEquals(403,$statusCode);
     }
 }

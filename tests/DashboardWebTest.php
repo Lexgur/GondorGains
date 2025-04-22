@@ -40,17 +40,19 @@ class DashboardWebTest extends WebTestCase
         session_start();
         $_SESSION['id'] = $savedUser->getUserId();
         session_write_close();
-
         $dashboardOutput = $this->request('GET', '/dashboard');
+        $statusCode = http_response_code();
 
-        $this->assertStringContainsString("Greetings, {$username}", $dashboardOutput['output']);
-        $this->assertEquals(200, $dashboardOutput['status']);
+        $this->assertStringContainsString("Greetings, {$username}", $dashboardOutput);
+        $this->assertEquals(200 ,$statusCode);
     }
 
     public function testAnonymousAccessDenied(): void
     {
         $dashboardOutput = $this->request('GET', '/dashboard');
+        $statusCode = http_response_code();
 
-        $this->assertEquals(403, $dashboardOutput['status']);
+        $this->assertStringContainsString("Access restricted", $dashboardOutput);
+        $this->assertEquals(403, $statusCode);
     }
 }

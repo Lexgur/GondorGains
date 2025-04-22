@@ -40,16 +40,18 @@ class QuestsWebTest extends WebTestCase
         session_write_close();
 
         $dashboardOutput = $this->request('GET', '/quests');
+        $statusCode = http_response_code();
 
-        $this->assertStringContainsString("Quests", $dashboardOutput['output']);
-        $this->assertEquals(200, $dashboardOutput['status']);
+        $this->assertStringContainsString("Quests", $dashboardOutput);
+        $this->assertEquals(200, $statusCode);
     }
 
     public function testAnonymousAccessDenied(): void
     {
         $dashboardOutput = $this->request('GET', '/quests');
+        $statusCode = http_response_code();
 
-        $this->assertStringContainsString("Access restricted", $dashboardOutput['output']);
-        $this->assertEquals(403, $dashboardOutput['status']);
+        $this->assertStringContainsString("Access restricted", $dashboardOutput);
+        $this->assertEquals(403,$statusCode);
     }
 }
