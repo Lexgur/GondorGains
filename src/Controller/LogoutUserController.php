@@ -30,7 +30,7 @@ class LogoutUserController extends AbstractController
     {
             if ($this->currentUser->isLoggedIn()) {
                 $this->session->destroy();
-                header('Location: /logout', true, 302);
+                header('Location: /login', true, 302);
                 return '';
             }
             throw new ForbiddenException('User not logged in.');
