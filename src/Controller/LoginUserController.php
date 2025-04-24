@@ -23,7 +23,7 @@ class LoginUserController extends AbstractController
 
     private CurrentUser $currentUser;
 
-    public function __construct(UserModelRepository $repository, TemplateProvider $templateProvider, PasswordValidator $passwordValidator, Session $session, CurrentUser $currentUser )
+    public function __construct(UserModelRepository $repository, TemplateProvider $templateProvider, PasswordValidator $passwordValidator, Session $session, CurrentUser $currentUser)
     {
         parent::__construct($templateProvider);
         $this->repository = $repository;
@@ -42,15 +42,17 @@ class LoginUserController extends AbstractController
                 $this->passwordValidator->validate($password);
                 $registeredUser = $this->repository->findByEmail($email);
                 PasswordVerifier::verify($password, $registeredUser->getUserPassword());
-                if ($this->currentUser->isAnonymous()){
+
+                if ($this->currentUser->isAnonymous()) {
                     $this->session->start($registeredUser);
                 }
                 $_SESSION['id'] = $registeredUser->getUserId();
                 header('Location: /dashboard');
+
                 return '';
             } catch (\Throwable) {
                 return $this->render('login.html.twig', [
-                    'error' => 'Invalid login credentials. Please try again.'
+                    'error' => 'Invalid login credentials. Please try again.',
                 ]);
             }
         }

@@ -36,6 +36,7 @@ class LogoutWebTest extends WebTestCase
     public function testLogout(User $user): void
     {
         $this->markTestSkipped('browser works, test does not');
+
         /** @phpstan-ignore deadCode.unreachable */
         $session = $this->container->get(Session::class);
         $this->assertFalse($session->hasStarted());
@@ -59,8 +60,8 @@ class LogoutWebTest extends WebTestCase
     {
         return [
             [
-                new User('example@localhost', 'example', 'Example123.', 1)
-            ]
+                new User('example@localhost', 'example', 'Example123.', 1),
+            ],
         ];
     }
 }
