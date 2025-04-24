@@ -44,8 +44,7 @@ class LoginUserController extends AbstractController
                 header('Location: /dashboard');
                 return '';
 
-            } catch (\Throwable $error) {
-                error_log('Error in DashboardController: ' . $error->getMessage());
+            } catch (\Throwable) {
                 return $this->render('login.html.twig', [
                     'error' => 'Invalid login credentials. Please try again.'
                 ]);
