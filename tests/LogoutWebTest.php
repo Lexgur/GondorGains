@@ -46,7 +46,7 @@ class LogoutWebTest extends WebTestCase
 
         $response = $this->request('GET', '/logout');
 
-        $this->markTestSkipped('must be revisited.');
+        $this->markTestSkipped('browser works, test does not');
         $this->assertEquals(302, http_response_code());
         $this->assertStringContainsString('', $response);
     }
