@@ -9,6 +9,7 @@ use Lexgur\GondorGains\Exception\ForbiddenException;
 use Lexgur\GondorGains\Exception\NotFoundException;
 use Lexgur\GondorGains\Exception\UserNotFoundException;
 use Lexgur\GondorGains\Repository\UserModelRepository;
+use Lexgur\GondorGains\Service\RandomQuote;
 use Lexgur\GondorGains\TemplateProvider;
 
 #[Path('/dashboard')]
@@ -16,10 +17,14 @@ class DashboardController extends AbstractController
 {
     private UserModelRepository $userRepository;
 
-    public function __construct(UserModelRepository $userRepository, TemplateProvider $templateProvider)
+    private RandomQuote $randomQuote;
+
+    public function __construct(UserModelRepository $userRepository, TemplateProvider $templateProvider, RandomQuote $randomQuote)
     {
         parent::__construct($templateProvider);
         $this->userRepository = $userRepository;
+        $this->randomQuote = $randomQuote;
+
     }
     /**
      * @throws ForbiddenException
@@ -48,7 +53,7 @@ class DashboardController extends AbstractController
                 $completedAverage,
                 $totalQuests
                 ),
-            'quote' => '“Deeds will not be less valiant because they are unpraised.” — Aragorn'
+            'quote' => $this->randomQuote->getQuote(),
             ]);
     }
 }
