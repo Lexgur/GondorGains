@@ -44,11 +44,10 @@ class LoginUserController extends AbstractController
                 PasswordVerifier::verify($password, $registeredUser->getUserPassword());
                 if ($this->currentUser->isAnonymous()){
                     $this->session->start($registeredUser);
-                    $_SESSION['id'] = $registeredUser->getUserId();
-                    header('Location: /dashboard');
-                    return '';
                 }
-
+                $_SESSION['id'] = $registeredUser->getUserId();
+                header('Location: /dashboard');
+                return '';
             } catch (\Throwable) {
                 return $this->render('login.html.twig', [
                     'error' => 'Invalid login credentials. Please try again.'
