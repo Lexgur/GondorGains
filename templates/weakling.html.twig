@@ -7,10 +7,6 @@
         <header class="welcome-message">
             <h1>Weakling!</h1>
         </header>
-        <section class="quote">
-            <blockquote>
-                {{ quote }}
-            </blockquote>
-        </section>
+        {% include "quote.html.twig" %}
     </div>
 {% endblock %}

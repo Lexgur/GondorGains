@@ -8,11 +8,7 @@
             <h1>{{ message }}</h1>
         </header>
 
-        <section class="quote">
-            <blockquote>
-                {{ quote }}
-            </blockquote>
-        </section>
+        {% include "quote.html.twig" %}
 
         <div class="horse-container">
             <div class="horse"></div>
