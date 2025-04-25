@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Lexgur\GondorGains\Controller;
 
 use Lexgur\GondorGains\Attribute\Path;
+use Lexgur\GondorGains\Exception\UserNotFoundException;
 use Lexgur\GondorGains\Repository\UserModelRepository;
 use Lexgur\GondorGains\Service\CurrentUser;
 use Lexgur\GondorGains\Service\PasswordVerifier;
@@ -34,19 +35,31 @@ class LoginUserController extends AbstractController
 
     public function __invoke(): string
     {
+        if ($this->currentUser->isLoggedIn()) {
+            header('Location: /dashboard', true, 302);
+
+            return '';
+        }
+
         if ($this->isPostRequest()) {
             try {
                 $data = $_POST;
                 $password = $data['password'];
                 $email = $data['email'];
+
                 $this->passwordValidator->validate($password);
-                $registeredUser = $this->repository->findByEmail($email);
+
+                try {
+                    $registeredUser = $this->repository->findByEmail($email);
+                } catch (UserNotFoundException) {
+                    header('Location: /register', true, 302);
+
+                    return '';
+                }
+
                 PasswordVerifier::verify($password, $registeredUser->getUserPassword());
 
-                if ($this->currentUser->isAnonymous()) {
-                    $this->session->start($registeredUser);
-                }
-                $_SESSION['id'] = $registeredUser->getUserId();
+                $this->session->start($registeredUser);
                 header('Location: /dashboard');
 
                 return '';
