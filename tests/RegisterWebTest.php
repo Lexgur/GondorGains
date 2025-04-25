@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Lexgur\GondorGains\Tests;
 
+use Lexgur\GondorGains\Connection;
 use Lexgur\GondorGains\Container;
 use Lexgur\GondorGains\Exception\UserNotFoundException;
 use Lexgur\GondorGains\Model\User;
@@ -16,6 +17,8 @@ class RegisterWebTest extends WebTestCase
 
     private UserModelRepository $userModelRepository;
 
+    private Connection $database;
+
     public function setUp(): void
     {
         $_ENV['IS_WEB_TEST'] = 'true';
@@ -23,8 +26,56 @@ class RegisterWebTest extends WebTestCase
         $config = require __DIR__.'/../config.php';
         $this->container = new Container($config);
         $this->userModelRepository = $this->container->get(UserModelRepository::class);
+        $this->database = $this->container->get(Connection::class);
 
         parent::setUp();
+    }
+
+    public function tearDown(): void
+    {
+        $this->database->connect()->exec('DELETE FROM users');
+    }
+
+    public function testRegisterPageAccessible(): void
+    {
+        $response = $this->request('GET', '/register');
+        $this->assertEquals(200, http_response_code());
+        $this->assertStringContainsString('Register', $response);
+    }
+
+    /**
+     * @throws UserNotFoundException
+     */
+    #[DataProvider('provideUserData')]
+    public function testSuccessfulRegistration(User $user): void
+    {
+        $data = [
+            'email' => $user->getUserEmail(),
+            'username' => $user->getUsername(),
+            'password' => 'Example123.',
+        ];
+
+        $response = $this->request('POST', '/register', $data);
+
+        $this->assertEquals(200, http_response_code());
+        $this->assertStringContainsString('Registration was successful', $response);
+
+        $savedUser = $this->userModelRepository->findByEmail($user->getUserEmail());
+
+        $this->assertNotNull($savedUser);
+        $this->assertEquals($user->getUserEmail(), $savedUser->getUserEmail());
+    }
+
+    /**
+     * @param array<string, string> $data
+     */
+    #[DataProvider('provideInvalidUserData')]
+    public function testInvalidRegistrationData(array $data, string $errorMessage): void
+    {
+        $response = $this->request('POST', '/register', $data);
+
+        $this->assertEquals(200, http_response_code());
+        $this->assertStringContainsString($errorMessage, $response);
     }
 
     /**
@@ -62,51 +113,5 @@ class RegisterWebTest extends WebTestCase
                 'Invalid email format',
             ],
         ];
-    }
-
-    public function testRegisterPageAccessible(): void
-    {
-        $response = $this->request('GET', '/register');
-        $this->assertEquals(200, http_response_code());
-        $this->assertStringContainsString('Register', $response);
-    }
-
-    /**
-     * @throws UserNotFoundException
-     */
-    #[DataProvider('provideUserData')]
-    public function testSuccessfulRegistration(User $user): void
-    {
-        $existingUser = $this->userModelRepository->findByEmail($user->getUserEmail());
-        if ($existingUser) {
-            $this->userModelRepository->delete($existingUser->getUserId());
-        }
-
-        $data = [
-            'email' => $user->getUserEmail(),
-            'username' => $user->getUsername(),
-            'password' => 'Example123.',
-        ];
-        $response = $this->request('POST', '/register', $data);
-
-        $this->assertEquals(200, http_response_code());
-        $this->assertStringContainsString('Registration was successful', $response);
-
-        $savedUser = $this->userModelRepository->findByEmail($user->getUserEmail());
-
-        $this->assertNotNull($savedUser);
-        $this->assertEquals($user->getUserEmail(), $savedUser->getUserEmail());
-    }
-
-    /**
-     * @param array<string, string> $data
-     */
-    #[DataProvider('provideInvalidUserData')]
-    public function testInvalidRegistrationData(array $data, string $errorMessage): void
-    {
-        $response = $this->request('POST', '/register', $data);
-
-        $this->assertEquals(200, http_response_code());
-        $this->assertStringContainsString($errorMessage, $response);
     }
 }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Lexgur\GondorGains\Controller;
 
 use Lexgur\GondorGains\Attribute\Path;
+use Lexgur\GondorGains\Exception\UserNotFoundException;
 use Lexgur\GondorGains\Repository\UserModelRepository;
 use Lexgur\GondorGains\Service\CurrentUser;
 use Lexgur\GondorGains\Service\PasswordVerifier;
@@ -34,8 +35,9 @@ class LoginUserController extends AbstractController
 
     public function __invoke(): string
     {
-        if ($this->currentUser->isLoggedIn() || isset($_COOKIE['PHPSESSID']) ) {
+        if ($this->currentUser->isLoggedIn()) {
             header('Location: /dashboard', true, 302);
+
             return '';
         }
 
@@ -44,13 +46,20 @@ class LoginUserController extends AbstractController
                 $data = $_POST;
                 $password = $data['password'];
                 $email = $data['email'];
+
                 $this->passwordValidator->validate($password);
-                $registeredUser = $this->repository->findByEmail($email);
-                PasswordVerifier::verify($password, $registeredUser->getUserPassword());
-                if ($this->currentUser->isAnonymous()) {
-                    $this->session->start($registeredUser);
+
+                try {
+                    $registeredUser = $this->repository->findByEmail($email);
+                } catch (UserNotFoundException) {
+                    header('Location: /register', true, 302);
+
+                    return '';
                 }
-                $_SESSION['id'] = $registeredUser->getUserId();
+
+                PasswordVerifier::verify($password, $registeredUser->getUserPassword());
+
+                $this->session->start($registeredUser);
                 header('Location: /dashboard');
 
                 return '';
