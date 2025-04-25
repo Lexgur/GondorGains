@@ -34,6 +34,11 @@ class LoginUserController extends AbstractController
 
     public function __invoke(): string
     {
+        if ($this->currentUser->isLoggedIn() || isset($_COOKIE['PHPSESSID']) ) {
+            header('Location: /dashboard', true, 302);
+            return '';
+        }
+
         if ($this->isPostRequest()) {
             try {
                 $data = $_POST;
@@ -42,7 +47,6 @@ class LoginUserController extends AbstractController
                 $this->passwordValidator->validate($password);
                 $registeredUser = $this->repository->findByEmail($email);
                 PasswordVerifier::verify($password, $registeredUser->getUserPassword());
-
                 if ($this->currentUser->isAnonymous()) {
                     $this->session->start($registeredUser);
                 }

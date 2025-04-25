@@ -15,7 +15,7 @@
     "require": {
         "psr/container": "^2.0",
       "ext-pdo": "*",
-        "twig/twig": "3.9"
+        "twig/twig": "3.19.0.0"
     },
     "require-dev": {
         "phpmd/phpmd": "^2.15",
