@@ -1,28 +1,17 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Dashboard</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/css/register.css">
-</head>
-<body>
-<div class="dashboard-container">
-    <header class="welcome-message">
-        <h1>{{ message }}</h1>
-    </header>
+{% extends "base.html.twig" %}
 
-    <section class="quote">
-        <blockquote>
-            {{ quote }}
-        </blockquote>
-    </section>
+{% block title %}Dashboard{% endblock %}
 
-    <div class="horse-container">
-        <div class="horse">
+{% block content %}
+    <div class="dashboard-container">
+        <header class="welcome-message">
+            <h1>{{ message }}</h1>
+        </header>
+
+        {% include "quote.html.twig" %}
+
+        <div class="horse-container">
+            <div class="horse"></div>
         </div>
     </div>
-
-</div>
-</body>
-</html>
+{% endblock %}

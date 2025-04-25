@@ -1,22 +1,12 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Your Quest Log</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/css/register.css">
-</head>
-<body>
-<div class="dashboard-container">
-    <header class="welcome-message">
-        <h1>Quests</h1>
-    </header>
+{% extends "base.html.twig" %}
 
-    <section class="quote">
-        <blockquote>
-            "All we have to decide is what to do with the time that is given us." — Gandalf
-        </blockquote>
-    </section>
-</div>
-</body>
-</html>
+{% block title %}Quests{% endblock %}
+
+{% block content %}
+    <div class="dashboard-container">
+        <header class="welcome-message">
+            <h1>Quests</h1>
+        </header>
+        {% include "quote.html.twig" %}
+    </div>
+{% endblock %}

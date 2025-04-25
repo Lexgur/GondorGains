@@ -1,35 +1,24 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Register</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/css/register.css">
-</head>
-<body>
-<div class="form-container">
-    <h1>REGISTER</h1>
+{% extends "base.html.twig" %}
 
-    {% if error %}
-        <div class="error">Registration failed: {{ error }}</div>
-    {% endif %}
+{% block title %}Register{% endblock %}
 
-    {% if success %}
-        <div class="register-success">{{ success }}</div>
-    {% endif %}
-
-    <form method="POST" action="/register">
-        <label for="username">Username</label>
-        <input type="text" id="username" name="username" required>
-
-        <label for="email">EMAIL</label>
-        <input type="email" id="email" name="email" required>
-
-        <label for="password">PASSWORD</label>
-        <input type="password" id="password" name="password" required>
-
-        <button type="submit">REGISTER</button>
-    </form>
-</div>
-</body>
-</html>
+{% block content %}
+    <div class="form-container">
+        <h1>REGISTER</h1>
+        {% if error %}
+            <div class="error">Registration failed: {{ error }}</div>
+        {% endif %}
+        {% if success %}
+            <div class="register-success">{{ success }}</div>
+        {% endif %}
+        <form method="POST" action="/register">
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" required>
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" required>
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" required>
+            <button type="submit">REGISTER</button>
+        </form>
+    </div>
+{% endblock %}
