@@ -60,7 +60,7 @@ class Exercise
     /**
      * @param array{
      *     name: string,
-     *     muscle_group: MuscleGroup,
+     *     muscle_group: string|int|MuscleGroup,
      *     description: string,
      *     id?: int|null
      * } $data
@@ -69,7 +69,7 @@ class Exercise
     {
         return new Exercise(
             name: $data['name'],
-            muscleGroup: $data['muscle_group'],
+            muscleGroup: MuscleGroup::from($data['muscle_group']),
             description: $data['description'],
             exerciseId: $data['id'] ?? null
         );
