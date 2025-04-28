@@ -45,7 +45,7 @@ class ExerciseModelRepositoryTest extends TestCase
         $this->assertNotNull($insertedExercise->getExerciseId());
     }
 
-    public function testFetchByIdReturnsUserWhenValidIdExists(): void
+    public function testFetchByIdReturnsExerciseWhenValidIdExists(): void
     {
         $exercise = new Exercise(
             name: 'Tests',
@@ -59,7 +59,7 @@ class ExerciseModelRepositoryTest extends TestCase
         $this->assertEquals($exerciseId, $existingExercise->getExerciseId());
     }
 
-    public function testFetchByIdThrowsExerciseNotFoundExceptionWhenUserDoesNotExist(): void
+    public function testFetchByIdThrowsExerciseNotFoundExceptionWhenExerciseDoesNotExist(): void
     {
         $this->expectException(ExerciseNotFoundException::class);
 
