@@ -9,15 +9,15 @@ use Lexgur\GondorGains\Container;
 
 class RunSeedersScript implements ScriptInterface
 {
-    private string $directory;
+    private string $seedersDirectory;
 
     private string $seededRegistryPath;
 
     private Container $container;
 
-    public function __construct(string $directory, string $seededRegistryPath, Container $container)
+    public function __construct(string $seedersDirectory, string $seededRegistryPath, Container $container)
     {
-        $this->directory = $directory;
+        $this->seedersDirectory = $seedersDirectory;
         $this->seededRegistryPath = $seededRegistryPath;
         $this->container = $container;
     }
@@ -29,7 +29,7 @@ class RunSeedersScript implements ScriptInterface
      */
     public function run(): int
     {
-        $classFinder = new ClassFinder($this->directory);
+        $classFinder = new ClassFinder($this->seedersDirectory);
         $seederClasses = $classFinder->findClassesImplementing(SeederInterface::class);
 
         $seeders = [];

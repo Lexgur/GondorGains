@@ -11,5 +11,7 @@ return [
     'dsn' => 'sqlite:' . __DIR__ . '/tmp/test/GondorGainsTest.sqlite',
     'directory' => __DIR__ . '/src/Migration',
     'migratedRegistryPath' => __DIR__ . '/tmp/test/testmigrations.json',
+    'seededRegistryPath' => __DIR__ . '/tmp/test/testseeders.json',
     'controllerDir' => $controllerDir,
-];
+    'seedersDirectory' => __DIR__ . '/src/Seeder',
+    ];
