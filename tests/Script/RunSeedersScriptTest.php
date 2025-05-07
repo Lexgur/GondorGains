@@ -76,7 +76,7 @@ class RunSeedersScriptTest extends TestCase
     {
         $container = new Container(
             [
-                'directory' => $directory,
+                'seedersDirectory' => $directory,
                 'seededRegistryPath' => $this->getSeededRegistryPath(),
             ]
         );
