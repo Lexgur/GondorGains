@@ -16,7 +16,7 @@ class DashboardWebTest extends WebTestCase
 
     private Session $session;
 
-    private Connection $connection;
+    private Connection $database;
 
     public function setUp(): void
     {
