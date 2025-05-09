@@ -14,6 +14,8 @@
     </include>
     <exclude>
       <directory suffix=".php">tests</directory>
+      <directory suffix=".php">src/Migration</directory>
+      <directory suffix=".php">src/Seeder</directory>
     </exclude>
   </source>
 </phpunit>
