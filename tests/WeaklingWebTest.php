@@ -4,25 +4,31 @@ declare(strict_types=1);
 
 namespace Lexgur\GondorGains\Tests;
 
+use Lexgur\GondorGains\Connection;
 use Lexgur\GondorGains\Container;
 use Lexgur\GondorGains\Model\User;
 use Lexgur\GondorGains\Repository\UserModelRepository;
 
 class WeaklingWebTest extends WebTestCase
 {
+    private Connection $database;
     private UserModelRepository $repository;
+
+    private Container $container;
 
     public function setUp(): void
     {
         $_ENV['IS_WEB_TEST'] = 'true';
         $config = require __DIR__.'/../config.php';
-        $container = new Container($config);
-        $this->repository = $container->get(UserModelRepository::class);
+        $this->container = new Container($config);
+        $this->repository = $this->container->get(UserModelRepository::class);
+        $this->database = $this->container->get(Connection::class);
         parent::setUp();
     }
 
     public function tearDown(): void
     {
+        $this->database->connect()->exec('DELETE FROM users');
         session_unset();
         parent::tearDown();
     }

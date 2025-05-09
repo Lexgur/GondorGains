@@ -67,9 +67,11 @@ class Exercise
      */
     public static function create(array $data): Exercise
     {
+        $muscleGroup = $data['muscle_group'];
+
         return new Exercise(
             name: $data['name'],
-            muscleGroup: MuscleGroup::from($data['muscle_group']),
+            muscleGroup: MuscleGroup::from($muscleGroup),
             description: $data['description'],
             exerciseId: $data['id'] ?? null
         );

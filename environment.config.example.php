@@ -7,4 +7,6 @@ return [
     'directory' => __DIR__ . '/src/Migration',
     'migratedRegistryPath' => __DIR__ . '/tmp/dev/migrations.json',
     'controllerDir' => __DIR__ . '/src/Controller',
+    'seededRegistryPath' => __DIR__ . '/tmp/dev/seeders.json',
+    'seedersDirectory' => __DIR__ . '/src/Seeder',
 ];
