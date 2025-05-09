@@ -15,6 +15,11 @@ class CurrentUser
         $this->session = $session;
     }
 
+    public function getUser(): ?User
+    {
+        return $_SESSION['user'] ?? null;
+    }
+
     public function isLoggedIn(): bool
     {
         return $this->session->hasStarted() && isset($_SESSION['user']) && $_SESSION['user'] instanceof User;
