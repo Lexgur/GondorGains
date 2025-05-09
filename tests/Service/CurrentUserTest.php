@@ -50,7 +50,7 @@ class CurrentUserTest extends TestCase
     }
 
     #[DataProvider('provideTestData')]
-    public function testGet(User $user): void
+    public function testGetUser(User $user): void
     {
         $currentUser = $this->container->get(CurrentUser::class);
         $session = $this->container->get(Session::class);
@@ -60,7 +60,7 @@ class CurrentUserTest extends TestCase
         $this->assertEquals($currentUser->getUser(), $user);
     }
 
-    public function testNoActiveSessionReturnsNullInsteadOfUser(): void
+    public function testGetUserWithNoActiveSessionReturnsNull(): void
     {
         $currentUser = $this->container->get(CurrentUser::class);
         $session = $this->container->get(Session::class);
