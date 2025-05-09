@@ -17,7 +17,7 @@ class CurrentUser
 
     public function get(): User
     {
-        return $_SESSION['user'];
+         return $_SESSION['user'];
     }
 
     public function isLoggedIn(): bool
