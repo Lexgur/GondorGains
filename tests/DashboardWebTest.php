@@ -4,13 +4,19 @@ declare(strict_types=1);
 
 namespace Lexgur\GondorGains\Tests;
 
+use Lexgur\GondorGains\Connection;
 use Lexgur\GondorGains\Container;
 use Lexgur\GondorGains\Model\User;
 use Lexgur\GondorGains\Repository\UserModelRepository;
+use Lexgur\GondorGains\Service\Session;
 
 class DashboardWebTest extends WebTestCase
 {
     private UserModelRepository $repository;
+
+    private Session $session;
+
+    private Connection $connection;
 
     public function setUp(): void
     {
@@ -19,13 +25,16 @@ class DashboardWebTest extends WebTestCase
         $config = require __DIR__.'/../config.php';
         $container = new Container($config);
         $this->repository = $container->get(UserModelRepository::class);
+        $this->session = $container->get(Session::class);
+        $this->database = $container->get(Connection::class);
 
         parent::setUp();
     }
 
     public function tearDown(): void
     {
-        session_unset();
+        $this->database->connect()->exec('DELETE FROM users');
+        $this->session->destroy();
         parent::tearDown();
     }
 
@@ -36,10 +45,8 @@ class DashboardWebTest extends WebTestCase
         $password = 'testSuccess123';
         $user = new User($username, $email, $password);
         $savedUser = $this->repository->save($user);
+        $this->session->start($savedUser);
 
-        session_start();
-        $_SESSION['id'] = $savedUser->getUserId();
-        session_write_close();
         $response = $this->request('GET', '/dashboard');
         $statusCode = http_response_code();
 
@@ -52,7 +59,7 @@ class DashboardWebTest extends WebTestCase
         $response = $this->request('GET', '/dashboard');
         $statusCode = http_response_code();
 
-        $this->assertStringContainsString('<title>Access restricted</title>', $response);
+        $this->assertStringContainsString('<title>Access restricted - Gondor Gains</title>', $response);
         $this->assertEquals(403, $statusCode);
     }
 }
