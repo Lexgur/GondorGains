@@ -74,7 +74,11 @@ class RunSeedersScriptTest extends TestCase
 
     public function testEmptyFolderReturnsEmptyArray(): void
     {
-        $runSeedersScript = $this->getRunSeedersScript(__DIR__ . '/RunSeedersScriptTest/NoSeeders');
+        $dir = __DIR__ . '/RunSeedersScriptTest/NoSeeders';
+        if (!is_dir($dir)) {
+            mkdir($dir, 0664, true);
+        }
+        $runSeedersScript = $this->getRunSeedersScript($dir);
         file_put_contents($this->getSeededRegistryPath(), '');
 
         $this->expectOutputString("No pending seeders found." . PHP_EOL);
@@ -85,7 +89,11 @@ class RunSeedersScriptTest extends TestCase
     {
         file_put_contents($this->getSeededRegistryPath(), '{invalid json');
 
-        $runSeedersScript = $this->getRunSeedersScript(__DIR__ . '/RunSeedersScriptTest/NoSeeders');
+        $dir = __DIR__ . '/RunSeedersScriptTest/NoSeeders';
+        if (!is_dir($dir)) {
+            mkdir($dir, 0664, true);
+        }
+        $runSeedersScript = $this->getRunSeedersScript($dir);
 
         $this->expectOutputString("No pending seeders found." . PHP_EOL);
         $this->assertEquals(1, $runSeedersScript->run());
@@ -95,7 +103,11 @@ class RunSeedersScriptTest extends TestCase
     {
         file_put_contents($this->getSeededRegistryPath(), json_encode("this is a string"));
 
-        $runSeedersScript = $this->getRunSeedersScript(__DIR__ . '/RunSeedersScriptTest/NoSeeders');
+        $dir = __DIR__ . '/RunSeedersScriptTest/NoSeeders';
+        if (!is_dir($dir)) {
+            mkdir($dir, 0664, true);
+        }
+        $runSeedersScript = $this->getRunSeedersScript($dir);
 
         $this->expectOutputString("No pending seeders found." . PHP_EOL);
         $this->assertEquals(1, $runSeedersScript->run());
