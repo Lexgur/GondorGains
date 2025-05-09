@@ -61,7 +61,7 @@ class WeaklingWebTest extends WebTestCase
         $response = $this->request('GET', '/weakling');
         $statusCode = http_response_code();
 
-        $this->assertStringContainsString('<title>Access restricted</title>', $response);
+        $this->assertStringContainsString('<title>Access restricted - Gondor Gains</title>', $response);
         $this->assertEquals(403,$statusCode);
     }
 }
