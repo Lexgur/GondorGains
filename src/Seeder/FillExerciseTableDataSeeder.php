@@ -17,7 +17,7 @@ class FillExerciseTableDataSeeder implements SeederInterface
         $this->connection = $connection;
     }
 
-    public function dependencies(): array
+    public static function dependencies(): array
     {
         return [];
     }

@@ -67,9 +67,7 @@ class Exercise
      */
     public static function create(array $data): Exercise
     {
-        $muscleGroup = $data['muscle_group'] instanceof MuscleGroup
-            ? $data['muscle_group']->value
-            : $data['muscle_group'];
+        $muscleGroup = $data['muscle_group'];
 
         return new Exercise(
             name: $data['name'],

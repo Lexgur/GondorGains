@@ -6,6 +6,7 @@ namespace Lexgur\GondorGains\Script;
 
 use Lexgur\GondorGains\ClassFinder;
 use Lexgur\GondorGains\Container;
+use Lexgur\GondorGains\Exception\CircularDependencyException;
 use ReflectionException;
 use RuntimeException;
 use Throwable;
@@ -34,8 +35,8 @@ class RunSeedersScript implements ScriptInterface
     {
         $classFinder = new ClassFinder($this->seedersDirectory);
         $seederClasses = $classFinder->findClassesImplementing(SeederInterface::class);
-
         $successfulSeeders = $this->getSeededSeeders();
+
         $pendingSeederClasses = array_diff($seederClasses, $successfulSeeders);
 
         if (empty($pendingSeederClasses)) {
@@ -43,21 +44,18 @@ class RunSeedersScript implements ScriptInterface
             return 1;
         }
 
-        $pendingSeeders = [];
-        foreach ($pendingSeederClasses as $class) {
+        $sortedSeederClasses = $this->sortSeeders($pendingSeederClasses);
+
+        foreach ($sortedSeederClasses as $class) {
             /** @var SeederInterface $seeder */
             $seeder = $this->container->get($class);
-            $pendingSeeders[$class] = $seeder;
-        }
-
-        $sortedSeeders = $this->sortSeeders($pendingSeeders);
-
-        foreach ($sortedSeeders as $class => $seeder) {
             $seeder->seed();
-            echo $class.PHP_EOL;
+            echo $class . PHP_EOL;
+
             $successfulSeeders[] = $class;
-            file_put_contents($this->getSeededRegistryPath(), json_encode($successfulSeeders));
+            file_put_contents($this->getSeededRegistryPath(), json_encode($successfulSeeders, JSON_PRETTY_PRINT));
         }
+
         return 0;
     }
 
@@ -91,25 +89,24 @@ class RunSeedersScript implements ScriptInterface
     }
 
     /**
-     * Sort seeders by resolving their dependencies.
-     *
-     * @param array<string, SeederInterface> $seeders
-     * @return array<string, SeederInterface>
+     * @param array<string> $classNames
+     * @return array<string>
+     * @throws CircularDependencyException
      */
-    private function sortSeeders(array $seeders): array
+    private function sortSeeders(array $classNames): array
     {
         $sorted = [];
         $done = [];
 
-        while (count($sorted) < count($seeders)) {
+        while (count($sorted) < count($classNames)) {
             $progress = false;
 
-            foreach ($seeders as $class => $seeder) {
+            foreach ($classNames as $class) {
                 if (isset($done[$class])) {
                     continue;
                 }
 
-                $deps = $seeder->dependencies();
+                $deps = $class::dependencies();
                 $depsResolved = true;
 
                 foreach ($deps as $dep) {
@@ -120,14 +117,13 @@ class RunSeedersScript implements ScriptInterface
                 }
 
                 if ($depsResolved) {
-                    $sorted[$class] = $seeder;
+                    $sorted[$class] = $this->container->get($class);
                     $done[$class] = true;
                     $progress = true;
                 }
             }
-
             if (!$progress) {
-                throw new RuntimeException("Circular or missing dependency detected among seeders.");
+                throw new RuntimeException("Unresolvable dependency.");
             }
         }
 

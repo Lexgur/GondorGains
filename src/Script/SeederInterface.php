@@ -11,7 +11,7 @@ interface SeederInterface
      *
      * @return string[]
      */
-    public function dependencies(): array;
+    public static function dependencies(): array;
 
     public function seed(): void;
 }

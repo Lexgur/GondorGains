@@ -8,7 +8,7 @@ use Lexgur\GondorGains\Script\SeederInterface;
 
 class FailedSeeder implements SeederInterface
 {
-    public function dependencies(): array
+    public static function dependencies(): array
     {
         return [FirstSeeder::class];
     }
