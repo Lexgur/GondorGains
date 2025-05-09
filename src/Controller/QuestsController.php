@@ -6,6 +6,7 @@ namespace Lexgur\GondorGains\Controller;
 
 use Lexgur\GondorGains\Attribute\Path;
 use Lexgur\GondorGains\Exception\ForbiddenException;
+use Lexgur\GondorGains\Service\CurrentUser;
 use Lexgur\GondorGains\Service\RandomQuote;
 use Lexgur\GondorGains\TemplateProvider;
 
@@ -14,18 +15,18 @@ class QuestsController extends AbstractController
 {
     private RandomQuote $randomQuote;
 
-    public function __construct(TemplateProvider $templateProvider, RandomQuote $randomQuote)
+    private CurrentUser $currentUser;
+
+    public function __construct(TemplateProvider $templateProvider, RandomQuote $randomQuote, CurrentUser $currentUser)
     {
         parent::__construct($templateProvider);
         $this->randomQuote = $randomQuote;
+        $this->currentUser = $currentUser;
     }
 
     public function __invoke(): string
     {
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
-        if (!isset($_SESSION['id'])) {
+        if ($this->currentUser->isAnonymous()) {
             throw new ForbiddenException();
         }
         return $this->render("quests.html.twig", [

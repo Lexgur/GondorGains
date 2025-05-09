@@ -71,6 +71,35 @@ class RunMigrationsScriptTest extends TestCase
         $this->assertEquals(1, $runMigrationsScript->run());
     }
 
+    public function testEmptyFolderReturnsEmptyArray(): void
+    {
+        $runMigrationsScript = $this->getRunMigrationsScript(__DIR__ . '/RunMigrationsScriptTest/NoMigrations');
+        file_put_contents($this->getMigratedRegistryPath(), '');
+
+        $this->expectOutputString("No pending migrations found." . PHP_EOL);
+        $this->assertEquals(1, $runMigrationsScript->run());
+    }
+
+    public function testRegistryFileWithInvalidJsonReturnsEmptyArray(): void
+    {
+        file_put_contents($this->getMigratedRegistryPath(), '{invalid json');
+
+        $runMigrationsScript = $this->getRunMigrationsScript(__DIR__ . '/RunMigrationsScriptTest/NoMigrations');
+
+        $this->expectOutputString("No pending migrations found." . PHP_EOL);
+        $this->assertEquals(1, $runMigrationsScript->run());
+    }
+
+    public function testRegistryFileWithNonArrayJsonReturnsEmptyArray(): void
+    {
+        file_put_contents($this->getMigratedRegistryPath(), json_encode("this is a string"));
+
+        $runMigrationsScript = $this->getRunMigrationsScript(__DIR__ . '/RunMigrationsScriptTest/NoMigrations');
+
+        $this->expectOutputString("No pending migrations found." . PHP_EOL);
+        $this->assertEquals(1, $runMigrationsScript->run());
+    }
+
     private function getRunMigrationsScript(string $directory): RunMigrationsScript
     {
         $container = new Container(

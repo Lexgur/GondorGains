@@ -10,10 +10,12 @@
   </testsuites>
   <source>
     <include>
-      <directory suffix=".php">src</directory>
+      <directory>src</directory>
     </include>
     <exclude>
-      <directory suffix=".php">tests</directory>
+      <directory>tests</directory>
+      <directory>src/Migration</directory>
+      <directory>src/Seeder</directory>
     </exclude>
   </source>
 </phpunit>
