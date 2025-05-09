@@ -26,6 +26,6 @@ class LogoutWebTest extends WebTestCase
 
         $response = $this->request('GET', '/logout');
         $this->assertEquals(403, http_response_code());
-        $this->assertStringContainsString('<title>Access restricted</title>', $response);
+        $this->assertStringContainsString('<title>Access restricted - Gondor Gains</title>', $response);
     }
 }
