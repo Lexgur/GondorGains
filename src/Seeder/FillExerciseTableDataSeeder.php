@@ -17,18 +17,12 @@ class FillExerciseTableDataSeeder implements SeederInterface
         $this->connection = $connection;
     }
 
-    public function order(): int
+    public function dependencies(): array
     {
-        return 1;
+        return [];
     }
 
     public function seed(): void
-    {
-        echo static::class.PHP_EOL;
-        $this->fillTable();
-    }
-
-    public function fillTable(): void
     {
         $exercises = [
             [
@@ -163,3 +157,4 @@ class FillExerciseTableDataSeeder implements SeederInterface
         echo "Exercises have been inserted into the table." . PHP_EOL;
     }
 }
+

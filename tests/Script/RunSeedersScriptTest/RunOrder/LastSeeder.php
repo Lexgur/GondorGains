@@ -8,10 +8,11 @@ use Lexgur\GondorGains\Script\SeederInterface;
 
 class LastSeeder implements SeederInterface
 {
-    public function order(): int
+    public function dependencies(): array
     {
-        return 4;
+        return [FirstSeeder::class, SecondSeeder::class, ThirdSeeder::class];
     }
+
 
     public function seed(): void
     {

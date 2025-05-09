@@ -8,9 +8,9 @@ use Lexgur\GondorGains\Script\SeederInterface;
 
 class SecondSeeder implements SeederInterface
 {
-    public function order(): int
+    public function dependencies(): array
     {
-        return 2;
+        return [FirstSeeder::class];
     }
 
     public function seed(): void

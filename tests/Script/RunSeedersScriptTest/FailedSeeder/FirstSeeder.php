@@ -8,9 +8,9 @@ use Lexgur\GondorGains\Script\SeederInterface;
 
 class FirstSeeder implements SeederInterface
 {
-    public function order(): int
+    public function dependencies(): array
     {
-        return 1;
+        return [];
     }
 
     public function seed(): void

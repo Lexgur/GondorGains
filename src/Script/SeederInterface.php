@@ -6,7 +6,12 @@ namespace Lexgur\GondorGains\Script;
 
 interface SeederInterface
 {
-    public function order(): int;
+    /**
+     * Returns an array of class names this seeder depends on.
+     *
+     * @return string[]
+     */
+    public function dependencies(): array;
 
     public function seed(): void;
 }
