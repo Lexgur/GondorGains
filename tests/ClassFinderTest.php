@@ -110,8 +110,6 @@ class ClassFinderTest extends TestCase
     public function testFindClassesInNamespace(string $value, array $expected): void
     {
         $actual = $this->classFinder->findClassesInNamespace($value);
-        sort($expected);
-
         $this->assertEquals($expected, $actual);
     }
 
@@ -122,10 +120,10 @@ class ClassFinderTest extends TestCase
             [
                 "Lexgur\GondorGains\Tests\ClassFinderTest\FindClassesInNamespace",
                 [
-                    FirstEnum::class,
-                    ClassFinderTest\FindClassesInNamespace\FirstNameSpace\FirstInterface::class,
-                    FirstTrait::class,
                     ClassFinderTest\FindClassesInNamespace\FirstNameSpace\FirstClass::class,
+                    ClassFinderTest\FindClassesInNamespace\FirstNameSpace\FirstEnum::class,
+                    ClassFinderTest\FindClassesInNamespace\FirstNameSpace\FirstInterface::class,
+                    ClassFinderTest\FindClassesInNamespace\FirstNameSpace\FirstTrait::class,
                     ClassFinderTest\FindClassesInNamespace\FirstNameSpace\SecondNamespace\FirstClass::class,
                     ClassFinderTest\FindClassesInNamespace\SecondNamespace\FirstClass::class,
                 ],
@@ -133,10 +131,10 @@ class ClassFinderTest extends TestCase
             [
                 "Lexgur\GondorGains\Tests\ClassFinderTest\FindClassesInNamespace\FirstNameSpace",
                 [
+                    ClassFinderTest\FindClassesInNamespace\FirstNameSpace\FirstClass::class,
                     FirstEnum::class,
                     ClassFinderTest\FindClassesInNamespace\FirstNameSpace\FirstInterface::class,
                     FirstTrait::class,
-                    ClassFinderTest\FindClassesInNamespace\FirstNameSpace\FirstClass::class,
                     ClassFinderTest\FindClassesInNamespace\FirstNameSpace\SecondNamespace\FirstClass::class,
                 ],
             ],
