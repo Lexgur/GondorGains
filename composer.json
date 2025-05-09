@@ -30,7 +30,7 @@
         ],
         "phpstan": "vendor/bin/phpstan",
         "php-cs-fixer-set": "set PHP_CS_FIXER_IGNORE_ENV=1",
-        "php-cs-fixer-run": "vendor/bin/php-cs-fixer check -v --diff --show-progress=none",
+        "php-cs-fixer-run": "vendor\\bin\\phpunit --coverage-text",
         "code-style": [
             "@phpmd",
             "@phpstan",
