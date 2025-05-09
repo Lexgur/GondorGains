@@ -109,7 +109,7 @@ class RunSeedersScript implements ScriptInterface
                     continue;
                 }
 
-                $deps = method_exists($seeder, 'dependencies') ? $seeder->dependencies() : [];
+                $deps = $seeder->dependencies();
                 $depsResolved = true;
 
                 foreach ($deps as $dep) {

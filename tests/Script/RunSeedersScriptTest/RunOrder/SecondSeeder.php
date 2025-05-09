@@ -15,6 +15,6 @@ class SecondSeeder implements SeederInterface
 
     public function seed(): void
     {
-        echo static::class . PHP_EOL;
+
     }
 }

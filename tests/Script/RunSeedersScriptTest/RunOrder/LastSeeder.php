@@ -16,6 +16,5 @@ class LastSeeder implements SeederInterface
 
     public function seed(): void
     {
-        echo static::class . PHP_EOL;
     }
 }

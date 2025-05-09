@@ -15,6 +15,5 @@ class ThirdSeeder implements SeederInterface
 
     public function seed(): void
     {
-        echo static::class . PHP_EOL;
     }
 }
