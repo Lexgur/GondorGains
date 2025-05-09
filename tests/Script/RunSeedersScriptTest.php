@@ -72,6 +72,35 @@ class RunSeedersScriptTest extends TestCase
         $this->assertEquals(1, $runSeedersScript->run());
     }
 
+    public function testEmptyFolderReturnsEmptyArray(): void
+    {
+        $runSeedersScript = $this->getRunSeedersScript(__DIR__ . '/RunSeedersScriptTest/NoSeeders');
+        file_put_contents($this->getSeededRegistryPath(), '');
+
+        $this->expectOutputString("No pending seeders found." . PHP_EOL);
+        $this->assertEquals(1, $runSeedersScript->run());
+    }
+
+    public function testRegistryFileWithInvalidJsonReturnsEmptyArray(): void
+    {
+        file_put_contents($this->getSeededRegistryPath(), '{invalid json');
+
+        $runSeedersScript = $this->getRunSeedersScript(__DIR__ . '/RunSeedersScriptTest/NoSeeders');
+
+        $this->expectOutputString("No pending seeders found." . PHP_EOL);
+        $this->assertEquals(1, $runSeedersScript->run());
+    }
+
+    public function testRegistryFileWithNonArrayJsonReturnsEmptyArray(): void
+    {
+        file_put_contents($this->getSeededRegistryPath(), json_encode("this is a string"));
+
+        $runSeedersScript = $this->getRunSeedersScript(__DIR__ . '/RunSeedersScriptTest/NoSeeders');
+
+        $this->expectOutputString("No pending seeders found." . PHP_EOL);
+        $this->assertEquals(1, $runSeedersScript->run());
+    }
+
     private function getRunSeedersScript(string $directory): RunSeedersScript
     {
         $container = new Container(
