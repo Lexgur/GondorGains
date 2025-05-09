@@ -49,6 +49,17 @@ class CurrentUserTest extends TestCase
         $this->assertTrue($currentUser->isAnonymous());
     }
 
+    #[DataProvider('provideTestData')]
+    public function testGet(User $user): void
+    {
+        $currentUser = $this->container->get(CurrentUser::class);
+        $session = $this->container->get(Session::class);
+        $session->start($user);
+
+        $this->assertTrue($currentUser->isLoggedIn());
+        $this->assertEquals($currentUser->get($currentUser), $user);
+    }
+
     /**
      * @return array<array<User>>
      */
