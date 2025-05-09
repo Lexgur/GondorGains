@@ -15,8 +15,11 @@ class CurrentUser
         $this->session = $session;
     }
 
-    public function get(): User
+    public function getUser(): ?User
     {
+        if (!isset($_SESSION['user'])) {
+            return null;
+        }
         return $_SESSION['user'];
     }
 

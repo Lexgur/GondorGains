@@ -57,7 +57,16 @@ class CurrentUserTest extends TestCase
         $session->start($user);
 
         $this->assertTrue($currentUser->isLoggedIn());
-        $this->assertEquals($currentUser->get($currentUser), $user);
+        $this->assertEquals($currentUser->getUser(), $user);
+    }
+
+    public function testNoActiveSessionReturnsNullInsteadOfUser(): void
+    {
+        $currentUser = $this->container->get(CurrentUser::class);
+        $session = $this->container->get(Session::class);
+        $session->destroy();
+
+        $this->assertNull($currentUser->getUser());
     }
 
     /**
