@@ -17,10 +17,7 @@ class CurrentUser
 
     public function getUser(): ?User
     {
-        if (!isset($_SESSION['user'])) {
-            return null;
-        }
-        return $_SESSION['user'];
+        return $_SESSION['user'] ?? null;
     }
 
     public function isLoggedIn(): bool
