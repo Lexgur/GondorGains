@@ -6,9 +6,8 @@ namespace Lexgur\GondorGains\Script;
 
 use Lexgur\GondorGains\ClassFinder;
 use Lexgur\GondorGains\Container;
-use Lexgur\GondorGains\Exception\CircularDependencyException;
+use Lexgur\GondorGains\Service\SeederDependencyResolver;
 use ReflectionException;
-use RuntimeException;
 use Throwable;
 
 class RunSeedersScript implements ScriptInterface
@@ -43,10 +42,9 @@ class RunSeedersScript implements ScriptInterface
             echo "No pending seeders found." . PHP_EOL;
             return 1;
         }
+        $sortedSeedersClasses = (new SeederDependencyResolver())->sortSeeders($pendingSeederClasses);
 
-        $sortedSeederClasses = $this->sortSeeders($pendingSeederClasses);
-
-        foreach ($sortedSeederClasses as $class) {
+        foreach ($sortedSeedersClasses as $class) {
             /** @var SeederInterface $seeder */
             $seeder = $this->container->get($class);
             $seeder->seed();
@@ -86,47 +84,5 @@ class RunSeedersScript implements ScriptInterface
     private function getSeededRegistryPath(): string
     {
         return $this->seededRegistryPath;
-    }
-
-    /**
-     * @param array<string> $classNames
-     * @return array<string>
-     * @throws CircularDependencyException
-     */
-    private function sortSeeders(array $classNames): array
-    {
-        $sorted = [];
-        $done = [];
-
-        while (count($sorted) < count($classNames)) {
-            $progress = false;
-
-            foreach ($classNames as $class) {
-                if (isset($done[$class])) {
-                    continue;
-                }
-
-                $deps = $class::dependencies();
-                $depsResolved = true;
-
-                foreach ($deps as $dep) {
-                    if (!isset($done[$dep])) {
-                        $depsResolved = false;
-                        break;
-                    }
-                }
-
-                if ($depsResolved) {
-                    $sorted[$class] = $this->container->get($class);
-                    $done[$class] = true;
-                    $progress = true;
-                }
-            }
-            if (!$progress) {
-                throw new RuntimeException("Unresolvable dependency.");
-            }
-        }
-
-        return $sorted;
     }
 }
