@@ -36,6 +36,6 @@
             "@phpstan",
             "php-cs-fixer"
         ],
-        "phpunit": "vendor\\bin\\phpunit --coverage-text"
+        "phpunit": "vendor\\bin\\phpunit --coverage-html coverage-report"
     }
 }
