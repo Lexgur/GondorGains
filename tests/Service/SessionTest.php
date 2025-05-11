@@ -42,6 +42,19 @@ class SessionTest extends TestCase
     }
 
     #[DataProvider('provideTestData')]
+    public function testConstructorStartsSessionIfPHPSessionIdIsSet(User $user): void
+    {
+        $_COOKIE['PHPSESSID'] = 'test-session-id';
+        session_id('test-session-id');
+
+        $this->session->start($user);
+        $_SESSION = [];
+        $this->assertTrue($this->session->hasStarted());
+
+        $this->session->destroy();
+    }
+
+    #[DataProvider('provideTestData')]
     public function testDestroy(User $user): void
     {
         $this->session->start($user);

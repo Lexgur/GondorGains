@@ -25,7 +25,6 @@ class RandomQuote
         'Endurance is not given; it is forged in the sweat of struggle. – Boromir',
         'You are no mere wanderer; each stride makes you a warrior of the gym. – Arwen',
     ];
-
     private ?string $lastQuote;
 
     public function __construct()
@@ -39,9 +38,6 @@ class RandomQuote
             return $quote !== $this->lastQuote;
         });
 
-        if (empty($quoteQueue)) {
-            $quoteQueue = $this->randomQuotes;
-        }
         $quote = $quoteQueue[array_rand($quoteQueue)];
         $this->lastQuote = $quote;
 
