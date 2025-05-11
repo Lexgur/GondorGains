@@ -30,27 +30,35 @@ class QuestsController extends AbstractController
 
     public function __invoke(): string
     {
-        if ($this->currentUser->isAnonymous()) {
-            throw new ForbiddenException();
-        }
-        $userChallenges = $this->challengeRepository->fetchAllChallenges();
-        $completedChallenges = [];
-
-        foreach ($userChallenges as $userChallenge) {
-            if ($userChallenge->getCompletedAt() !== null) {
-                $completedChallenges[] = [
-                    'id' => $userChallenge->getChallengeId(),
-                    'started_at' => $userChallenge->getStartedAt()->format('Y-m-d H:i'),
-                    'completed_at' => $userChallenge->getCompletedAt()->format('Y-m-d H:i'),
-                ];
+        try {
+            if ($this->currentUser->isAnonymous()) {
+                throw new ForbiddenException();
             }
-        }
+            $userChallenges = $this->challengeRepository->fetchAllChallenges();
+            $completedChallenges = [];
 
-        return $this->render("quests.html.twig", [
-            'quote' => $this->randomQuote->getQuote(),
-            'message' => 'List of completed quests, Gondorian:',
-            'challenges' => $completedChallenges,
-            'quest' => '/daily-quest/start',
-        ]);
+            foreach ($userChallenges as $userChallenge) {
+                if (null !== $userChallenge->getCompletedAt()) {
+                    $completedChallenges[] = [
+                        'id' => $userChallenge->getChallengeId(),
+                        'started_at' => $userChallenge->getStartedAt()->format('Y-m-d H:i'),
+                        'completed_at' => $userChallenge->getCompletedAt()->format('Y-m-d H:i'),
+                    ];
+                }
+            }
+
+            return $this->render('quests.html.twig', [
+                'quote' => $this->randomQuote->getQuote(),
+                'message' => 'List of completed quests, Gondorian:',
+                'challenges' => $completedChallenges,
+                'quest' => '/daily-quest/start',
+            ]);
+        } catch (\Throwable) {
+            return $this->render('error.html.twig', [
+                'code' => 403,
+                'title' => 'Access restricted',
+                'message' => 'You don\'t have permission to view this content.',
+            ]);
+        }
     }
 }

@@ -59,7 +59,7 @@ class LoginUserController extends AbstractController
                 return '';
             } catch (\Throwable) {
                 return $this->render('login.html.twig', [
-                    'error' => 'Invalid login credentials. Please try again.',
+                    'error' => 'You don\'t have permission to view this content.',
                 ]);
             }
         }

@@ -33,40 +33,50 @@ class DashboardController extends AbstractController
         $this->challengeRepository = $challengeRepository;
         $this->currentUser = $currentUser;
     }
+
     /**
      * @throws ForbiddenException
-     * @throws UserNotFoundException|NotFoundException
+     * @throws NotFoundException|UserNotFoundException
      */
     public function __invoke(): string
     {
-        if ($this->currentUser->isAnonymous()) {
-            throw new ForbiddenException();
-        }
-        $userId = (int)$_SESSION['id'];
-        $user = $this->userRepository->fetchById($userId);
-        $userChallenges = $this->challengeRepository->fetchAllChallenges();
+        try {
+            if ($this->currentUser->isAnonymous()) {
+                throw new ForbiddenException();
+            }
+            $userId = (int) $_SESSION['id'];
+            $user = $this->userRepository->fetchById($userId);
+            $userChallenges = $this->challengeRepository->fetchAllChallenges();
 
-        $completedChallenges = array_filter($userChallenges, fn($challenge) => $challenge->getUserId() === $userId && $challenge->getCompletedAt() !== null);
-        $completedAverage = count($completedChallenges);
-        $totalQuests = count($userChallenges);
+            $completedChallenges = array_filter($userChallenges, fn ($challenge) => $challenge->getUserId() === $userId && null !== $challenge->getCompletedAt());
+            $completedAverage = count($completedChallenges);
+            $totalQuests = count($userChallenges);
 
-        return $this->render('dashboard.html.twig', [
-            'message' => sprintf(
-                "Greetings, %s, on average you have completed %d of your %d quests!",
-                $user->getUsername(),
-                $completedAverage,
-                $totalQuests
+            return $this->render('dashboard.html.twig', [
+                'message' => sprintf(
+                    'Greetings, %s, on average you have completed %d of your %d quests!',
+                    $user->getUsername(),
+                    $completedAverage,
+                    $totalQuests
                 ),
-            'quote' => $this->randomQuote->getQuote(),
-            'begin' => $this->handleRedirect($totalQuests),
+                'quote' => $this->randomQuote->getQuote(),
+                'begin' => $this->handleRedirect($totalQuests),
             ]);
+        } catch (\Throwable) {
+            return $this->render('error.html.twig', [
+                'code' => 403,
+                'title' => 'Access restricted',
+                'message' => 'You don\'t have permission to view this content.',
+            ]);
+        }
     }
 
     private function handleRedirect(int $totalQuests): string
     {
-        if($totalQuests === 0){
+        if (0 === $totalQuests) {
             return '/weakling';
         }
+
         return '/quests';
     }
 }
