@@ -12,8 +12,6 @@ use Lexgur\GondorGains\Model\Challenge;
 use Lexgur\GondorGains\Repository\ChallengeModelRepository;
 use Lexgur\GondorGains\Script\RunMigrationsScript;
 use PHPUnit\Framework\TestCase;
-use function PHPUnit\Framework\assertNotEmpty;
-use function PHPUnit\Framework\assertNotNull;
 
 class ChallengeModelRepositoryTest extends TestCase
 {
