@@ -12,6 +12,8 @@ use Lexgur\GondorGains\Model\Challenge;
 use Lexgur\GondorGains\Repository\ChallengeModelRepository;
 use Lexgur\GondorGains\Script\RunMigrationsScript;
 use PHPUnit\Framework\TestCase;
+use function PHPUnit\Framework\assertNotEmpty;
+use function PHPUnit\Framework\assertNotNull;
 
 class ChallengeModelRepositoryTest extends TestCase
 {
@@ -60,6 +62,42 @@ class ChallengeModelRepositoryTest extends TestCase
         $existingChallenge = $this->repository->fetchById($challengeId);
 
         $this->assertEquals($challengeId, $existingChallenge->getChallengeId());
+    }
+
+    public function testFetchAllChallengesReturnsAllChallenges(): void
+    {
+        $challenge = new Challenge(
+            userId: 1,
+            startedAt: new DateTime('2025-01-01'),
+            completedAt: new DateTime('2025-01-02')
+        );
+        $this->repository->insert($challenge);
+
+        $challenge2 = new Challenge(
+            userId: 1,
+            startedAt: new DateTime('2025-01-02'),
+            completedAt: new DateTime('2025-01-03')
+        );
+        $this->repository->insert($challenge2);
+
+        $challenge3 = new Challenge(
+            userId: 1,
+            startedAt: new DateTime('2025-01-03'),
+            completedAt: new DateTime('2025-01-04')
+        );
+        $this->repository->insert($challenge3);
+
+        $challenge4 = new Challenge(
+            userId: 1,
+            startedAt: new DateTime('2025-01-04'),
+            completedAt: new DateTime('2025-01-05')
+        );
+        $this->repository->insert($challenge4);
+
+        $allChallenges = $this->repository->fetchAllChallenges();
+
+        $this->assertNotEmpty($allChallenges);
+        $this->assertCount(4, $allChallenges);
     }
 
     public function testFetchByIdThrowsChallengeNotFoundExceptionWhenChallengeDoesNotExist(): void

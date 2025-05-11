@@ -50,6 +50,22 @@ class ChallengeModelRepository extends BaseRepository implements ChallengeModelR
         ]);
     }
 
+    public function fetchAllChallenges(): array
+    {
+        $statement = $this->connection->connect()->prepare('SELECT * FROM `challenges`');
+        $statement->execute();
+        $rows = $statement->fetchAll(PDO::FETCH_ASSOC);
+
+        return array_map(function ($row) {
+            return Challenge::create([
+                'id' => (int)$row['id'],
+                'user_id' => (int)$row['user_id'],
+                'started_at' => new \DateTimeImmutable($row['started_at']),
+                'completed_at' => $row['completed_at'] ? new \DateTimeImmutable($row['completed_at']) : null
+            ]);
+        }, $rows);
+    }
+
     public function update(Challenge $challenge): Challenge
     {
         $statement = $this->connection->connect()->prepare('UPDATE `challenges` SET `user_id` = :user_id, `started_at` = :started_at, `completed_at` = :completed_at WHERE `id` = :id');
