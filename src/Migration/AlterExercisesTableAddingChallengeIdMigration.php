@@ -22,7 +22,7 @@ class AlterExercisesTableAddingChallengeIdMigration implements MigrationInterfac
     public function migrate(): void
     {
         echo static::class . PHP_EOL;
-        $this->addChallengeIdColumn();
+        $this->addChallengeIdColumn();;
     }
 
     private function addChallengeIdColumn(): void
@@ -31,7 +31,7 @@ class AlterExercisesTableAddingChallengeIdMigration implements MigrationInterfac
 
         $database->exec("
             ALTER TABLE exercises 
-            ADD COLUMN challenge_id INTEGER REFERENCES challenges(id) ON DELETE SET NULL;
+            ADD COLUMN challenge_id INTEGER REFERENCES challenges(id);
         ");
     }
 }

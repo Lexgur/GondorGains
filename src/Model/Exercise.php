@@ -71,7 +71,7 @@ class Exercise
 
         return new Exercise(
             name: $data['name'],
-            muscleGroup: MuscleGroup::from($muscleGroup),
+            muscleGroup: $muscleGroup instanceof MuscleGroup ? $muscleGroup : MuscleGroup::from($muscleGroup),
             description: $data['description'],
             exerciseId: $data['id'] ?? null
         );
