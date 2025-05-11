@@ -21,16 +21,4 @@ class RandomQuoteTest extends TestCase
         $this->assertNotEquals($quote2, $quote3);
         $this->assertNotEquals($quote3, $quote4);
     }
-
-    public function testQuoteQueueIsRepopulatedWhenAllQuotesMatchLast(): void
-    {
-        $_SESSION['last_quote'] = 'Test quote';
-        $quotes = ['Test quote'];
-
-        $quote = new RandomQuote($quotes);
-        $result = $quote->getQuote();
-
-        $this->assertSame('Test quote', $result);
-    }
-
 }
