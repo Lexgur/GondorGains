@@ -69,9 +69,13 @@ class Exercise
     {
         $muscleGroup = $data['muscle_group'];
 
+        if (is_string($muscleGroup)) {
+            $muscleGroup = MuscleGroup::from($muscleGroup);
+        }
+
         return new Exercise(
             name: $data['name'],
-            muscleGroup: $muscleGroup instanceof MuscleGroup ? $muscleGroup : MuscleGroup::from($muscleGroup),
+            muscleGroup: $muscleGroup,
             description: $data['description'],
             exerciseId: $data['id'] ?? null
         );
