@@ -62,6 +62,50 @@ class ChallengeModelRepositoryTest extends TestCase
         $this->assertEquals($challengeId, $existingChallenge->getChallengeId());
     }
 
+    public function testFetchAllChallengesReturnsAllChallenges(): void
+    {
+        $challenge = new Challenge(
+            userId: 1,
+            startedAt: new DateTime('2025-01-01'),
+            completedAt: new DateTime('2025-01-02')
+        );
+        $this->repository->insert($challenge);
+
+        $challenge2 = new Challenge(
+            userId: 1,
+            startedAt: new DateTime('2025-01-02'),
+            completedAt: new DateTime('2025-01-03')
+        );
+        $this->repository->insert($challenge2);
+
+        $challenge3 = new Challenge(
+            userId: 1,
+            startedAt: new DateTime('2025-01-03'),
+            completedAt: new DateTime('2025-01-04')
+        );
+        $this->repository->insert($challenge3);
+
+        $challenge4 = new Challenge(
+            userId: 1,
+            startedAt: new DateTime('2025-01-04'),
+            completedAt: new DateTime('2025-01-05')
+        );
+        $this->repository->insert($challenge4);
+
+        $allChallenges = $this->repository->fetchAllChallenges();
+
+        $this->assertNotEmpty($allChallenges);
+        $this->assertCount(4, $allChallenges);
+    }
+
+    public function testFetchAllChallengesWithoutChallengesReturnsEmptyArray(): void
+    {
+        $allChallenges = $this->repository->fetchAllChallenges();
+
+        $this->assertEquals([] ,$allChallenges);
+        $this->assertCount(0, $allChallenges);
+    }
+
     public function testFetchByIdThrowsChallengeNotFoundExceptionWhenChallengeDoesNotExist(): void
     {
         $this->expectException(ChallengeNotFoundException::class);
@@ -111,11 +155,13 @@ class ChallengeModelRepositoryTest extends TestCase
             startedAt: new DateTime('2025-01-01'),
             completedAt: new DateTime('2025-01-02')
         );
-        $insertedChallenge = $this->repository->insert($challenge);
-        $insertedChallenge->setCompletedAt(new DateTime('2025-01-03'));
+        $savedChallenge = $this->repository->save($challenge);
 
-        $this->assertNotNull($insertedChallenge->getChallengeId());
-        $this->assertEquals(new DateTime('2025-01-03'), $insertedChallenge->getCompletedAt());
+        $savedChallenge->setCompletedAt(new DateTime('2025-01-03'));
+        $updatedChallenge = $this->repository->save($savedChallenge);
+
+        $this->assertNotNull($savedChallenge->getChallengeId());
+        $this->assertEquals(new DateTime('2025-01-03'), $updatedChallenge->getCompletedAt());
     }
 
     public function testSuccessfulChallengeDeletion(): void

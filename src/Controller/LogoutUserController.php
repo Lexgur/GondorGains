@@ -22,17 +22,22 @@ class LogoutUserController extends AbstractController
         $this->currentUser = $currentUser;
         $this->session = $session;
     }
-
-    /**
-     * @throws ForbiddenException
-     */
     public function __invoke(): string
     {
-            if ($this->currentUser->isLoggedIn()) {
-                $this->session->destroy();
-                header('Location: /login', true, 302);
-                return '';
+        try {
+            if (!$this->currentUser->isLoggedIn()) {
+                throw new ForbiddenException('User not logged in.');
             }
-            throw new ForbiddenException('User not logged in.');
+
+            $this->session->destroy();
+            header('Location: /login', true, 302);
+            return '';
+        } catch (\Throwable) {
+            return $this->render('error.html.twig', [
+                'code' => 403,
+                'title' => 'Access restricted',
+                'message' => 'You don\'t have permission to view this content.',
+            ]);
+        }
     }
 }

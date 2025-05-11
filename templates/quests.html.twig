@@ -5,8 +5,23 @@
 {% block content %}
     <div class="dashboard-container">
         <header class="welcome-message">
-            <h1>Quests</h1>
+            <h2>{{ message }}</h2>
         </header>
+        {% if challenges is not empty %}
+            <ul>
+                {% for challenge in challenges %}
+                    <li>
+                        Quest #{{ challenge.id }}<br>
+                        Started at: {{ challenge.started_at }}<br>
+                        Completed at: {{ challenge.completed_at }}<br>
+                        <a href="/quests/view/{{ challenge.id }}" class="btn">View</a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No completed quests yet.</p>
+        {% endif %}
         {% include "quote.html.twig" %}
+        <button class="quest-button" onclick="window.location.href='{{ quest }}';">Start your daily quest</button>
     </div>
 {% endblock %}

@@ -37,7 +37,6 @@ class LoginUserController extends AbstractController
     {
         if ($this->currentUser->isLoggedIn()) {
             header('Location: /dashboard', true, 302);
-
             return '';
         }
 
@@ -48,24 +47,19 @@ class LoginUserController extends AbstractController
                 $email = $data['email'];
 
                 $this->passwordValidator->validate($password);
-
-                try {
-                    $registeredUser = $this->repository->findByEmail($email);
-                } catch (UserNotFoundException) {
-                    header('Location: /register', true, 302);
-
-                    return '';
-                }
+                $registeredUser = $this->repository->findByEmail($email);
 
                 PasswordVerifier::verify($password, $registeredUser->getUserPassword());
 
                 $this->session->start($registeredUser);
                 header('Location: /dashboard');
-
+                return '';
+            } catch (UserNotFoundException) {
+                header('Location: /register', true, 302);
                 return '';
             } catch (\Throwable) {
                 return $this->render('login.html.twig', [
-                    'error' => 'Invalid login credentials. Please try again.',
+                    'error' => 'You don\'t have permission to view this content.',
                 ]);
             }
         }
