@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Lexgur\GondorGains\Tests;
+namespace Lexgur\GondorGains\Tests\Service;
 
 use Lexgur\GondorGains\Exception\WeakPasswordException;
 use Lexgur\GondorGains\Service\PasswordHasher;
