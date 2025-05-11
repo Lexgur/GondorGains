@@ -82,6 +82,7 @@ input[type="password"] {
 }
 
 button {
+    font-family: 'Cinzel', serif;
     width: 100%;
     margin-top: 1.5rem;
     background: linear-gradient(135deg, #0b0d12, #2a3a4f, #d3d3d3);
@@ -89,7 +90,7 @@ button {
     border: none;
     padding: 0.8rem;
     font-size: 1.1rem;
-    font-weight: bold;
+    font-weight: 500;
     text-transform: uppercase;
     border-radius: 5px;
     cursor: pointer;
@@ -148,6 +149,12 @@ button:hover {
     width: 70px;
     height: 70px;
     animation: horseRide 7s linear infinite;
+}
+
+.quest-button {
+    display: block;
+    width: 50%;
+    margin: 2rem auto 0 auto;
 }
 @keyframes horseRide {
     0% {

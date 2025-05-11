@@ -8,7 +8,9 @@ use Lexgur\GondorGains\Attribute\Path;
 use Lexgur\GondorGains\Exception\ForbiddenException;
 use Lexgur\GondorGains\Exception\NotFoundException;
 use Lexgur\GondorGains\Exception\UserNotFoundException;
+use Lexgur\GondorGains\Repository\ChallengeModelRepository;
 use Lexgur\GondorGains\Repository\UserModelRepository;
+use Lexgur\GondorGains\Service\CurrentUser;
 use Lexgur\GondorGains\Service\RandomQuote;
 use Lexgur\GondorGains\TemplateProvider;
 
@@ -19,12 +21,17 @@ class DashboardController extends AbstractController
 
     private RandomQuote $randomQuote;
 
-    public function __construct(UserModelRepository $userRepository, TemplateProvider $templateProvider, RandomQuote $randomQuote)
+    private ChallengeModelRepository $challengeRepository;
+
+    private CurrentUser $currentUser;
+
+    public function __construct(UserModelRepository $userRepository, TemplateProvider $templateProvider, RandomQuote $randomQuote, ChallengeModelRepository $challengeRepository, CurrentUser $currentUser)
     {
         parent::__construct($templateProvider);
         $this->userRepository = $userRepository;
         $this->randomQuote = $randomQuote;
-
+        $this->challengeRepository = $challengeRepository;
+        $this->currentUser = $currentUser;
     }
     /**
      * @throws ForbiddenException
@@ -32,19 +39,16 @@ class DashboardController extends AbstractController
      */
     public function __invoke(): string
     {
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
-        if (!isset($_SESSION['id'])) {
+        if ($this->currentUser->isAnonymous()) {
             throw new ForbiddenException();
         }
         $userId = (int)$_SESSION['id'];
         $user = $this->userRepository->fetchById($userId);
-        if (!$user) {
-            throw new NotFoundException("User not found.");
-        }
-        $completedAverage = 0;
-        $totalQuests = 0;
+        $userChallenges = $this->challengeRepository->fetchAllChallenges();
+
+        $completedChallenges = array_filter($userChallenges, fn($challenge) => $challenge->getUserId() === $userId && $challenge->getCompletedAt() !== null);
+        $completedAverage = count($completedChallenges);
+        $totalQuests = count($userChallenges);
 
         return $this->render('dashboard.html.twig', [
             'message' => sprintf(
@@ -54,6 +58,15 @@ class DashboardController extends AbstractController
                 $totalQuests
                 ),
             'quote' => $this->randomQuote->getQuote(),
+            'begin' => $this->handleRedirect($totalQuests),
             ]);
+    }
+
+    private function handleRedirect(int $totalQuests): string
+    {
+        if($totalQuests === 0){
+            return '/weakling';
+        }
+        return '/quests';
     }
 }
