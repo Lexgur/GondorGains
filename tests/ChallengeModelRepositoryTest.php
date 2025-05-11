@@ -100,6 +100,14 @@ class ChallengeModelRepositoryTest extends TestCase
         $this->assertCount(4, $allChallenges);
     }
 
+    public function testFetchAllChallengesWithoutChallengesReturnsEmptyArray(): void
+    {
+        $allChallenges = $this->repository->fetchAllChallenges();
+
+        $this->assertEquals([] ,$allChallenges);
+        $this->assertCount(0, $allChallenges);
+    }
+
     public function testFetchByIdThrowsChallengeNotFoundExceptionWhenChallengeDoesNotExist(): void
     {
         $this->expectException(ChallengeNotFoundException::class);
@@ -149,11 +157,13 @@ class ChallengeModelRepositoryTest extends TestCase
             startedAt: new DateTime('2025-01-01'),
             completedAt: new DateTime('2025-01-02')
         );
-        $insertedChallenge = $this->repository->insert($challenge);
-        $insertedChallenge->setCompletedAt(new DateTime('2025-01-03'));
+        $savedChallenge = $this->repository->save($challenge);
 
-        $this->assertNotNull($insertedChallenge->getChallengeId());
-        $this->assertEquals(new DateTime('2025-01-03'), $insertedChallenge->getCompletedAt());
+        $savedChallenge->setCompletedAt(new DateTime('2025-01-03'));
+        $updatedChallenge = $this->repository->save($savedChallenge);
+
+        $this->assertNotNull($savedChallenge->getChallengeId());
+        $this->assertEquals(new DateTime('2025-01-03'), $updatedChallenge->getCompletedAt());
     }
 
     public function testSuccessfulChallengeDeletion(): void
