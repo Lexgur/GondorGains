@@ -7,8 +7,10 @@
         <h1>Quest Started!</h1>
         <p>Started at: {{ challenge.startedAt|date("Y-m-d H:i:s") }}</p>
 
-        <form method="POST" action="/daily-quest/complete">
-            <input type="hidden" name="challenge_id" value="{{ challenge.challengeId }}">
+        <form method="POST" action="/daily-quest/start">
+            <input type="hidden" name="user_id" value="{{ challenge.user_id }}">
+            <input type="hidden" name="started_at" value="{{ challenge.started_at|date("Y-m-d H:i:s") }}">
+            <input type="hidden" name="completed_at" value="{{ challenge.completed_at|date("Y-m-d H:i:s") }}">
             <button type="submit">MARK AS DONE</button>
         </form>
     </div>

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Lexgur\GondorGains\Controller;
 
 use Lexgur\GondorGains\Attribute\Path;
@@ -13,7 +15,6 @@ use Lexgur\GondorGains\TemplateProvider;
 class CreateChallengeController extends AbstractController
 {
     private CurrentUser $currentUser;
-
     private ChallengeModelRepository $challengeRepository;
 
     public function __construct(TemplateProvider $templateProvider, CurrentUser $currentUser, ChallengeModelRepository $challengeRepository)
@@ -28,29 +29,28 @@ class CreateChallengeController extends AbstractController
         if ($this->currentUser->isAnonymous()) {
             throw new ForbiddenException();
         }
+
         if ($this->isPostRequest()) {
             try {
-                $userId = (int) $_SESSION['id'];
+                $userId = (int)$_SESSION['id'];
                 $startedAt = new \DateTimeImmutable();
+
                 $challenge = new Challenge(
                     userId: $userId,
                     startedAt: $startedAt
                 );
-
+                $challenge->setCompletedAt(new \DateTimeImmutable());
                 $this->challengeRepository->save($challenge);
-
-                return $this->render('challenge_started.html.twig', [
-                    'challenge' => $challenge,
-                ]);
-            } catch (\Throwable) {
+                header('Location: /quests');
+                return '';
+            } catch (\Throwable $e) {
                 return $this->render('error.html.twig', [
-                    'code' => 403,
-                    'title' => 'Access restricted',
-                    'message' => 'You don\'t have permission to view this content.',
+                    'code' => 500,
+                    'title' => 'Failed to start your challenge',
+                    'message' => $e->getMessage(),
                 ]);
             }
         }
-
         return $this->render('challenge_started.html.twig');
     }
 }
