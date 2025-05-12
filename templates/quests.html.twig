@@ -7,21 +7,38 @@
         <header class="welcome-message">
             <h2>{{ message }}</h2>
         </header>
+
         {% if challenges is not empty %}
-            <ul>
+            <table class="quest-table">
+                <thead>
+                <tr>
+                    <th>Quest</th>
+                    <th>Started At</th>
+                    <th>Completed At</th>
+                    <th>Action</th>
+                </tr>
+                </thead>
+                <tbody>
                 {% for challenge in challenges %}
-                    <li>
-                        Quest #{{ challenge.id }}<br>
-                        Started at: {{ challenge.started_at }}<br>
-                        Completed at: {{ challenge.completed_at }}<br>
-                        <a href="/quests/view/{{ challenge.id }}" class="btn">View</a>
-                    </li>
+                    <tr>
+                        <td>Quest #{{ loop.index }}</td>
+                        <td>{{ challenge.started_at }}</td>
+                        <td>{{ challenge.completed_at }}</td>
+                        <td>
+                            <div class="button-cell">
+                                <a href="/daily-quest/{{ challenge.id }}/" class="quest-link">View</a>
+                            </div>
+                        </td>
+                    </tr>
                 {% endfor %}
-            </ul>
+                </tbody>
+            </table>
         {% else %}
             <p>No completed quests yet.</p>
         {% endif %}
+
         {% include "quote.html.twig" %}
+
         <button class="quest-button" onclick="window.location.href='{{ quest }}';">Start your daily quest</button>
     </div>
 {% endblock %}

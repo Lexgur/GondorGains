@@ -47,7 +47,7 @@ class CreateChallengeController extends AbstractController
                 return $this->render('error.html.twig', [
                     'code' => 500,
                     'title' => 'Failed to start your challenge',
-                    'message' => $e->getMessage(),
+                    'message' => 'Our team has been notified. Please try again later.',
                 ]);
             }
         }
