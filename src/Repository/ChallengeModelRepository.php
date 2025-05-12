@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Lexgur\GondorGains\Repository;
 
+use Exception;
 use Lexgur\GondorGains\Exception\ChallengeNotFoundException;
 use Lexgur\GondorGains\Model\Challenge;
 use PDO;
@@ -50,6 +51,7 @@ class ChallengeModelRepository extends BaseRepository implements ChallengeModelR
         ]);
     }
 
+    /** @return Challenge[] */
     public function fetchAllChallenges(): array
     {
         $statement = $this->connection->connect()->prepare('SELECT * FROM `challenges`');

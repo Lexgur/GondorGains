@@ -12,6 +12,15 @@ use Lexgur\GondorGains\Service\Session;
 
 class CreateChallengeWebTest extends WebTestCase
 {
+
+    private Container $container;
+
+    private UserModelRepository $userModelRepository;
+
+    private Session $session;
+
+    private Connection $database;
+
     public function setUp(): void
     {
         $_ENV['IS_WEB_TEST'] = 'true';
