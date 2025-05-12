@@ -25,6 +25,19 @@ class ChallengeTest extends TestCase
         $this->assertEquals($completedAt, $challenge->getCompletedAt());
     }
 
+    public function testSetUserIdCorrectlySetsUserId(): void
+    {
+        $userId = 1;
+        $newUserId = 42;
+        $startedAt = new \DateTime('2025-05-06');
+        $completedAt = new \DateTime('2025-05-07');
+        $challenge = new Challenge($userId, $startedAt, $completedAt);
+
+        $challenge->setUserId($newUserId);
+
+        $this->assertEquals($newUserId, $challenge->getUserId());
+    }
+
     public function testConstructorThrowsTypeErrorWhenInvalidArgumentIsProvided(): void
     {
 
