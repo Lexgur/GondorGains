@@ -112,12 +112,27 @@ class ExerciseModelRepositoryTest extends TestCase
         $insertedExercise->setName('NewTests');
         $insertedExercise->setDescription('new-test');
         $insertedExercise->setMuscleGroup(MuscleGroup::ARMS);
+        $this->repository->save($insertedExercise);
 
         $this->assertNotNull($insertedExercise->getExerciseId());
         $this->assertEquals('NewTests', $insertedExercise->getName());
         $this->assertEquals('new-test', $insertedExercise->getDescription());
         $this->assertEquals(MuscleGroup::ARMS, $insertedExercise->getMuscleGroup());
     }
+
+    public function testInsertIsCalledWhenExerciseIdIsNull(): void
+    {
+        $exercise = new Exercise(
+            name: 'Test',
+            muscleGroup: MuscleGroup::CHEST,
+            description: 'good exercise',
+            exerciseId: null
+        );
+        $insertedExercise = $this->repository->save($exercise);
+
+        $this->assertNotNull($insertedExercise->getExerciseId());
+    }
+
 
     public function testSuccessfulExerciseDeletion(): void
     {
