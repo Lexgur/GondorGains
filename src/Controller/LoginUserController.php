@@ -52,11 +52,9 @@ class LoginUserController extends AbstractController
                 PasswordVerifier::verify($password, $registeredUser->getUserPassword());
 
                 $this->session->start($registeredUser);
-                header('Location: /dashboard');
-                return '';
+                $this->redirect('/dashboard');
             } catch (UserNotFoundException) {
-                header('Location: /register', true, 302);
-                return '';
+                $this->redirect('/register');
             } catch (\Throwable) {
                 return $this->render('login.html.twig', [
                     'error' => 'You don\'t have permission to view this content.',

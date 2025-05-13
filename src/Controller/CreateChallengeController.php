@@ -42,9 +42,7 @@ class CreateChallengeController extends AbstractController
                 );
                 $challenge->setCompletedAt(new \DateTimeImmutable());
                 $this->challengeRepository->save($challenge);
-                header('Location: /quests');
-
-                return '';
+                $this->redirect('/quests');
             }
         }
 
