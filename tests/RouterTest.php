@@ -28,10 +28,15 @@ class RouterTest extends TestCase
     }
 
     #[DataProvider('provideTestGetControllerData')]
-    final public function testGetController(string $routePath, string $expectedController): void
+    final public function testGetController(string $routePath, string $expectedController, array $expectedParams): void
     {
-        $controller = $this->router->getController($routePath);
+        $result = $this->router->getController($routePath);
+        $controller = $result[0];
+        $params = $result[1];
+
+
         $this->assertSame($expectedController, $controller);
+        $this->assertSame($expectedParams, $params);
     }
 
     #[DataProvider('provideTestGetControllerThrowsIncorrectRoutePathException')]
@@ -40,7 +45,7 @@ class RouterTest extends TestCase
         $this->expectException(NotFoundException::class);
 
         $controller = $this->router->getController($routePath);
-        $this->assertSame($expectedController, $controller);
+        $this->assertSame($expectedController, $controller[0]);
     }
 
     final public function testIncorrectPathThrowsIncorrectRoutePathException(): void
@@ -73,12 +78,12 @@ class RouterTest extends TestCase
         }
     }
 
-    /** @return array<int, array<int,string>> */
+    /** @return array<int, array<int,mixed>> */
     public static function provideTestGetControllerData(): array
     {
         return [
-            ['/about', AboutProjectController::class],
-            ['/daily-quest/11', ViewChallengeController::class],
+            ['/about', AboutProjectController::class, []],
+            ['/daily-quest/11', ViewChallengeController::class, ['id' => '11']],
         ];
     }
 

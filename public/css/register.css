@@ -180,6 +180,13 @@ button:hover {
     transition: all 0.9s ease;
 }
 
+.link-group {
+    display: flex;
+    gap: 2rem;
+    margin-left: 1rem;
+    justify-content: center;
+}
+
 @keyframes horseRide {
     0% {
         left: -100px;

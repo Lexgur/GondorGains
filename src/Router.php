@@ -78,14 +78,20 @@ class Router
         throw new NotFoundException('Class not found: ' . $filePath);
     }
 
-    public function getController(string $routePath): string
+    public function getController(string $routePath): array
     {
         foreach ($this->routes as $routePattern => $controllerClass) {
             $regexPattern = preg_replace('/:(\w+)/', '(?P<$1>\d+)', $routePattern);
             $regexPattern = '#^' . $regexPattern . '$#';
 
-            if (preg_match($regexPattern, $routePath)) {
-                return $controllerClass;
+            if (preg_match($regexPattern, $routePath, $matches)) {
+                $params = array_filter($matches, 'is_string', ARRAY_FILTER_USE_KEY);
+                foreach ($params as $key => $value) {
+                    if (is_numeric($value)) {
+                        $params[$key] = (int)$value;
+                    }
+                }
+                return [$controllerClass, $params];
             }
         }
 

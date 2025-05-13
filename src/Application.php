@@ -31,12 +31,13 @@ class Application
 
             if (empty($routePath) || $routePath === '/') {
                 $controller = $this->container->get(AboutProjectController::class);
+                $params = [];
             } else {
-                $controllerClass = $this->router->getController($routePath);
+                list($controllerClass, $params) = $this->router->getController($routePath);
                 $controller = $this->container->get($controllerClass);
             }
             http_response_code(200);
-            print $controller();
+            print $controller(...$params);
 
         } catch (\Throwable $error) {
             $errorController = $this->container->get(ErrorController::class);

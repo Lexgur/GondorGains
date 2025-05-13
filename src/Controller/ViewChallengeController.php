@@ -17,33 +17,26 @@ class ViewChallengeController extends AbstractController
 
     private ChallengeModelRepository $challengeRepository;
 
-    private Challenge $challenge;
-
-    public function __construct(TemplateProvider $templateProvider, CurrentUser $currentUser, ChallengeModelRepository $challengeRepository, Challenge $challenge)
+    public function __construct(TemplateProvider $templateProvider, CurrentUser $currentUser, ChallengeModelRepository $challengeRepository)
     {
         parent::__construct($templateProvider);
         $this->currentUser = $currentUser;
         $this->challengeRepository = $challengeRepository;
-        $this->challenge = $challenge;
     }
 
     /**
      * @throws ChallengeNotFoundException
      * @throws ForbiddenException
      */
-    public function __invoke(): string
+    public function __invoke(int $id): string
     {
         if ($this->currentUser->isAnonymous()) {
             throw new ForbiddenException();
         }
 
         $user = $this->currentUser->getUser();
-        $challengeId = $this->challenge->getChallengeId();
-        $challenge = $this->challengeRepository->fetchById($challengeId);
+        $challenge = $this->challengeRepository->fetchById($id);
 
-        if (!$challenge) {
-            throw new ChallengeNotFoundException("Challenge not found.");
-        }
         if ($challenge->getUserId() !== $user->getUserId()) {
             throw new ForbiddenException();
         }

@@ -12,11 +12,9 @@
 
         <p>{{ message }}</p>
 
-        <a href="{% if isCompleted %}/quests{% else %}/daily-quest/start{% endif %}">
-            <button type="button">{{ isCompleted ? 'Back' : 'Try again' }}</button>
-        </a>
-        <a href="/quests">
-            <button type="button">Back</button>
-        </a>
+        <div class="link-group">
+            <a href="/quests" class="quest-link">Back</a>
+            <a href="/daily-quest/start" class="quest-link">Try again</a>
+        </div>
     </div>
 {% endblock %}
