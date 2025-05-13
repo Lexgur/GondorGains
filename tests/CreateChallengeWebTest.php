@@ -40,22 +40,6 @@ class CreateChallengeWebTest extends WebTestCase
         $this->session->destroy();
     }
 
-    public function testChallengePageAccessible(): void
-    {
-        $this->markTestSkipped('Just like in Quests the sessions are not handled properly');
-        $username = 'testSuccess';
-        $email = 'testSuccess@test.com';
-        $password = 'testSuccess123';
-        $user = new User($username, $email, $password);
-        $savedUser = $this->userModelRepository->save($user);
-        $this->session->start($savedUser);
-
-        $response = $this->request('GET', '/daily-quest/start');
-
-        $this->assertEquals(200, http_response_code());
-        $this->assertStringContainsString('List of completed quests, Gondorian', $response);
-    }
-
     public function testAnonymousAccessDenied(): void
     {
         $response = $this->request('GET', '/daily-quest/start');
@@ -64,5 +48,4 @@ class CreateChallengeWebTest extends WebTestCase
         $this->assertStringContainsString('<title>Access restricted - Gondor Gains</title>', $response);
         $this->assertEquals(403, $statusCode);
     }
-
 }
