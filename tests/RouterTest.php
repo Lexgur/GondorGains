@@ -83,7 +83,7 @@ class RouterTest extends TestCase
     {
         return [
             ['/about', AboutProjectController::class, []],
-            ['/daily-quest/11', ViewChallengeController::class, ['id' => '11']],
+            ['/daily-quest/11', ViewChallengeController::class, ['id' => 11]],
         ];
     }
 
