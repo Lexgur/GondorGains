@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Lexgur\GondorGains\Controller;
 
 use Lexgur\GondorGains\Attribute\Path;
+use Lexgur\GondorGains\Exception\BadRequestException;
 use Lexgur\GondorGains\Exception\ForbiddenException;
 use Lexgur\GondorGains\Model\Challenge;
 use Lexgur\GondorGains\Repository\ChallengeModelRepository;
@@ -31,24 +32,23 @@ class CreateChallengeController extends AbstractController
         }
 
         if ($this->isPostRequest()) {
-            try {
-                $userId = (int)$_SESSION['id'];
-                $startedAt = new \DateTimeImmutable();
+            if ($_POST['action'] === 'challenge-complete') {
+                try {
+                    $user = $this->currentUser->getUser();
+                    $userId = $user->getUserId();
+                    $startedAt = new \DateTimeImmutable();
 
-                $challenge = new Challenge(
-                    userId: $userId,
-                    startedAt: $startedAt
-                );
-                $challenge->setCompletedAt(new \DateTimeImmutable());
-                $this->challengeRepository->save($challenge);
-                header('Location: /quests');
-                return '';
-            } catch (\Throwable $e) {
-                return $this->render('error.html.twig', [
-                    'code' => 500,
-                    'title' => 'Failed to start your challenge',
-                    'message' => 'Our team has been notified. Please try again later.',
-                ]);
+                    $challenge = new Challenge(
+                        userId: $userId,
+                        startedAt: $startedAt
+                    );
+                    $challenge->setCompletedAt(new \DateTimeImmutable());
+                    $this->challengeRepository->save($challenge);
+                    header('Location: /quests');
+                    return '';
+                } catch (\Throwable) {
+                    throw new BadRequestException();
+                }
             }
         }
         return $this->render('challenge_started.html.twig');

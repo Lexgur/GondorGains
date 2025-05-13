@@ -11,7 +11,7 @@
             <input type="hidden" name="user_id" value="{{ challenge.user_id }}">
             <input type="hidden" name="started_at" value="{{ challenge.started_at|date("Y-m-d H:i:s") }}">
             <input type="hidden" name="completed_at" value="{{ challenge.completed_at|date("Y-m-d H:i:s") }}">
-            <button type="submit">MARK AS DONE</button>
+            <button type="submit" value="challenge-complete" name="action">MARK AS DONE</button>
         </form>
     </div>
 {% endblock %}
