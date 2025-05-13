@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Lexgur\GondorGains\Tests;
 
 use Lexgur\GondorGains\Controller\AboutProjectController;
+use Lexgur\GondorGains\Controller\ViewChallengeController;
 use Lexgur\GondorGains\Exception\NotFoundException;
 use Lexgur\GondorGains\Router;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -77,6 +78,7 @@ class RouterTest extends TestCase
     {
         return [
             ['/about', AboutProjectController::class],
+            ['/daily-quest/11', ViewChallengeController::class],
         ];
     }
 

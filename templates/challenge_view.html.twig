@@ -1,0 +1,22 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Challenge Details{% endblock %}
+
+{% block content %}
+    <div class="challenge-view">
+        <p>Started At: {{ challenge.started_at|date('Y-m-d H:i') }}</p>
+
+        {% if challenge.completed_at %}
+            <p>Completed At: {{ challenge.completed_at|date('Y-m-d H:i') }}</p>
+        {% endif %}
+
+        <p>{{ message }}</p>
+
+        <a href="{% if isCompleted %}/quests{% else %}/daily-quest/start{% endif %}">
+            <button type="button">{{ isCompleted ? 'Back' : 'Try again' }}</button>
+        </a>
+        <a href="/quests">
+            <button type="button">Back</button>
+        </a>
+    </div>
+{% endblock %}

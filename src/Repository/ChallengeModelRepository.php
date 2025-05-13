@@ -68,6 +68,28 @@ class ChallengeModelRepository extends BaseRepository implements ChallengeModelR
         }, $rows);
     }
 
+    /**
+     * @throws ChallengeNotFoundException
+     * @throws Exception
+     */
+    public function viewChallenge(int $challengeId, int $userId): Challenge
+    {
+        $statement = $this->connection->connect()->prepare('SELECT * FROM `challenges` WHERE `id` = :id AND `user_id` = :user_id');
+        $statement->execute([':id' => $challengeId, ':user_id' => $userId]);
+        $row = $statement->fetch(PDO::FETCH_ASSOC);
+
+        if (!$row) {
+            throw new ChallengeNotFoundException("Challenge not found or you do not have access to it.");
+        }
+
+        return Challenge::create([
+            'id' => (int)$row['id'],
+            'user_id' => (int)$row['user_id'],
+            'started_at' => new \DateTimeImmutable($row['started_at']),
+            'completed_at' => $row['completed_at'] ? new \DateTimeImmutable($row['completed_at']) : null
+        ]);
+    }
+
     public function update(Challenge $challenge): Challenge
     {
         $statement = $this->connection->connect()->prepare('UPDATE `challenges` SET `user_id` = :user_id, `started_at` = :started_at, `completed_at` = :completed_at WHERE `id` = :id');
