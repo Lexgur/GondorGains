@@ -34,11 +34,6 @@ class Challenge
         return $this->userId;
     }
 
-    public function setUserId(int $userId): void
-    {
-        $this->userId = $userId;
-    }
-
     public function getStartedAt(): DateTimeInterface
     {
         return $this->startedAt;
