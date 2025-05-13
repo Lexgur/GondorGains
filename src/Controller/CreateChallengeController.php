@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Lexgur\GondorGains\Controller;
 
 use Lexgur\GondorGains\Attribute\Path;
-use Lexgur\GondorGains\Exception\BadRequestException;
 use Lexgur\GondorGains\Exception\ForbiddenException;
 use Lexgur\GondorGains\Model\Challenge;
 use Lexgur\GondorGains\Repository\ChallengeModelRepository;
@@ -32,25 +31,23 @@ class CreateChallengeController extends AbstractController
         }
 
         if ($this->isPostRequest()) {
-            if ($_POST['action'] === 'challenge-complete') {
-                try {
-                    $user = $this->currentUser->getUser();
-                    $userId = $user->getUserId();
-                    $startedAt = new \DateTimeImmutable();
+            if ('challenge-complete' === $_POST['action']) {
+                $user = $this->currentUser->getUser();
+                $userId = $user->getUserId();
+                $startedAt = new \DateTimeImmutable();
 
-                    $challenge = new Challenge(
-                        userId: $userId,
-                        startedAt: $startedAt
-                    );
-                    $challenge->setCompletedAt(new \DateTimeImmutable());
-                    $this->challengeRepository->save($challenge);
-                    header('Location: /quests');
-                    return '';
-                } catch (\Throwable) {
-                    throw new BadRequestException();
-                }
+                $challenge = new Challenge(
+                    userId: $userId,
+                    startedAt: $startedAt
+                );
+                $challenge->setCompletedAt(new \DateTimeImmutable());
+                $this->challengeRepository->save($challenge);
+                header('Location: /quests');
+
+                return '';
             }
         }
+
         return $this->render('challenge_started.html.twig');
     }
 }
