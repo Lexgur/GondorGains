@@ -90,6 +90,10 @@ class ClassFinder
         foreach ($phpFiles as $file) {
                 $path = $file->getPathname();
                 $className = $this->getFullClassName($path);
+
+                if ($className === null) {
+                    continue;
+                }
                 $reflectionClass = new \ReflectionClass($className);
 
                 if ($condition($reflectionClass, $className)) {

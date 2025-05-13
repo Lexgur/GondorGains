@@ -113,6 +113,22 @@ class ClassFinderTest extends TestCase
         $this->assertEquals($expected, $actual);
     }
 
+    public function testGetFullClassNameWithNonExistentPathReturnsNull(): void
+    {
+        $path = 'NoPathLikeThis';
+        $result = $this->classFinder->getFullClassName($path);
+
+        $this->assertNull($result);
+    }
+
+    public function testGetFullClassNameReturnsNullWhenNoClassFound(): void
+    {
+        $path = __DIR__ . '/ClassFinderBadTest/NoMatchFile.php';
+        $result = $this->classFinder->getFullClassName($path);
+
+        $this->assertNull($result);
+    }
+
     /** @return  array<int, list<list<string>|string>> */
     public static function provideTestFindClassesInNamespaceData(): array
     {
