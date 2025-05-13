@@ -49,6 +49,7 @@ class ViewChallengeController extends AbstractController
             'challenge' => $challenge,
             'message' => $message,
             'isCompleted' => $isCompleted,
+            'completed_at' => $challenge->getCompletedAt()->format('Y-m-d H:i')
         ]);
     }
 

@@ -6,8 +6,8 @@
     <div class="challenge-view">
         <p>Started At: {{ challenge.started_at|date('Y-m-d H:i') }}</p>
 
-        {% if challenge.completed_at %}
-            <p>Completed At: {{ challenge.completed_at|date('Y-m-d H:i') }}</p>
+        {% if completed_at %}
+            <p>Completed At: {{ completed_at|date('Y-m-d H:i') }}</p>
         {% endif %}
 
         <p>{{ message }}</p>
