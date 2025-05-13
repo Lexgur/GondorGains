@@ -1,0 +1,13 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Quest Started!{% endblock %}
+
+{% block content %}
+    <div class="form-container">
+        <p>Let's begin, Gondorian!</p>
+
+        <form method="POST" action="/daily-quest/start">
+            <button type="submit" value="challenge-complete" name="action">MARK AS DONE</button>
+        </form>
+    </div>
+{% endblock %}

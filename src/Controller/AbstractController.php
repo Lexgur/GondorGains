@@ -31,4 +31,9 @@ abstract class AbstractController
         return $this->templateProvider->get()->render($template, $params);
     }
 
+    public function redirect(string $path): string
+    {
+        header('Location: ' . $path, true, 302);
+        return '';
+    }
 }

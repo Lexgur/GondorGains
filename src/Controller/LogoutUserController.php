@@ -30,8 +30,7 @@ class LogoutUserController extends AbstractController
             }
 
             $this->session->destroy();
-            header('Location: /login', true, 302);
-            return '';
+            $this->redirect('/login');
         } catch (\Throwable) {
             return $this->render('error.html.twig', [
                 'code' => 403,

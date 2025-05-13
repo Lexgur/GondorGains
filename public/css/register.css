@@ -154,8 +154,32 @@ button:hover {
 .quest-button {
     display: block;
     width: 50%;
-    margin: 2rem auto 0 auto;
+    margin: 2rem auto 1rem auto;
+    text-align: justify-all;
 }
+
+.quest-link {
+    display: inline-block;
+    font-family: 'Cinzel', serif;
+    background: linear-gradient(135deg, #0b0d12, #2a3a4f, #d3d3d3);
+    color: #ffffff;
+    border: none;
+    padding: 0.8rem 1.2rem;
+    font-size: 1.1rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    border-radius: 5px;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+}
+
+.quest-link:hover {
+    background: linear-gradient(135deg, #0b0d12, #212c3e, #f5f5f5);
+    color: #a1a0a0;
+    transition: all 0.9s ease;
+}
+
 @keyframes horseRide {
     0% {
         left: -100px;
@@ -182,4 +206,28 @@ button:hover {
 .horse img {
     width: 100%;
     height: auto;
+}
+
+.quest-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+}
+
+.quest-table th, .quest-table td {
+    border: 1px solid #ccc;
+    padding: 10px;
+    text-align: center;
+    align-items: center;
+}
+
+.quest-table th {
+    background: linear-gradient(135deg, #0b0d12, #2a3a4f, #d3d3d3);
+}
+
+.button-cell {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
 }
