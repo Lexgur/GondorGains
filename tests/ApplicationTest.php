@@ -50,5 +50,4 @@ class ApplicationTest extends WebTestCase
         $this->assertStringContainsString('Login', $output);
         $this->assertEquals(200, $statusCode);
     }
-
 }
