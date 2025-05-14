@@ -33,7 +33,8 @@ class Application
                 $controller = $this->container->get(AboutProjectController::class);
                 $params = [];
             } else {
-                list($controllerClass, $params) = $this->router->getController($routePath);
+                $controllerClass = $this->router->getController($routePath);
+                $params = $this->router->getParameters($routePath);
                 $controller = $this->container->get($controllerClass);
             }
             http_response_code(200);

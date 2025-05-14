@@ -42,19 +42,18 @@ class ViewChallengeController extends AbstractController
         }
 
         $isCompleted = $challenge->getCompletedAt();
-
-        $message = $isCompleted ? 'You have done a great job, completing all '.$this->calculateCompletionPercentage($challenge).'% of the challenges!' : 'You tried with honour completing '.$this->calculateCompletionPercentage($challenge).'% of the challenge. Perhaps you wish to try again today?';
+        $completionPercentage = $this->calculateCompletionPercentage($challenge);
 
         return $this->render('challenge_view.html.twig', [
             'challenge' => $challenge,
-            'message' => $message,
             'isCompleted' => $isCompleted,
-            'completed_at' => $challenge->getCompletedAt()->format('Y-m-d H:i')
+            'completionPercentage' => $completionPercentage,
         ]);
     }
 
     private function calculateCompletionPercentage(Challenge $challenge): int
     {
+        //TODO add actual logic calculation of percentage, once exercises are implemented.
         return rand(70, 100);
     }
 }

@@ -78,24 +78,39 @@ class Router
         throw new NotFoundException('Class not found: ' . $filePath);
     }
 
-    public function getController(string $routePath): array
+    public function getController(string $routePath): string
     {
         foreach ($this->routes as $routePattern => $controllerClass) {
             $regexPattern = preg_replace('/:(\w+)/', '(?P<$1>\d+)', $routePattern);
             $regexPattern = '#^' . $regexPattern . '$#';
 
+            if (preg_match($regexPattern, $routePath)) {
+                return $controllerClass;
+            }
+        }
+        throw new NotFoundException("404, Not Found: The route '{$routePath}' does not exist.");
+    }
+
+    public function getParameters(string $routePath): array
+    {
+        foreach ($this->routes as $routePattern => $controllerClass) {
+            $regexPattern = preg_replace('/:(\w+)/', '(?P<$1>[^/]+)', $routePattern);
+            $regexPattern = '#^' . $regexPattern . '$#';
+
             if (preg_match($regexPattern, $routePath, $matches)) {
                 $params = array_filter($matches, 'is_string', ARRAY_FILTER_USE_KEY);
+
                 foreach ($params as $key => $value) {
                     if (is_numeric($value)) {
                         $params[$key] = (int)$value;
                     }
                 }
-                return [$controllerClass, $params];
+
+                return $params;
             }
         }
 
-        throw new NotFoundException("404, Not Found: The route '{$routePath}' does not exist.");
+        return [];
     }
 
     /**

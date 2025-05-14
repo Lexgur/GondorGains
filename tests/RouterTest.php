@@ -28,15 +28,10 @@ class RouterTest extends TestCase
     }
 
     #[DataProvider('provideTestGetControllerData')]
-    final public function testGetController(string $routePath, string $expectedController, array $expectedParams): void
+    final public function testGetController(string $routePath, string $expectedController): void
     {
-        $result = $this->router->getController($routePath);
-        $controller = $result[0];
-        $params = $result[1];
-
-
+        $controller = $this->router->getController($routePath);
         $this->assertSame($expectedController, $controller);
-        $this->assertSame($expectedParams, $params);
     }
 
     #[DataProvider('provideTestGetControllerThrowsIncorrectRoutePathException')]
@@ -45,7 +40,14 @@ class RouterTest extends TestCase
         $this->expectException(NotFoundException::class);
 
         $controller = $this->router->getController($routePath);
-        $this->assertSame($expectedController, $controller[0]);
+        $this->assertSame($expectedController, $controller);
+    }
+
+    #[DataProvider('provideTestGetParametersData')]
+    public function testGetParameters(string $routePath, array $expectedParams): void
+    {
+        $params = $this->router->getParameters($routePath);
+        $this->assertSame($expectedParams, $params);
     }
 
     final public function testIncorrectPathThrowsIncorrectRoutePathException(): void
@@ -78,12 +80,11 @@ class RouterTest extends TestCase
         }
     }
 
-    /** @return array<int, array<int,mixed>> */
+    /** @return array<int, array<int,string>> */
     public static function provideTestGetControllerData(): array
     {
         return [
-            ['/about', AboutProjectController::class, []],
-            ['/daily-quest/11', ViewChallengeController::class, ['id' => 11]],
+            ['/about', AboutProjectController::class],
         ];
     }
 
@@ -92,6 +93,15 @@ class RouterTest extends TestCase
     {
         return [
             ['/incorrectPath', AboutProjectController::class],
+        ];
+    }
+
+    /** @return array<int, array{string, array<string, int>}> */
+    public static function provideTestGetParametersData(): array
+    {
+        return [
+            ['/daily-quest/11', ['id' => 11]],
+            ['/daily-quest/7', ['id' => 7]],
         ];
     }
 }

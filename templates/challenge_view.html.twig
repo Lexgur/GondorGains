@@ -6,11 +6,12 @@
     <div class="challenge-view">
         <p>Started At: {{ challenge.started_at|date('Y-m-d H:i') }}</p>
 
-        {% if completed_at %}
-            <p>Completed At: {{ completed_at|date('Y-m-d H:i') }}</p>
+        {% if isCompleted %}
+            <p>Completed At: {{ challenge.completed_at|date('Y-m-d H:i') }}</p>
+            <p>You have done a great job, completing all {{ completionPercentage }}% of the challenges!</p>
+        {% else %}
+            <p>You tried with honour completing {{ completionPercentage }}% of the challenge. Perhaps you wish to try again today?</p>
         {% endif %}
-
-        <p>{{ message }}</p>
 
         <div class="link-group">
             <a href="/quests" class="quest-link">Back</a>
