@@ -41,4 +41,14 @@ class ApplicationTest extends WebTestCase
         $this->assertStringContainsString('Page not found', $output);
         $this->assertEquals(404, $statusCode);
     }
+
+    public function testEmptyPathReturnsLoginController(): void
+    {
+        $output = $this->request('GET', '');
+        $statusCode = http_response_code();
+
+        $this->assertStringContainsString('Login', $output);
+        $this->assertEquals(200, $statusCode);
+    }
+
 }
