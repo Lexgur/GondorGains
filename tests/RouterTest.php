@@ -6,7 +6,9 @@ namespace Lexgur\GondorGains\Tests;
 
 use Lexgur\GondorGains\Controller\AboutProjectController;
 use Lexgur\GondorGains\Controller\ViewChallengeController;
+use Lexgur\GondorGains\Exception\FilePathReadException;
 use Lexgur\GondorGains\Exception\NotFoundException;
+use Lexgur\GondorGains\Exception\RegisterControllerException;
 use Lexgur\GondorGains\Router;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
@@ -17,12 +19,15 @@ class RouterTest extends TestCase
 
     private string $controllerDir;
 
+    private string $filesystem;
+
     /**
      * @throws NotFoundException
      */
     protected function setUp(): void
     {
         $this->controllerDir = __DIR__ . '/../src/Controller';
+        $this->filesystem = __DIR__ . '/../tmp/test';
         $this->router = new Router($this->controllerDir);
         $this->router->registerControllers();
     }
@@ -50,6 +55,13 @@ class RouterTest extends TestCase
         $this->assertSame($expectedParams, $params);
     }
 
+    #[DataProvider('provideTestGetEmptyParametersDataArray')]
+    public function testGetEmptyParametersArray(string $routePath, array $expectedParams): void
+    {
+        $params = $this->router->getParameters($routePath);
+        $this->assertSame($expectedParams, $params);
+    }
+
     final public function testIncorrectPathThrowsIncorrectRoutePathException(): void
     {
         $this->expectException(NotFoundException::class);
@@ -65,6 +77,26 @@ class RouterTest extends TestCase
         $this->assertSame('Lexgur\GondorGains\Controller\AboutProjectController', $result);
     }
 
+    public function testGetFullClassNameThrowsFilePathReadExceptionForEmptyFile(): void
+    {
+        $emptyFilePath = $this->filesystem . 'EmptyFile.php';
+
+        $this->expectException(FilePathReadException::class);
+
+        $router = new Router(__DIR__ . '/../src/Controller');
+        $router->getFullClassName($emptyFilePath);
+    }
+
+    public function testGetFullClassNameThrowsNotFoundExceptionForNoClass(): void
+    {
+        $this->expectException(NotFoundException::class);
+
+        $filePath = $this->filesystem . '/RouterTest/NoClassFile.php';
+
+        $router = new Router(__DIR__ . '/../src/Controller');
+        $router->getFullClassName($filePath);
+    }
+
     final public function testRegisterControllers(): void
     {
         $routes = $this->router->getRoutes();
@@ -78,6 +110,18 @@ class RouterTest extends TestCase
         foreach ($expectedRoutes as $route) {
             $this->assertArrayHasKey($route, $routes);
         }
+    }
+
+    public function testRegisterControllerThrowsExceptionFromInvalidClass(): void
+    {
+        $this->expectException(RegisterControllerException::class);
+
+        $testControllerDir = $this->filesystem . '/RouterTest';
+        if (!is_dir($testControllerDir)) {
+            mkdir($testControllerDir, 0644, true);
+        }
+        $router = new Router($testControllerDir);
+        $router->registerControllers();
     }
 
     /** @return array<int, array<int,string>> */
@@ -102,6 +146,14 @@ class RouterTest extends TestCase
         return [
             ['/daily-quest/11', ['id' => 11]],
             ['/daily-quest/7', ['id' => 7]],
+        ];
+    }
+
+    /** @return array<int, array{string, array<string, int>}> */
+    public static function provideTestGetEmptyParametersDataArray(): array
+    {
+        return [
+            ['/daily-quest/', []],
         ];
     }
 }
