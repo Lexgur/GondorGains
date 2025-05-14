@@ -6,6 +6,7 @@ namespace Lexgur\GondorGains;
 
 use Lexgur\GondorGains\Controller\ErrorController;
 use Lexgur\GondorGains\Controller\AboutProjectController;
+use Lexgur\GondorGains\Controller\LoginUserController;
 
 class Application
 {
@@ -30,7 +31,7 @@ class Application
             $routePath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
             if (empty($routePath) || $routePath === '/') {
-                $controller = $this->container->get(AboutProjectController::class);
+                $controller = $this->container->get(LoginUserController::class);
                 $params = [];
             } else {
                 $controllerClass = $this->router->getController($routePath);
