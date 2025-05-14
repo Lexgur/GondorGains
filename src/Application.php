@@ -38,7 +38,7 @@ class Application
                 $controller = $this->container->get($controllerClass);
             }
             http_response_code(200);
-            print $controller(...$params);
+            print call_user_func_array($controller, $params);
 
         } catch (\Throwable $error) {
             $errorController = $this->container->get(ErrorController::class);
