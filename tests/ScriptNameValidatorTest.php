@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Lexgur\GondorGains\Tests;
 
+use Lexgur\GondorGains\Exception\IncorrectScriptNameException;
 use Lexgur\GondorGains\Validation\ScriptNameValidator;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
@@ -25,6 +26,13 @@ class ScriptNameValidatorTest extends TestCase {
         $this->assertEquals($expected, $actual);
     }
 
+    #[DataProvider('provideInvalidNamespaceData')]
+    public function testInvalidNamespacesThrowException(string $scriptClassName): void
+    {
+        $this->expectException(IncorrectScriptNameException::class);
+        $this->validator->validate($scriptClassName);
+    }
+
     /** @return array<array{string, int}> */
     public static function provideTestNamespaceRegexData(): array
     {
@@ -38,4 +46,17 @@ class ScriptNameValidatorTest extends TestCase {
         ];
     }
 
+    public static function provideInvalidNamespaceData(): array
+    {
+        return [
+            [''],
+            ['123Invalid\Namespace'],
+            ['InvalidNamespace!'],
+            ['Namespace with spaces'],
+            ['\\'],
+            ['/'],
+            ['\\\\invalid\\path\\'],
+            ['Invalid/Namespace/'],
+        ];
+    }
 }
