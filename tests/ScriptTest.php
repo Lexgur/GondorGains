@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Lexgur\GondorGains\Tests;
 
 use Lexgur\GondorGains\Exception\IncorrectScriptNameException;
+use Lexgur\GondorGains\Exception\ScriptFailedToRunException;
 use Lexgur\GondorGains\Script;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
@@ -68,6 +69,14 @@ class ScriptTest extends TestCase
         $this->script->run($scriptClassName);
     }
 
+    public function testScripFailedToRunExceptionIsThrownWithNonExistentScript(): void
+    {
+        $this->expectException(ScriptFailedToRunException::class);
+
+        $scriptClassName = 'Lexgur/GondorGains/Tests/Script/ScriptNotInstanceOfScriptInterface';
+        $this->script->run($scriptClassName);
+    }
+
     /** @return array<array{string}> */
     public static function provideTestScriptFailedToRunExceptionData(): array
     {
@@ -75,7 +84,7 @@ class ScriptTest extends TestCase
             ['LexgurGondorGainsTestsScriptFailedScript'],
             ['Lexgur/GondorGains/Tests/Script//FailedScript'],
             ['//Lexgur/GondorGains/Tests/Script/FailedScript'],
+            ['/\Lexgur/GondorGains\\Tests/Script\\FailedScript'],
         ];
     }
-
 }
