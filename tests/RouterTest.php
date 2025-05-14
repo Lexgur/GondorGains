@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Lexgur\GondorGains\Tests;
 
 use Lexgur\GondorGains\Controller\AboutProjectController;
+use Lexgur\GondorGains\Controller\QuestsController;
 use Lexgur\GondorGains\Controller\ViewChallengeController;
 use Lexgur\GondorGains\Exception\FilePathReadException;
 use Lexgur\GondorGains\Exception\NotFoundException;
@@ -71,10 +72,10 @@ class RouterTest extends TestCase
 
     final public function testGetFullClassName(): void
     {
-        $filePath = __DIR__.'/../src/Controller/AboutProjectController.php';
+        $filePath = __DIR__.'/../src/Controller/QuestsController.php';
         $result = $this->router->getFullClassName($filePath);
 
-        $this->assertSame('Lexgur\GondorGains\Controller\AboutProjectController', $result);
+        $this->assertSame('Lexgur\GondorGains\Controller\QuestsController', $result);
     }
 
     public function testGetFullClassNameThrowsFilePathReadExceptionForEmptyFile(): void
@@ -104,7 +105,7 @@ class RouterTest extends TestCase
         $this->assertNotEmpty($routes);
 
         $expectedRoutes = [
-            '/about',
+            '/quests',
         ];
 
         foreach ($expectedRoutes as $route) {
@@ -128,7 +129,7 @@ class RouterTest extends TestCase
     public static function provideTestGetControllerData(): array
     {
         return [
-            ['/about', AboutProjectController::class],
+            ['/quests', QuestsController::class],
         ];
     }
 
@@ -136,7 +137,7 @@ class RouterTest extends TestCase
     public static function provideTestGetControllerThrowsIncorrectRoutePathException(): array
     {
         return [
-            ['/incorrectPath', AboutProjectController::class],
+            ['/incorrectPath', QuestsController::class],
         ];
     }
 
