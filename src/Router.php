@@ -88,8 +88,29 @@ class Router
                 return $controllerClass;
             }
         }
-
         throw new NotFoundException("404, Not Found: The route '{$routePath}' does not exist.");
+    }
+
+    public function getParameters(string $routePath): array
+    {
+        foreach ($this->routes as $routePattern => $controllerClass) {
+            $regexPattern = preg_replace('/:(\w+)/', '(?P<$1>[^/]+)', $routePattern);
+            $regexPattern = '#^' . $regexPattern . '$#';
+
+            if (preg_match($regexPattern, $routePath, $matches)) {
+                $params = array_filter($matches, 'is_string', ARRAY_FILTER_USE_KEY);
+
+                foreach ($params as $key => $value) {
+                    if (is_numeric($value)) {
+                        $params[$key] = (int)$value;
+                    }
+                }
+
+                return $params;
+            }
+        }
+
+        return [];
     }
 
     /**

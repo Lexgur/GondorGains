@@ -68,6 +68,11 @@ class ChallengeModelRepository extends BaseRepository implements ChallengeModelR
         }, $rows);
     }
 
+    /**
+     * @throws ChallengeNotFoundException
+     * @throws Exception
+     */
+
     public function update(Challenge $challenge): Challenge
     {
         $statement = $this->connection->connect()->prepare('UPDATE `challenges` SET `user_id` = :user_id, `started_at` = :started_at, `completed_at` = :completed_at WHERE `id` = :id');

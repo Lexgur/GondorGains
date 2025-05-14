@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Lexgur\GondorGains\Tests;
 
 use Lexgur\GondorGains\Controller\AboutProjectController;
+use Lexgur\GondorGains\Controller\ViewChallengeController;
 use Lexgur\GondorGains\Exception\NotFoundException;
 use Lexgur\GondorGains\Router;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -40,6 +41,13 @@ class RouterTest extends TestCase
 
         $controller = $this->router->getController($routePath);
         $this->assertSame($expectedController, $controller);
+    }
+
+    #[DataProvider('provideTestGetParametersData')]
+    public function testGetParameters(string $routePath, array $expectedParams): void
+    {
+        $params = $this->router->getParameters($routePath);
+        $this->assertSame($expectedParams, $params);
     }
 
     final public function testIncorrectPathThrowsIncorrectRoutePathException(): void
@@ -85,6 +93,15 @@ class RouterTest extends TestCase
     {
         return [
             ['/incorrectPath', AboutProjectController::class],
+        ];
+    }
+
+    /** @return array<int, array{string, array<string, int>}> */
+    public static function provideTestGetParametersData(): array
+    {
+        return [
+            ['/daily-quest/11', ['id' => 11]],
+            ['/daily-quest/7', ['id' => 7]],
         ];
     }
 }

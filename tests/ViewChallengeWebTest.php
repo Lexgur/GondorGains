@@ -10,7 +10,7 @@ use Lexgur\GondorGains\Model\User;
 use Lexgur\GondorGains\Repository\UserModelRepository;
 use Lexgur\GondorGains\Service\Session;
 
-class CreateChallengeWebTest extends WebTestCase
+class ViewChallengeWebTest extends WebTestCase
 {
 
     private Container $container;
@@ -40,7 +40,7 @@ class CreateChallengeWebTest extends WebTestCase
 
     public function testAnonymousAccessDenied(): void
     {
-        $response = $this->request('GET', '/daily-quest/start');
+        $response = $this->request('GET', '/daily-quest/11');
         $statusCode = http_response_code();
 
         $this->assertStringContainsString('<title>Access restricted - Gondor Gains</title>', $response);
