@@ -36,8 +36,7 @@ class LoginUserController extends AbstractController
     public function __invoke(): string
     {
         if ($this->currentUser->isLoggedIn()) {
-            header('Location: /dashboard', true, 302);
-            return '';
+            $this->redirect('/dashboard');
         }
 
         if ($this->isPostRequest()) {
@@ -57,7 +56,7 @@ class LoginUserController extends AbstractController
                 $this->redirect('/register');
             } catch (\Throwable) {
                 return $this->render('login.html.twig', [
-                    'error' => 'You don\'t have permission to view this content.',
+                    'error' => 'Incorrect user credentials',
                 ]);
             }
         }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Lexgur\GondorGains\Controller;
 
+use JetBrains\PhpStorm\NoReturn;
 use Lexgur\GondorGains\Attribute\Path;
 use Lexgur\GondorGains\TemplateProvider;
 
@@ -33,7 +34,11 @@ abstract class AbstractController
 
     public function redirect(string $path): string
     {
+        if (isset($_ENV['IS_WEB_TEST']) && $_ENV['IS_WEB_TEST'] === 'true') {
+            return $path;
+        }
+
         header('Location: ' . $path, true, 302);
-        return '';
+        exit;
     }
 }

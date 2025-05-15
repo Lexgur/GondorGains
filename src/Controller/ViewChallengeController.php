@@ -41,7 +41,7 @@ class ViewChallengeController extends AbstractController
             throw new ForbiddenException();
         }
 
-        $isCompleted = $challenge->getCompletedAt();
+        $isCompleted = (bool) $challenge->getCompletedAt();
         $completionPercentage = $this->calculateCompletionPercentage($challenge);
 
         return $this->render('challenge_view.html.twig', [
