@@ -34,10 +34,9 @@ class LoginWebTest extends WebTestCase
     {
         $response = $this->request('POST', '/login', [
             'email' => 'nonexistent@example.com',
-            'password' => 'Whatever123!',
+            'password' => 'WhatevEr12345!',
         ]);
 
-        $this->assertEquals(302, http_response_code());
-        $this->assertStringContainsString('', $response);
+        $this->assertEquals('/register', $response);
     }
 }

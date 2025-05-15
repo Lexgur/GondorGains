@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Lexgur\GondorGains\Tests;
 
 use Lexgur\GondorGains\Container;
+use Lexgur\GondorGains\Exception\MissingDependencyParameterException;
 use Lexgur\GondorGains\Exception\ServiceInstantiationException;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
@@ -60,6 +61,54 @@ class ContainerTest extends TestCase
             // Test if service is already initiated.
             $this->assertTrue($container->has($serviceClass));
         }
+    }
+
+    final public function testHasParameter(): void
+    {
+        $container = new Container([
+            'dbHost' => 'localhost',
+        ]);
+
+        $this->assertTrue($container->hasParameter('dbHost'));
+    }
+
+    final public function testGetParameter(): void
+    {
+        $container = new Container([
+            'apiKey' => 'secret-key',
+        ]);
+
+        $this->assertSame('secret-key', $container->getParameter('apiKey'));
+    }
+
+    public function testGetParameterThrowsMissingDependencyParameterExceptionWhenMissing(): void
+    {
+        $container = new Container();
+
+        $this->expectException(MissingDependencyParameterException::class);
+        $container->getParameter('noKey');
+    }
+
+
+    final public function testBindStoresAndRetrievesService(): void
+    {
+        $service = new \stdClass();
+        $container = new Container();
+
+        $this->assertFalse($container->has(\stdClass::class));
+
+        $container->bind(\stdClass::class, $service);
+
+        $this->assertTrue($container->has(\stdClass::class));
+        $this->assertSame($service, $container->get(\stdClass::class));
+    }
+
+    public function testModelClassesAreSkipped(): void
+    {
+        $this->expectException(ServiceInstantiationException::class);
+
+        $container = new Container();
+        $container->get('Lexgur\GondorGains\Model\User');
     }
 
     /** @return array<array{string, bool}> */
