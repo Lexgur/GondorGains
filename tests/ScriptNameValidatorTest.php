@@ -46,6 +46,9 @@ class ScriptNameValidatorTest extends TestCase {
         ];
     }
 
+    /**
+     * @return array<int, array{string}>
+     */
     public static function provideInvalidNamespaceData(): array
     {
         return [

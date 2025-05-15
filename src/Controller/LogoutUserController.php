@@ -38,5 +38,6 @@ class LogoutUserController extends AbstractController
                 'message' => 'You don\'t have permission to view this content.',
             ]);
         }
+        return 'login.html.twig';
     }
 }

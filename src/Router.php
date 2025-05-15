@@ -91,6 +91,9 @@ class Router
         throw new NotFoundException("404, Not Found: The route '{$routePath}' does not exist.");
     }
 
+    /**
+     * @return array<string, int|string>
+     */
     public function getParameters(string $routePath): array
     {
         foreach ($this->routes as $routePattern => $controllerClass) {

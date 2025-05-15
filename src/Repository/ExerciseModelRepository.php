@@ -41,6 +41,9 @@ class ExerciseModelRepository extends BaseRepository implements ExerciseModelRep
         return Exercise::create($row);
     }
 
+    /**
+     * @return array<Exercise>
+     */
     public function fetchByMuscleGroup(\Lexgur\GondorGains\Model\MuscleGroup $muscleGroup): array
     {
         $statement = $this->connection->connect()->prepare('SELECT * FROM exercises WHERE muscle_group = :muscle_group');
