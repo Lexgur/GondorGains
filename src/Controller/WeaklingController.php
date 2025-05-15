@@ -26,7 +26,6 @@ class WeaklingController extends AbstractController
 
     public function __invoke(): string
     {
-        try {
             if ($this->currentUser->isAnonymous()) {
                 throw new ForbiddenException();
             }
@@ -36,12 +35,5 @@ class WeaklingController extends AbstractController
                 'message' => 'You have not completed a single quest? I know a man in white robes, that would be disappointed',
                 'quest' => '/daily-quest/start',
             ]);
-        } catch (\Throwable) {
-            return $this->render('error.html.twig', [
-                'code' => 403,
-                'title' => 'Access restricted',
-                'message' => 'You don\'t have permission to view this content.',
-            ]);
-        }
     }
 }

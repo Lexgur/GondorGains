@@ -48,7 +48,6 @@ class RegisterUserController extends AbstractController
                     'success' => 'Registration was successful,try and log in',
                 ]);
             } catch (\PDOException) {
-
                 return $this->render('error.html.twig', [
                     'code' => 500,
                     'title' => "We're having some trouble",

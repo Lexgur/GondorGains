@@ -30,7 +30,6 @@ class QuestsController extends AbstractController
 
     public function __invoke(): string
     {
-        try {
             if ($this->currentUser->isAnonymous()) {
                 throw new ForbiddenException();
             }
@@ -53,12 +52,5 @@ class QuestsController extends AbstractController
                 'challenges' => $completedChallenges,
                 'quest' => '/daily-quest/start',
             ]);
-        } catch (\Throwable) {
-            return $this->render('error.html.twig', [
-                'code' => 403,
-                'title' => 'Access restricted',
-                'message' => 'You don\'t have permission to view this content.',
-            ]);
-        }
     }
 }

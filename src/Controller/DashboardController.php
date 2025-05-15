@@ -34,13 +34,8 @@ class DashboardController extends AbstractController
         $this->currentUser = $currentUser;
     }
 
-    /**
-     * @throws ForbiddenException
-     * @throws NotFoundException|UserNotFoundException
-     */
     public function __invoke(): string
     {
-        try {
             if ($this->currentUser->isAnonymous()) {
                 throw new ForbiddenException();
             }
@@ -62,13 +57,6 @@ class DashboardController extends AbstractController
                 'quote' => $this->randomQuote->getQuote(),
                 'begin' => $this->handleRedirect($totalQuests),
             ]);
-        } catch (\Throwable) {
-            return $this->render('error.html.twig', [
-                'code' => 403,
-                'title' => 'Access restricted',
-                'message' => 'You don\'t have permission to view this content.',
-            ]);
-        }
     }
 
     private function handleRedirect(int $totalQuests): string
