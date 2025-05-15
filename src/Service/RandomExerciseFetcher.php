@@ -55,10 +55,6 @@ class RandomExerciseFetcher
      * @return array<int> Returns array of exercise IDs
      * @throws RandomException
      */
-    /**
-     * @return array<int> Returns array of exercise IDs
-     * @throws RandomException
-     */
     public function fetchRandomExerciseIds(?int $rotation = null): array
     {
         $rotation = $rotation ?? $this->getNextRotation();
