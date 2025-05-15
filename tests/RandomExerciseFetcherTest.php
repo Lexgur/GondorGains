@@ -149,8 +149,14 @@ class RandomExerciseFetcherTest extends TestCase
         $firstCall = $this->exerciseFetcher->fetchRandomExerciseIds(1);
         $secondCall = $this->exerciseFetcher->fetchRandomExerciseIds(1);
         $thirdCall = $this->exerciseFetcher->fetchRandomExerciseIds(1);
-        $allPreviousExercises = array_merge($firstCall, $secondCall);
-        $commonExercises = array_intersect($thirdCall, $allPreviousExercises);
+        $onlyInts = fn($array) => array_filter($array, 'is_int');
+
+        $ids1 = $onlyInts($firstCall);
+        $ids2 = $onlyInts($secondCall);
+        $ids3 = $onlyInts($thirdCall);
+
+        $allPreviousExercises = array_merge($ids1, $ids2);
+        $commonExercises = array_intersect($ids3, $allPreviousExercises);
 
         $this->assertGreaterThanOrEqual(self::MIN_EXERCISES_ROTATION_1, count($firstCall));
         $this->assertLessThanOrEqual(self::MAX_EXERCISES_ROTATION_1, count($firstCall));
