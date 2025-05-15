@@ -49,6 +49,9 @@ class RouterTest extends TestCase
         $this->assertSame($expectedController, $controller);
     }
 
+    /**
+     * @param array<string, string> $expectedParams
+     */
     #[DataProvider('provideTestGetParametersData')]
     public function testGetParameters(string $routePath, array $expectedParams): void
     {
@@ -56,6 +59,9 @@ class RouterTest extends TestCase
         $this->assertSame($expectedParams, $params);
     }
 
+    /**
+     * @param array<string, string> $expectedParams
+     */
     #[DataProvider('provideTestGetEmptyParametersDataArray')]
     public function testGetEmptyParametersArray(string $routePath, array $expectedParams): void
     {

@@ -41,6 +41,24 @@ class ExerciseModelRepository extends BaseRepository implements ExerciseModelRep
         return Exercise::create($row);
     }
 
+    /**
+     * @return array<Exercise>
+     */
+    public function fetchByMuscleGroup(\Lexgur\GondorGains\Model\MuscleGroup $muscleGroup): array
+    {
+        $statement = $this->connection->connect()->prepare('SELECT * FROM exercises WHERE muscle_group = :muscle_group');
+        $statement->execute([':muscle_group' => $muscleGroup->value]);
+        $rows = $statement->fetchAll(PDO::FETCH_ASSOC);
+
+        $exercises = [];
+        foreach ($rows as $row) {
+            $exercises[] = Exercise::create($row);
+        }
+
+        return $exercises;
+    }
+
+
     public function update(Exercise $exercise): Exercise
     {
         $statement = $this->connection->connect()->prepare('UPDATE `exercises` SET `name` = :name, `muscle_group` = :muscle_group, `description` = :description WHERE id = :id');

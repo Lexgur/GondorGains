@@ -72,6 +72,42 @@ class ExerciseModelRepositoryTest extends TestCase
         $this->repository->fetchById(9999);
     }
 
+    public function testFetchByMuscleGroupReturnsAllExercisesForGivenMuscleGroup(): void
+    {
+        $exercise = new Exercise(
+            name: 'Tests',
+            muscleGroup: MuscleGroup::CHEST,
+            description: 'test'
+        );
+        $this->repository->insert($exercise);
+        $existingExercise = $this->repository->fetchByMuscleGroup(MuscleGroup::CHEST);
+
+        $this->assertEquals($exercise->getName(), $existingExercise[0]->getName());
+        $this->assertEquals($exercise->getMuscleGroup(), $existingExercise[0]->getMuscleGroup());
+    }
+
+    public function testFetchByMuscleGroupReturnsMultipleExercisesForGivenMuscleGroup(): void
+    {
+        $exercise = new Exercise(
+            name: 'Tests',
+            muscleGroup: MuscleGroup::CHEST,
+            description: 'test'
+        );
+        $exercise2 = new Exercise(
+            name: 'Tests2',
+            muscleGroup: MuscleGroup::CHEST,
+            description: 'test2'
+        );
+        $this->repository->insert($exercise);
+        $this->repository->insert($exercise2);
+        $existingExercises = $this->repository->fetchByMuscleGroup(MuscleGroup::CHEST);
+
+        $this->assertEquals($exercise->getName(), $existingExercises[0]->getName());
+        $this->assertEquals($exercise->getMuscleGroup(), $existingExercises[0]->getMuscleGroup());
+        $this->assertEquals($exercise2->getName(), $existingExercises[1]->getName());
+        $this->assertEquals($exercise2->getMuscleGroup(), $existingExercises[1]->getMuscleGroup());
+    }
+
     public function testSuccessfulInsertionOfMultipleExercises(): void
     {
         $exercise1 = new Exercise(
