@@ -12,14 +12,14 @@ use Random\RandomException;
 
 class RandomExerciseFetcher
 {
-    private const ROTATION_1 = 1;
-    private const ROTATION_2 = 2;
-    private const ROTATION_3 = 3;
+    public const ROTATION_1 = 1;
+    public const ROTATION_2 = 2;
+    public const ROTATION_3 = 3;
 
     private const ROTATIONS = [
-        self::ROTATION_1 => 2,
-        self::ROTATION_2 => 4,
-        self::ROTATION_3 => 2,
+        self::ROTATION_1 => [MuscleGroup::LEGS, MuscleGroup::SHOULDERS],
+        self::ROTATION_2 => [MuscleGroup::CHEST, MuscleGroup::BACK, MuscleGroup::ARMS, MuscleGroup::SHOULDERS],
+        self::ROTATION_3 => [MuscleGroup::CORE, MuscleGroup::BACK],
     ];
 
     private const MIN_EXERCISES_PER_GROUP = 2;
@@ -52,7 +52,7 @@ class RandomExerciseFetcher
     }
 
     /**
-     * @return array<int> Returns array of exercise IDs
+     * @return array<int|MuscleGroup>
      * @throws RandomException
      */
     public function fetchRandomExerciseIds(?int $rotation = null): array
@@ -63,7 +63,7 @@ class RandomExerciseFetcher
             throw new \InvalidArgumentException('Invalid rotation number');
         }
 
-        $muscleGroups = $this->selectRandomMuscleGroups(self::ROTATIONS[$rotation]);
+        $muscleGroups = self::ROTATIONS[$rotation];
         $exerciseIds = [];
 
         foreach ($muscleGroups as $muscleGroup) {
@@ -111,16 +111,5 @@ class RandomExerciseFetcher
         return array_filter($exercises, function (Exercise $exercise) use ($muscleGroup) {
             return !in_array($exercise->getExerciseId(), $this->usedExercises[$muscleGroup], true);
         });
-    }
-
-    /**
-     * @return array<MuscleGroup>
-     */
-    private function selectRandomMuscleGroups(int $count): array
-    {
-        $allMuscleGroups = MuscleGroup::cases();
-        shuffle($allMuscleGroups);
-
-        return array_slice($allMuscleGroups, 0, $count);
     }
 }
