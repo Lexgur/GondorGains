@@ -31,7 +31,7 @@ class ChallengeCreatorServiceTest extends TestCase
      */
     public function testGenerateChallengeReturnsExercisesForSpecifiedRotation(): void
     {
-        $rotation = 2;
+        $muscleGroupRotation = 2;
         $expectedExercises = [
             $this->createStub(Exercise::class),
             $this->createStub(Exercise::class),
@@ -40,10 +40,10 @@ class ChallengeCreatorServiceTest extends TestCase
 
         $this->fetcher->expects($this->once())
             ->method('fetchRandomExercise')
-            ->with($rotation)
+            ->with($muscleGroupRotation)
             ->willReturn($expectedExercises);
 
-        $result = $this->service->generateChallenge($rotation);
+        $result = $this->service->generateChallenge($muscleGroupRotation);
 
         $this->assertSame($expectedExercises, $result);
         $this->assertCount(3, $result);

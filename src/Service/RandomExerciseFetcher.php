@@ -13,21 +13,21 @@ use Random\RandomException;
 
 class RandomExerciseFetcher
 {
-    public const ROTATION_1 = 1;
-    public const ROTATION_2 = 2;
-    public const ROTATION_3 = 3;
+    public const MUSCLE_GROUP_ROTATION_1 = 1;
+    public const MUSCLE_GROUP_ROTATION_2 = 2;
+    public const MUSCLE_GROUP_ROTATION_3 = 3;
 
-    private const ROTATIONS = [
-        self::ROTATION_1 => [MuscleGroup::LEGS, MuscleGroup::SHOULDERS],
-        self::ROTATION_2 => [MuscleGroup::CHEST, MuscleGroup::BACK, MuscleGroup::ARMS, MuscleGroup::SHOULDERS],
-        self::ROTATION_3 => [MuscleGroup::CORE, MuscleGroup::BACK],
+    private const MUSCLE_GROUP_ROTATIONS = [
+        self::MUSCLE_GROUP_ROTATION_1 => [MuscleGroup::LEGS, MuscleGroup::SHOULDERS],
+        self::MUSCLE_GROUP_ROTATION_2 => [MuscleGroup::CHEST, MuscleGroup::BACK, MuscleGroup::ARMS, MuscleGroup::SHOULDERS],
+        self::MUSCLE_GROUP_ROTATION_3 => [MuscleGroup::CORE, MuscleGroup::BACK],
     ];
 
     private const MIN_EXERCISES_PER_GROUP = 2;
     private const MAX_EXERCISES_PER_GROUP = 3;
 
     /** @var array<int> */
-    private array $rotationSequence = [];
+    private array $muscleGroupRotationSequence = [];
 
     /** @var array<int, array<string, array<int>>> */
     private array $usedExercises = [];
@@ -39,40 +39,40 @@ class RandomExerciseFetcher
 
     private function initializeRotationSequence(): void
     {
-        $this->rotationSequence = [self::ROTATION_1, self::ROTATION_2, self::ROTATION_3];
-        shuffle($this->rotationSequence);
+        $this->muscleGroupRotationSequence = [self::MUSCLE_GROUP_ROTATION_1, self::MUSCLE_GROUP_ROTATION_2, self::MUSCLE_GROUP_ROTATION_3];
+        shuffle($this->muscleGroupRotationSequence);
     }
 
     public function getNextRotation(): int
     {
-        if (empty($this->rotationSequence)) {
+        if (empty($this->muscleGroupRotationSequence)) {
             $this->initializeRotationSequence();
         }
 
-        return array_shift($this->rotationSequence);
+        return array_shift($this->muscleGroupRotationSequence);
     }
 
     /**
      * @return array<Exercise|null>
      * @throws RandomException|ExerciseNotFoundException
      */
-    public function fetchRandomExercise(?int $rotation = null): array
+    public function fetchRandomExercise(?int $muscleGroupRotation = null): array
     {
-        $rotation = $rotation ?? $this->getNextRotation();
+        $muscleGroupRotation = $muscleGroupRotation ?? $this->getNextRotation();
 
-        if (!isset(self::ROTATIONS[$rotation])) {
+        if (!isset(self::MUSCLE_GROUP_ROTATIONS[$muscleGroupRotation])) {
             throw new \InvalidArgumentException('Invalid rotation number');
         }
 
-        $muscleGroups = self::ROTATIONS[$rotation];
+        $muscleGroups = self::MUSCLE_GROUP_ROTATIONS[$muscleGroupRotation];
         $selectedExercises = [];
 
         foreach ($muscleGroups as $muscleGroup) {
             $exercises = $this->exerciseRepository->fetchByMuscleGroup($muscleGroup);
-            $availableExercises = $this->filterUsedExercises($exercises, $rotation, $muscleGroup->value);
+            $availableExercises = $this->filterUsedExercises($exercises, $muscleGroupRotation, $muscleGroup->value);
 
             if (count($availableExercises) < self::MIN_EXERCISES_PER_GROUP) {
-                $this->usedExercises[$rotation][$muscleGroup->value] = [];
+                $this->usedExercises[$muscleGroupRotation][$muscleGroup->value] = [];
                 $availableExercises = $exercises;
             }
 
@@ -91,7 +91,7 @@ class RandomExerciseFetcher
 
             for ($i = 0; $i < $numberOfExercises; $i++) {
                 $exerciseId = $availableExercises[$i]->getExerciseId();
-                $this->usedExercises[$rotation][$muscleGroup->value][] = $exerciseId;
+                $this->usedExercises[$muscleGroupRotation][$muscleGroup->value][] = $exerciseId;
 
                 $selectedExercises[] = $this->exerciseRepository->fetchById($exerciseId);
             }
@@ -104,14 +104,14 @@ class RandomExerciseFetcher
      * @param array<Exercise> $exercises
      * @return array<Exercise>
      */
-    private function filterUsedExercises(array $exercises, int $rotation, string $muscleGroup): array
+    private function filterUsedExercises(array $exercises, int $muscleGroupRotation, string $muscleGroup): array
     {
-        if (!isset($this->usedExercises[$rotation][$muscleGroup])) {
-            $this->usedExercises[$rotation][$muscleGroup] = [];
+        if (!isset($this->usedExercises[$muscleGroupRotation][$muscleGroup])) {
+            $this->usedExercises[$muscleGroupRotation][$muscleGroup] = [];
         }
 
-        return array_filter($exercises, function (Exercise $exercise) use ($rotation, $muscleGroup) {
-            return !in_array($exercise->getExerciseId(), $this->usedExercises[$rotation][$muscleGroup], true);
+        return array_filter($exercises, function (Exercise $exercise) use ($muscleGroupRotation, $muscleGroup) {
+            return !in_array($exercise->getExerciseId(), $this->usedExercises[$muscleGroupRotation][$muscleGroup], true);
         });
     }
 }

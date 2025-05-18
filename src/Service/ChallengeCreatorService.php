@@ -17,8 +17,8 @@ class ChallengeCreatorService
      * @throws ExerciseNotFoundException
      * @throws RandomException
      */
-    public function generateChallenge(?int $rotation = null): array
+    public function generateChallenge(?int $muscleGroupRotation = null): array
     {
-        return $this->fetcher->fetchRandomExercise($rotation);
+        return $this->fetcher->fetchRandomExercise($muscleGroupRotation);
     }
 }
