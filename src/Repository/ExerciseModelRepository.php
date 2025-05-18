@@ -59,20 +59,6 @@ class ExerciseModelRepository extends BaseRepository implements ExerciseModelRep
         return $exercises;
     }
 
-    public function assignExerciseToChallenge(int $exerciseId, ?int $challengeId): void
-    {
-        $database = $this->connection->connect();
-        $statement = $database->prepare('
-        UPDATE exercises 
-        SET challenge_id = :challenge_id 
-        WHERE id = :exercise_id
-    ');
-
-        $statement->bindValue(':challenge_id', $challengeId, $challengeId === null ? PDO::PARAM_NULL : PDO::PARAM_INT);
-        $statement->bindValue(':exercise_id', $exerciseId, PDO::PARAM_INT);
-        $statement->execute();
-    }
-
     public function update(Exercise $exercise): Exercise
     {
         $statement = $this->connection->connect()->prepare('UPDATE `exercises` SET `name` = :name, `muscle_group` = :muscle_group, `description` = :description WHERE id = :id');
@@ -80,6 +66,7 @@ class ExerciseModelRepository extends BaseRepository implements ExerciseModelRep
         $statement->bindValue(':muscle_group', $exercise->getMuscleGroup()->value);
         $statement->bindValue(':description', $exercise->getDescription());
         $statement->bindValue(':id', $exercise->getExerciseId());
+        $statement->bindValue(':challenge_id', $exercise->getChallengeId());
 
         return $this->fetchById($exercise->getExerciseId());
     }

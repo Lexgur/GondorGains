@@ -108,29 +108,6 @@ class ExerciseModelRepositoryTest extends TestCase
         $this->assertEquals($exercise2->getMuscleGroup(), $existingExercises[1]->getMuscleGroup());
     }
 
-    public function testAssignExerciseToChallenge(): void
-    {
-        $exercise = new Exercise(
-            name: 'ChallengeTest',
-            muscleGroup: MuscleGroup::CHEST,
-            description: 'Test for challenge assignment'
-        );
-        $insertedExercise = $this->repository->save($exercise);
-        $exerciseId = $insertedExercise->getExerciseId();
-
-        $challengeId = 42;
-        $this->repository->assignExerciseToChallenge($exerciseId, $challengeId);
-
-        $stmt = $this->database->connect()->prepare('SELECT challenge_id FROM exercises WHERE id = :id');
-        $stmt->bindValue(':id', $exerciseId, \PDO::PARAM_INT);
-        $stmt->execute();
-        $result = $stmt->fetch(\PDO::FETCH_ASSOC);
-        $updatedExercise = $this->repository->fetchById($exerciseId);
-
-        $this->assertEquals($challengeId, (int)$result['challenge_id']);
-        $this->assertEquals($challengeId, $updatedExercise->getChallengeId());
-    }
-
     public function testSuccessfulInsertionOfMultipleExercises(): void
     {
         $exercise1 = new Exercise(

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Lexgur\GondorGains\Service;
 
+use Lexgur\GondorGains\Exception\ExerciseNotFoundException;
 use Lexgur\GondorGains\Exception\NotEnoughExercisesException;
 use Lexgur\GondorGains\Model\Exercise;
 use Lexgur\GondorGains\Model\MuscleGroup;
@@ -28,7 +29,7 @@ class RandomExerciseFetcher
     /** @var array<int> */
     private array $rotationSequence = [];
 
-    /** @var array<string, array<int>> */
+    /** @var array<int, array<string, array<int>>> */
     private array $usedExercises = [];
 
     public function __construct(private readonly ExerciseModelRepository $exerciseRepository)
@@ -52,10 +53,10 @@ class RandomExerciseFetcher
     }
 
     /**
-     * @return array<int|MuscleGroup>
-     * @throws RandomException
+     * @return array<Exercise|null>
+     * @throws RandomException|ExerciseNotFoundException
      */
-    public function fetchRandomExerciseIds(?int $rotation = null): array
+    public function fetchRandomExercise(?int $rotation = null): array
     {
         $rotation = $rotation ?? $this->getNextRotation();
 
@@ -64,14 +65,14 @@ class RandomExerciseFetcher
         }
 
         $muscleGroups = self::ROTATIONS[$rotation];
-        $exerciseIds = [];
+        $selectedExercises = [];
 
         foreach ($muscleGroups as $muscleGroup) {
             $exercises = $this->exerciseRepository->fetchByMuscleGroup($muscleGroup);
-            $availableExercises = $this->filterUsedExercises($exercises, $muscleGroup->value);
+            $availableExercises = $this->filterUsedExercises($exercises, $rotation, $muscleGroup->value);
 
             if (count($availableExercises) < self::MIN_EXERCISES_PER_GROUP) {
-                $this->usedExercises[$muscleGroup->value] = [];
+                $this->usedExercises[$rotation][$muscleGroup->value] = [];
                 $availableExercises = $exercises;
             }
 
@@ -90,26 +91,27 @@ class RandomExerciseFetcher
 
             for ($i = 0; $i < $numberOfExercises; $i++) {
                 $exerciseId = $availableExercises[$i]->getExerciseId();
-                $exerciseIds[] = $exerciseId;
-                $this->usedExercises[$muscleGroup->value][] = $exerciseId;
+                $this->usedExercises[$rotation][$muscleGroup->value][] = $exerciseId;
+
+                $selectedExercises[] = $this->exerciseRepository->fetchById($exerciseId);
             }
         }
 
-        return $exerciseIds;
+        return $selectedExercises;
     }
 
     /**
      * @param array<Exercise> $exercises
      * @return array<Exercise>
      */
-    private function filterUsedExercises(array $exercises, string $muscleGroup): array
+    private function filterUsedExercises(array $exercises, int $rotation, string $muscleGroup): array
     {
-        if (!isset($this->usedExercises[$muscleGroup])) {
-            $this->usedExercises[$muscleGroup] = [];
+        if (!isset($this->usedExercises[$rotation][$muscleGroup])) {
+            $this->usedExercises[$rotation][$muscleGroup] = [];
         }
 
-        return array_filter($exercises, function (Exercise $exercise) use ($muscleGroup) {
-            return !in_array($exercise->getExerciseId(), $this->usedExercises[$muscleGroup], true);
+        return array_filter($exercises, function (Exercise $exercise) use ($rotation, $muscleGroup) {
+            return !in_array($exercise->getExerciseId(), $this->usedExercises[$rotation][$muscleGroup], true);
         });
     }
 }
