@@ -22,6 +22,12 @@ class ChallengeCreatorServiceTest extends TestCase
     private RandomExerciseFetcher&MockObject $fetcher;
     private ChallengeCreatorService $service;
 
+    /** @var ExerciseModelRepository&MockObject */
+    private ExerciseModelRepository $exerciseRepository;
+
+    /** @var ChallengeModelRepository&MockObject */
+    private ChallengeModelRepository $challengeRepository;
+
     /**
      * @throws Exception
      */

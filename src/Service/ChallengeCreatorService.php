@@ -38,15 +38,19 @@ class ChallengeCreatorService
     public function createChallenge(int $userId, ?int $muscleGroupRotation = null): Challenge
     {
         $challenge = $this->createChallengeForUser($userId);
-        $exercises = $this->fetchExercisesForChallenge($muscleGroupRotation);
+
+        $exercises = array_filter(
+            $this->fetchExercisesForChallenge($muscleGroupRotation),
+            fn($exercise) => $exercise instanceof Exercise
+        );
+
         $this->assignChallengeToExercises($challenge, $exercises);
 
         return $challenge;
     }
 
     /**
-     * @return Exercise[]|null[]
-     *
+     * @return (Exercise|null)[]
      * @throws ExerciseNotFoundException
      * @throws RandomException
      */
@@ -71,6 +75,9 @@ class ChallengeCreatorService
         return $savedChallenge;
     }
 
+    /**
+     * @param (Exercise|null)[] $exercises
+     */
     public function assignChallengeToExercises(Challenge $challenge, array $exercises): void
     {
         $challengeId = $challenge->getChallengeId();
