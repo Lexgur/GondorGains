@@ -58,7 +58,7 @@ class RandomExerciseFetcherTest extends TestCase
      * @param int $minExercises
      * @param int $maxExercises
      * @return void
-     * @throws RandomException|ExerciseNotFoundException
+     * @throws RandomException
      */
     #[DataProvider('provideValidRotations')]
     public function testShouldReturnValidNumberOfExercisesForRotation(int $muscleGroupRotation, int $minExercises, int $maxExercises): void
@@ -86,7 +86,7 @@ class RandomExerciseFetcherTest extends TestCase
 
     /**
      * @group validation
-     * @throws RandomException|ExerciseNotFoundException
+     * @throws RandomException
      */
     public function testShouldThrowExceptionForInvalidRotation(): void
     {
@@ -94,6 +94,9 @@ class RandomExerciseFetcherTest extends TestCase
         $this->exerciseFetcher->fetchRandomExercise(5);
     }
 
+    /**
+     * @throws RandomException
+     */
     public function testShouldThrowNotEnoughExercisesException(): void
     {
         $this->expectException(NotEnoughExercisesException::class);
@@ -107,6 +110,7 @@ class RandomExerciseFetcherTest extends TestCase
 
     /**
      * @group rotation
+     * @throws RandomException
      */
     public function testShouldProvideNonRepeatingRotationSequence(): void
     {
@@ -148,28 +152,30 @@ class RandomExerciseFetcherTest extends TestCase
      */
     public function testShouldResetExercisesWhenAllUsed(): void
     {
-        $testExercises = [
-            MuscleGroup::CHEST->value => $this->createTestExercises(MuscleGroup::CHEST, 2),
-            MuscleGroup::BACK->value => $this->createTestExercises(MuscleGroup::BACK, 2),
-            MuscleGroup::ARMS->value => $this->createTestExercises(MuscleGroup::ARMS, 2),
-            MuscleGroup::SHOULDERS->value => $this->createTestExercises(MuscleGroup::SHOULDERS, 2),
-        ];
+        $chestExercises = $this->createTestExercises(MuscleGroup::CHEST, 2);
+        $backExercises = $this->createTestExercises(MuscleGroup::BACK, 2);
+        $armsExercises = $this->createTestExercises(MuscleGroup::ARMS, 2);
+        $shoulderExercises = $this->createTestExercises(MuscleGroup::SHOULDERS, 2);
 
         $this->repository
             ->method('fetchByMuscleGroup')
-            ->willReturnCallback(function (MuscleGroup $group) use ($testExercises) {
-                return $testExercises[$group->value] ?? [];
-            });
-        $firstBatch = $this->exerciseFetcher->fetchRandomExercise(RandomExerciseFetcher::MUSCLE_GROUP_ROTATION_2);
-        $secondBatch = $this->exerciseFetcher->fetchRandomExercise(RandomExerciseFetcher::MUSCLE_GROUP_ROTATION_2);
+            ->willReturnMap([
+                [MuscleGroup::CHEST, $chestExercises],
+                [MuscleGroup::BACK, $backExercises],
+                [MuscleGroup::ARMS, $armsExercises],
+                [MuscleGroup::SHOULDERS, $shoulderExercises],
+            ]);
 
-        $firstIds = array_map(fn(Exercise $e) => $e->getExerciseId(), $firstBatch);
-        $secondIds = array_map(fn(Exercise $e) => $e->getExerciseId(), $secondBatch);
+        $firstRun = $this->exerciseFetcher->fetchRandomExercise(2);
+        $secondRun = $this->exerciseFetcher->fetchRandomExercise(2);
 
-        $this->assertNotEmpty(
-            array_intersect($firstIds, $secondIds),
-            'Expected some exercises to be reused after reset'
-        );
+        $firstIds = array_map(fn($ex) => $ex->getExerciseId(), $firstRun);
+        $secondIds = array_map(fn($ex) => $ex->getExerciseId(), $secondRun);
+        $intersection = array_intersect($firstIds, $secondIds);
+
+        $this->assertNotEmpty($intersection, "Expected some exercises to repeat after reset");
+        $this->assertCount(8, $firstRun);
+        $this->assertCount(8, $secondRun);
     }
 }
 

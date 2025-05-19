@@ -13,14 +13,10 @@ use Random\RandomException;
 
 class RandomExerciseFetcher
 {
-    public const MUSCLE_GROUP_ROTATION_1 = 1;
-    public const MUSCLE_GROUP_ROTATION_2 = 2;
-    public const MUSCLE_GROUP_ROTATION_3 = 3;
-
     private const MUSCLE_GROUP_ROTATIONS = [
-        self::MUSCLE_GROUP_ROTATION_1 => [MuscleGroup::LEGS, MuscleGroup::SHOULDERS],
-        self::MUSCLE_GROUP_ROTATION_2 => [MuscleGroup::CHEST, MuscleGroup::BACK, MuscleGroup::ARMS, MuscleGroup::SHOULDERS],
-        self::MUSCLE_GROUP_ROTATION_3 => [MuscleGroup::CORE, MuscleGroup::BACK],
+        1 => [MuscleGroup::LEGS, MuscleGroup::SHOULDERS],
+        2 => [MuscleGroup::CHEST, MuscleGroup::BACK, MuscleGroup::ARMS, MuscleGroup::SHOULDERS],
+        3 => [MuscleGroup::CORE, MuscleGroup::BACK],
     ];
 
     private const MIN_EXERCISES_PER_GROUP = 2;
@@ -39,7 +35,7 @@ class RandomExerciseFetcher
 
     private function initializeRotationSequence(): void
     {
-        $this->muscleGroupRotationSequence = [self::MUSCLE_GROUP_ROTATION_1, self::MUSCLE_GROUP_ROTATION_2, self::MUSCLE_GROUP_ROTATION_3];
+        $this->muscleGroupRotationSequence = array_keys(self::MUSCLE_GROUP_ROTATIONS);
         shuffle($this->muscleGroupRotationSequence);
     }
 
