@@ -2,7 +2,7 @@
 
 namespace Lexgur\GondorGains\Tests\Service;
 
-use Lexgur\GondorGains\Exception\ExerciseNotFoundException;
+use InvalidArgumentException;
 use Lexgur\GondorGains\Exception\NotEnoughExercisesException;
 use Lexgur\GondorGains\Model\Exercise;
 use Lexgur\GondorGains\Model\MuscleGroup;
@@ -90,7 +90,7 @@ class RandomExerciseFetcherTest extends TestCase
      */
     public function testShouldThrowExceptionForInvalidRotation(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->exerciseFetcher->fetchRandomExercise(5);
     }
 
@@ -148,7 +148,6 @@ class RandomExerciseFetcherTest extends TestCase
     /**
      * @group exercise_selection
      * @throws RandomException
-     * @throws ExerciseNotFoundException
      */
     public function testShouldResetExercisesWhenAllUsed(): void
     {
