@@ -1,6 +1,6 @@
 <?php
 
-namespace Lexgur\GondorGains\Tests;
+namespace Lexgur\GondorGains\Tests\Service;
 
 use Lexgur\GondorGains\Exception\ExerciseNotFoundException;
 use Lexgur\GondorGains\Exception\NotEnoughExercisesException;
@@ -159,12 +159,17 @@ class RandomExerciseFetcherTest extends TestCase
 
         $this->repository
             ->method('fetchByMuscleGroup')
-            ->willReturnMap([
-                [MuscleGroup::CHEST, $chestExercises],
-                [MuscleGroup::BACK, $backExercises],
-                [MuscleGroup::ARMS, $armsExercises],
-                [MuscleGroup::SHOULDERS, $shoulderExercises],
-            ]);
+            ->willReturnCallback(function (MuscleGroup $group) use (
+                $chestExercises, $backExercises, $armsExercises, $shoulderExercises
+            ) {
+                return match ($group) {
+                    MuscleGroup::CHEST => $chestExercises,
+                    MuscleGroup::BACK => $backExercises,
+                    MuscleGroup::ARMS => $armsExercises,
+                    MuscleGroup::SHOULDERS => $shoulderExercises,
+                    default => [],
+                };
+            });
 
         $firstRun = $this->exerciseFetcher->fetchRandomExercise(2);
         $secondRun = $this->exerciseFetcher->fetchRandomExercise(2);

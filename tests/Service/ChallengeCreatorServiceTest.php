@@ -1,9 +1,8 @@
 <?php
 declare(strict_types=1);
 
-namespace Lexgur\GondorGains\Tests;
+namespace Lexgur\GondorGains\Tests\Service;
 
-use DateTimeImmutable;
 use Lexgur\GondorGains\Exception\ChallengeNotFoundException;
 use Lexgur\GondorGains\Exception\ExerciseNotFoundException;
 use Lexgur\GondorGains\Model\Challenge;
@@ -44,7 +43,7 @@ class ChallengeCreatorServiceTest extends TestCase
     }
 
     /**
-     * @throws ExerciseNotFoundException|RandomException|Exception
+     * @throws RandomException|Exception
      */
     public function testFetchExercisesForChallengeReturnsExercisesForSpecifiedRotation(): void
     {
@@ -67,7 +66,7 @@ class ChallengeCreatorServiceTest extends TestCase
     }
 
     /**
-     * @throws ExerciseNotFoundException|RandomException|Exception
+     * @throws RandomException|Exception
      */
     public function testFetchExercisesForChallengeUsesNextRotationWhenNoneSpecified(): void
     {
@@ -88,7 +87,7 @@ class ChallengeCreatorServiceTest extends TestCase
     }
 
     /**
-     * @throws ExerciseNotFoundException|RandomException
+     * @throws RandomException
      */
     public function testGenerateChallengePropagatesExceptions(): void
     {
@@ -137,6 +136,11 @@ class ChallengeCreatorServiceTest extends TestCase
         $this->service->assignChallengeToExercises($challenge, [$exercise]);
     }
 
+    /**
+     * @throws ChallengeNotFoundException
+     * @throws Exception
+     * @throws RandomException
+     */
     public function testCreateChallengeReturnsChallengeWithExercisesAssigned(): void
     {
         $userId = 123;
@@ -175,6 +179,9 @@ class ChallengeCreatorServiceTest extends TestCase
     }
 
 
+    /**
+     * @throws Exception
+     */
     public function testCreateChallengeForUserThrowsWhenChallengeIdIsNull(): void
     {
         $challengeWithoutId = $this->createMock(Challenge::class);

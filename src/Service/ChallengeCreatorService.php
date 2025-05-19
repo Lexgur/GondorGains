@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Lexgur\GondorGains\Service;
 
+use DateTimeImmutable;
 use Lexgur\GondorGains\Exception\ChallengeNotFoundException;
-use Lexgur\GondorGains\Exception\ExerciseNotFoundException;
 use Lexgur\GondorGains\Model\Challenge;
 use Lexgur\GondorGains\Model\Exercise;
 use Lexgur\GondorGains\Repository\ChallengeModelRepository;
@@ -32,7 +32,6 @@ class ChallengeCreatorService
      * @param int|null $muscleGroupRotation
      * @return Challenge
      * @throws ChallengeNotFoundException
-     * @throws ExerciseNotFoundException
      * @throws RandomException
      */
     public function createChallenge(int $userId, ?int $muscleGroupRotation = null): Challenge
@@ -51,7 +50,6 @@ class ChallengeCreatorService
 
     /**
      * @return (Exercise|null)[]
-     * @throws ExerciseNotFoundException
      * @throws RandomException
      */
     public function fetchExercisesForChallenge(?int $muscleGroupRotation = null): array
@@ -59,11 +57,14 @@ class ChallengeCreatorService
         return $this->fetcher->fetchRandomExercise($muscleGroupRotation);
     }
 
+    /**
+     * @throws ChallengeNotFoundException
+     */
     public function createChallengeForUser(int $userId): Challenge
     {
         $challenge = new Challenge(
             userId: $userId,
-            startedAt: new \DateTimeImmutable()
+            startedAt: new DateTimeImmutable()
         );
 
         $savedChallenge = $this->challengeRepository->save($challenge);
