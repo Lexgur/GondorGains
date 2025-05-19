@@ -1,13 +1,15 @@
 <?php
 
-namespace Lexgur\GondorGains\Tests;
+namespace Lexgur\GondorGains\Tests\Service;
 
+use InvalidArgumentException;
 use Lexgur\GondorGains\Exception\NotEnoughExercisesException;
 use Lexgur\GondorGains\Model\Exercise;
 use Lexgur\GondorGains\Model\MuscleGroup;
 use Lexgur\GondorGains\Repository\ExerciseModelRepository;
 use Lexgur\GondorGains\Service\RandomExerciseFetcher;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Random\RandomException;
@@ -24,6 +26,9 @@ class RandomExerciseFetcherTest extends TestCase
     /** @var ExerciseModelRepository&MockObject */
     private ExerciseModelRepository $repository;
 
+    /**
+     * @throws Exception
+     */
     protected function setUp(): void
     {
         $this->repository = $this->createMock(ExerciseModelRepository::class);
@@ -49,20 +54,20 @@ class RandomExerciseFetcherTest extends TestCase
     }
 
     /**
-     * @param int $rotation
+     * @param int $muscleGroupRotation
      * @param int $minExercises
      * @param int $maxExercises
      * @return void
      * @throws RandomException
      */
     #[DataProvider('provideValidRotations')]
-    public function testShouldReturnValidNumberOfExercisesForRotation(int $rotation, int $minExercises, int $maxExercises): void
+    public function testShouldReturnValidNumberOfExercisesForRotation(int $muscleGroupRotation, int $minExercises, int $maxExercises): void
     {
         $this->repository
             ->method('fetchByMuscleGroup')
             ->willReturn($this->createTestExercises(MuscleGroup::CHEST, 3));
 
-        $exerciseIds = $this->exerciseFetcher->fetchRandomExerciseIds($rotation);
+        $exerciseIds = $this->exerciseFetcher->fetchRandomExercise($muscleGroupRotation);
 
         $this->assertGreaterThanOrEqual($minExercises, count($exerciseIds));
         $this->assertLessThanOrEqual($maxExercises, count($exerciseIds));
@@ -85,10 +90,13 @@ class RandomExerciseFetcherTest extends TestCase
      */
     public function testShouldThrowExceptionForInvalidRotation(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->exerciseFetcher->fetchRandomExerciseIds(5);
+        $this->expectException(InvalidArgumentException::class);
+        $this->exerciseFetcher->fetchRandomExercise(5);
     }
 
+    /**
+     * @throws RandomException
+     */
     public function testShouldThrowNotEnoughExercisesException(): void
     {
         $this->expectException(NotEnoughExercisesException::class);
@@ -97,11 +105,12 @@ class RandomExerciseFetcherTest extends TestCase
             ->method('fetchByMuscleGroup')
             ->willReturn($this->createTestExercises(MuscleGroup::CHEST, 1));
 
-        $this->exerciseFetcher->fetchRandomExerciseIds(1);
+        $this->exerciseFetcher->fetchRandomExercise(1);
     }
 
     /**
      * @group rotation
+     * @throws RandomException
      */
     public function testShouldProvideNonRepeatingRotationSequence(): void
     {
@@ -109,29 +118,29 @@ class RandomExerciseFetcherTest extends TestCase
             ->method('fetchByMuscleGroup')
             ->willReturn($this->createTestExercises(MuscleGroup::CHEST, 3));
 
-        $rotations = [];
+        $muscleGroupRotations = [];
 
         for ($i = 0; $i < 3; $i++) {
-            $rotation = $this->exerciseFetcher->getNextRotation();
-            $rotations[] = $rotation;
-            $this->exerciseFetcher->fetchRandomExerciseIds($rotation);
+            $muscleGroupRotation = $this->exerciseFetcher->getNextRotation();
+            $muscleGroupRotations[] = $muscleGroupRotation;
+            $this->exerciseFetcher->fetchRandomExercise($muscleGroupRotation);
         }
 
-        $this->assertCount(3, array_unique($rotations));
-        $this->assertEqualsCanonicalizing([1, 2, 3], $rotations);
+        $this->assertCount(3, array_unique($muscleGroupRotations));
+        $this->assertEqualsCanonicalizing([1, 2, 3], $muscleGroupRotations);
     }
 
     public function testShouldReshuffleRotationSequenceAfterExhaustion(): void
     {
-        $usedRotations = [];
+        $usedMuscleGroupRotations = [];
 
         for ($i = 0; $i < 3; $i++) {
-            $usedRotations[] = $this->exerciseFetcher->getNextRotation();
+            $usedMuscleGroupRotations[] = $this->exerciseFetcher->getNextRotation();
         }
 
         $reshuffledFirst = $this->exerciseFetcher->getNextRotation();
 
-        $this->assertCount(3, array_unique($usedRotations));
+        $this->assertCount(3, array_unique($usedMuscleGroupRotations));
         $this->assertContains($reshuffledFirst, [1, 2, 3]);
         $this->assertNotEmpty($reshuffledFirst);
     }
@@ -142,26 +151,30 @@ class RandomExerciseFetcherTest extends TestCase
      */
     public function testShouldResetExercisesWhenAllUsed(): void
     {
+        $chestExercises = $this->createTestExercises(MuscleGroup::CHEST, 2);
+        $backExercises = $this->createTestExercises(MuscleGroup::BACK, 2);
+        $armsExercises = $this->createTestExercises(MuscleGroup::ARMS, 2);
+        $shoulderExercises = $this->createTestExercises(MuscleGroup::SHOULDERS, 2);
+
         $this->repository
             ->method('fetchByMuscleGroup')
-            ->willReturn($this->createTestExercises(MuscleGroup::CHEST, 3));
+            ->willReturnCallback(function (MuscleGroup $group) use (
+                $chestExercises, $backExercises, $armsExercises, $shoulderExercises
+            ) {
+                return match ($group) {
+                    MuscleGroup::CHEST => $chestExercises,
+                    MuscleGroup::BACK => $backExercises,
+                    MuscleGroup::ARMS => $armsExercises,
+                    MuscleGroup::SHOULDERS => $shoulderExercises,
+                    default => [],
+                };
+            });
 
-        $firstCall = $this->exerciseFetcher->fetchRandomExerciseIds(1);
-        $secondCall = $this->exerciseFetcher->fetchRandomExerciseIds(1);
-        $thirdCall = $this->exerciseFetcher->fetchRandomExerciseIds(1);
-        $allPreviousExercises = array_merge($firstCall, $secondCall);
-        $commonExercises = array_intersect($thirdCall, $allPreviousExercises);
+        $firstRun = $this->exerciseFetcher->fetchRandomExercise(2);
+        $secondRun = $this->exerciseFetcher->fetchRandomExercise(2);
 
-        $this->assertGreaterThanOrEqual(self::MIN_EXERCISES_ROTATION_1, count($firstCall));
-        $this->assertLessThanOrEqual(self::MAX_EXERCISES_ROTATION_1, count($firstCall));
-
-        $this->assertGreaterThanOrEqual(self::MIN_EXERCISES_ROTATION_1, count($secondCall));
-        $this->assertLessThanOrEqual(self::MAX_EXERCISES_ROTATION_1, count($secondCall));
-
-        $this->assertGreaterThanOrEqual(self::MIN_EXERCISES_ROTATION_1, count($thirdCall));
-        $this->assertLessThanOrEqual(self::MAX_EXERCISES_ROTATION_1, count($thirdCall));
-
-        $this->assertNotEmpty($commonExercises);
+        $this->assertCount(8, $firstRun);
+        $this->assertCount(8, $secondRun);
     }
 }
 

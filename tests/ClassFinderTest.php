@@ -35,7 +35,7 @@ class ClassFinderTest extends TestCase
     public function testFindClassesImplementing(string $value, array $expected): void
     {
         $actual = $this->classFinder->findClassesImplementing($value);
-        $this->assertEquals($expected, $actual);
+        $this->assertEqualsCanonicalizing($expected, $actual);
     }
 
     /**
@@ -75,7 +75,7 @@ class ClassFinderTest extends TestCase
     public function testFindClassesExtending(string $value, array $expected): void
     {
         $actual = $this->classFinder->findClassesExtending($value);
-        $this->assertEquals($expected, $actual);
+        $this->assertEqualsCanonicalizing($expected, $actual);
     }
 
     /** @return list<array{class-string, list<class-string>}> */
@@ -110,7 +110,7 @@ class ClassFinderTest extends TestCase
     public function testFindClassesInNamespace(string $value, array $expected): void
     {
         $actual = $this->classFinder->findClassesInNamespace($value);
-        $this->assertEquals($expected, $actual);
+        $this->assertEqualsCanonicalizing($expected, $actual);
     }
 
     public function testGetFullClassNameWithNonExistentPathReturnsNull(): void

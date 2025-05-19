@@ -77,6 +77,13 @@ class UserModelRepositoryTest extends TestCase
         $this->assertEquals($user->getUserEmail(), 'Test@test.com');
     }
 
+    public function testFindByEmailThrowsUserNotFoundExceptionWhenUnusedEmailIsProvided(): void
+    {
+        $this->expectException(UserNotFoundException::class);
+
+        $this->repository->findByEmail('bad@bad.com');
+    }
+
     public function testLastInsertIdWithInvalidThrowsPDOException(): void
     {
         $this->expectException(\PDOException::class);

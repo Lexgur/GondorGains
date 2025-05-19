@@ -4,6 +4,7 @@ namespace Lexgur\GondorGains\Repository;
 
 use Lexgur\GondorGains\Exception\ExerciseNotFoundException;
 use Lexgur\GondorGains\Model\Exercise;
+use Lexgur\GondorGains\Model\MuscleGroup;
 use PDO;
 
 class ExerciseModelRepository extends BaseRepository implements ExerciseModelRepositoryInterface
@@ -44,7 +45,7 @@ class ExerciseModelRepository extends BaseRepository implements ExerciseModelRep
     /**
      * @return array<Exercise>
      */
-    public function fetchByMuscleGroup(\Lexgur\GondorGains\Model\MuscleGroup $muscleGroup): array
+    public function fetchByMuscleGroup(MuscleGroup $muscleGroup): array
     {
         $statement = $this->connection->connect()->prepare('SELECT * FROM exercises WHERE muscle_group = :muscle_group');
         $statement->execute([':muscle_group' => $muscleGroup->value]);
@@ -58,7 +59,6 @@ class ExerciseModelRepository extends BaseRepository implements ExerciseModelRep
         return $exercises;
     }
 
-
     public function update(Exercise $exercise): Exercise
     {
         $statement = $this->connection->connect()->prepare('UPDATE `exercises` SET `name` = :name, `muscle_group` = :muscle_group, `description` = :description WHERE id = :id');
@@ -66,6 +66,7 @@ class ExerciseModelRepository extends BaseRepository implements ExerciseModelRep
         $statement->bindValue(':muscle_group', $exercise->getMuscleGroup()->value);
         $statement->bindValue(':description', $exercise->getDescription());
         $statement->bindValue(':id', $exercise->getExerciseId());
+        $statement->bindValue(':challenge_id', $exercise->getChallengeId());
 
         return $this->fetchById($exercise->getExerciseId());
     }

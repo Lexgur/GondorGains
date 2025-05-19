@@ -25,6 +25,22 @@ class ExerciseTest extends TestCase
         $this->assertEquals($exerciseDescription, $exercise->getDescription());
     }
 
+    public function testSetChallengeIdCorrectlySetsProperty(): void
+    {
+        $exercise = new Exercise(
+            name: "Test Exercise",
+            muscleGroup: MuscleGroup::CHEST,
+            description: "Test description"
+        );
+        $this->assertNull($exercise->getChallengeId());
+
+        $challengeId = 42;
+        $exercise->setChallengeId($challengeId);
+
+        $this->assertEquals($challengeId, $exercise->getChallengeId());
+    }
+
+
     public function testConstructorThrowsTypeErrorWhenInvalidArgumentIsProvided(): void
     {
 
