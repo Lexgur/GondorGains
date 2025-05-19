@@ -9,6 +9,7 @@ use Lexgur\GondorGains\Model\MuscleGroup;
 use Lexgur\GondorGains\Repository\ExerciseModelRepository;
 use Lexgur\GondorGains\Service\RandomExerciseFetcher;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Random\RandomException;
@@ -25,6 +26,9 @@ class RandomExerciseFetcherTest extends TestCase
     /** @var ExerciseModelRepository&MockObject */
     private ExerciseModelRepository $repository;
 
+    /**
+     * @throws Exception
+     */
     protected function setUp(): void
     {
         $this->repository = $this->createMock(ExerciseModelRepository::class);
@@ -54,7 +58,7 @@ class RandomExerciseFetcherTest extends TestCase
      * @param int $minExercises
      * @param int $maxExercises
      * @return void
-     * @throws RandomException
+     * @throws RandomException|ExerciseNotFoundException
      */
     #[DataProvider('provideValidRotations')]
     public function testShouldReturnValidNumberOfExercisesForRotation(int $muscleGroupRotation, int $minExercises, int $maxExercises): void
@@ -82,7 +86,7 @@ class RandomExerciseFetcherTest extends TestCase
 
     /**
      * @group validation
-     * @throws RandomException
+     * @throws RandomException|ExerciseNotFoundException
      */
     public function testShouldThrowExceptionForInvalidRotation(): void
     {
@@ -144,44 +148,28 @@ class RandomExerciseFetcherTest extends TestCase
      */
     public function testShouldResetExercisesWhenAllUsed(): void
     {
-        // Always return the same 3 exercises for the CHEST group
-        $testExercises = $this->createTestExercises(MuscleGroup::CHEST, 3);
+        $testExercises = [
+            MuscleGroup::CHEST->value => $this->createTestExercises(MuscleGroup::CHEST, 2),
+            MuscleGroup::BACK->value => $this->createTestExercises(MuscleGroup::BACK, 2),
+            MuscleGroup::ARMS->value => $this->createTestExercises(MuscleGroup::ARMS, 2),
+            MuscleGroup::SHOULDERS->value => $this->createTestExercises(MuscleGroup::SHOULDERS, 2),
+        ];
 
         $this->repository
             ->method('fetchByMuscleGroup')
-            ->willReturn($testExercises);
-
-        $this->repository
-            ->method('fetchById')
-            ->willReturnCallback(function (int $id) use ($testExercises) {
-                foreach ($testExercises as $exercise) {
-                    if ($exercise->getExerciseId() === $id) {
-                        return $exercise;
-                    }
-                }
-                return null;
+            ->willReturnCallback(function (MuscleGroup $group) use ($testExercises) {
+                return $testExercises[$group->value] ?? [];
             });
+        $firstBatch = $this->exerciseFetcher->fetchRandomExercise(RandomExerciseFetcher::MUSCLE_GROUP_ROTATION_2);
+        $secondBatch = $this->exerciseFetcher->fetchRandomExercise(RandomExerciseFetcher::MUSCLE_GROUP_ROTATION_2);
 
-        // Call three times to exhaust and then trigger reset
-        $firstCall = $this->exerciseFetcher->fetchRandomExercise(2);
-        $secondCall = $this->exerciseFetcher->fetchRandomExercise(2);
-        $thirdCall = $this->exerciseFetcher->fetchRandomExercise(2);
+        $firstIds = array_map(fn(Exercise $e) => $e->getExerciseId(), $firstBatch);
+        $secondIds = array_map(fn(Exercise $e) => $e->getExerciseId(), $secondBatch);
 
-        $getIds = fn(array $exercises) => array_map(
-            fn(Exercise $exercise) => $exercise->getExerciseId(),
-            $exercises
+        $this->assertNotEmpty(
+            array_intersect($firstIds, $secondIds),
+            'Expected some exercises to be reused after reset'
         );
-
-        $ids1 = $getIds($firstCall);
-        $ids2 = $getIds($secondCall);
-        $ids3 = $getIds($thirdCall);
-        $allPreviousExercises = array_merge($ids1, $ids2);
-        $commonExercises = array_intersect($ids3, $allPreviousExercises);
-
-        $this->assertNotEmpty($ids1);
-        $this->assertNotEmpty($ids2);
-        $this->assertNotEmpty($ids3);
-        $this->assertNotEmpty($commonExercises);
     }
 }
 

@@ -54,7 +54,7 @@ class RandomExerciseFetcher
 
     /**
      * @return array<Exercise|null>
-     * @throws RandomException|ExerciseNotFoundException
+     * @throws RandomException
      */
     public function fetchRandomExercise(?int $muscleGroupRotation = null): array
     {
@@ -90,10 +90,11 @@ class RandomExerciseFetcher
             );
 
             for ($i = 0; $i < $numberOfExercises; $i++) {
-                $exerciseId = $availableExercises[$i]->getExerciseId();
-                $this->usedExercises[$muscleGroupRotation][$muscleGroup->value][] = $exerciseId;
+                $exercise = $availableExercises[$i];
+                $exerciseId = $exercise->getExerciseId();
 
-                $selectedExercises[] = $this->exerciseRepository->fetchById($exerciseId);
+                $this->usedExercises[$muscleGroupRotation][$muscleGroup->value][] = $exerciseId;
+                $selectedExercises[] = $exercise;
             }
         }
 
