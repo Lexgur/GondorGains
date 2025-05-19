@@ -35,7 +35,7 @@ class ClassFinderTest extends TestCase
     public function testFindClassesImplementing(string $value, array $expected): void
     {
         $actual = $this->classFinder->findClassesImplementing($value);
-        $this->assertEquals($expected, $actual);
+        $this->assertEqualsCanonicalizing($expected, $actual);
     }
 
     /**

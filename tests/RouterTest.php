@@ -99,7 +99,9 @@ class RouterTest extends TestCase
         $this->expectException(NotFoundException::class);
 
         $filePath = $this->filesystem . '/RouterTest/NoClassFile.php';
-
+        if (!file_exists($filePath)) {
+            mkdir($filePath, 0644, true);
+        }
         $router = new Router(__DIR__ . '/../src/Controller');
         $router->getFullClassName($filePath);
     }
