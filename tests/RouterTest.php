@@ -29,6 +29,11 @@ class RouterTest extends TestCase
     {
         $this->controllerDir = __DIR__ . '/../src/Controller';
         $this->filesystem = __DIR__ . '/../tmp/test';
+
+        if (!is_dir($this->filesystem . '/RouterTest')) {
+            mkdir($this->filesystem . '/RouterTest', 0644, true);
+        }
+
         $this->router = new Router($this->controllerDir);
         $this->router->registerControllers();
     }
@@ -86,23 +91,25 @@ class RouterTest extends TestCase
 
     public function testGetFullClassNameThrowsFilePathReadExceptionForEmptyFile(): void
     {
-        $emptyFilePath = $this->filesystem . 'EmptyFile.php';
-
         $this->expectException(FilePathReadException::class);
+
+        $emptyFilePath = $this->filesystem . '/EmptyFile.php';
+        file_put_contents($emptyFilePath, '');
 
         $router = new Router(__DIR__ . '/../src/Controller');
         $router->getFullClassName($emptyFilePath);
     }
 
+
     public function testGetFullClassNameThrowsNotFoundExceptionForNoClass(): void
     {
         $this->expectException(NotFoundException::class);
 
-        $filePath = $this->filesystem . '/RouterTest/NoClassFile.php';
-        if (!file_exists($filePath)) {
-            mkdir($filePath, 0644, true);
-        }
-        $router = new Router(__DIR__ . '/../src/Controller');
+        $dir = $this->filesystem . '/RouterTest';
+        $filePath = $dir . '/NoClassFile.php';
+        file_put_contents($filePath, "<?php\n\nnamespace Lexgur\\GondorGains\\Controller;\n\ntrait NoClass{}\n");
+
+        $router = new Router($dir);
         $router->getFullClassName($filePath);
     }
 
@@ -126,9 +133,8 @@ class RouterTest extends TestCase
         $this->expectException(RegisterControllerException::class);
 
         $testControllerDir = $this->filesystem . '/RouterTest';
-        if (!is_dir($testControllerDir)) {
-            mkdir($testControllerDir, 0644, true);
-        }
+        file_put_contents($testControllerDir . '/InvalidController.php', "<?php\nnamespace Lexgur\\GondorGains\\Controller;\nclass InvalidController {}");
+
         $router = new Router($testControllerDir);
         $router->registerControllers();
     }
