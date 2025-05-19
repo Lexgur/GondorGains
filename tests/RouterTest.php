@@ -31,8 +31,9 @@ class RouterTest extends TestCase
         $this->filesystem = __DIR__ . '/../tmp/test';
 
         if (!is_dir($this->filesystem . '/RouterTest')) {
-            mkdir($this->filesystem . '/RouterTest', 0644, true);
+            mkdir($this->filesystem . '/RouterTest', 0777, true);
         }
+        chmod($this->filesystem . '/RouterTest', 0777);
 
         $this->router = new Router($this->controllerDir);
         $this->router->registerControllers();
