@@ -190,23 +190,25 @@ class ChallengeCreatorServiceTest extends TestCase
         $this->service->createChallengeForUser(1);
     }
 
+    /**
+     * @throws Exception
+     */
     public function testAssignChallengeToExercisesAssignsAndSavesOnlyNonNullExercises(): void
     {
         $challenge = $this->createMock(Challenge::class);
         $challenge->method('getChallengeId')->willReturn(55);
 
         $exercise1 = $this->createMock(Exercise::class);
-        $exercise2 = null;
-        $exercise3 = $this->createMock(Exercise::class);
+        $exercise2 = $this->createMock(Exercise::class);
 
         $exercise1->expects($this->once())->method('setChallengeId')->with(55);
-        $exercise3->expects($this->once())->method('setChallengeId')->with(55);
+        $exercise2->expects($this->once())->method('setChallengeId')->with(55);
 
         $this->exerciseRepository
             ->expects($this->exactly(2))
             ->method('save')
-            ->with($this->logicalOr($exercise1, $exercise3));
+            ->with($this->logicalOr($exercise1, $exercise2));
 
-        $this->service->assignChallengeToExercises($challenge, [$exercise1, $exercise2, $exercise3]);
+        $this->service->assignChallengeToExercises($challenge, [$exercise1, $exercise2]);
     }
 }

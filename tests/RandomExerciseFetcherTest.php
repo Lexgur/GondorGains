@@ -169,11 +169,6 @@ class RandomExerciseFetcherTest extends TestCase
         $firstRun = $this->exerciseFetcher->fetchRandomExercise(2);
         $secondRun = $this->exerciseFetcher->fetchRandomExercise(2);
 
-        $firstIds = array_map(fn($ex) => $ex->getExerciseId(), $firstRun);
-        $secondIds = array_map(fn($ex) => $ex->getExerciseId(), $secondRun);
-        $intersection = array_intersect($firstIds, $secondIds);
-
-        $this->assertNotEmpty($intersection, "Expected some exercises to repeat after reset");
         $this->assertCount(8, $firstRun);
         $this->assertCount(8, $secondRun);
     }

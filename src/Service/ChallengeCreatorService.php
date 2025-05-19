@@ -87,10 +87,8 @@ class ChallengeCreatorService
         }
 
         foreach ($exercises as $exercise) {
-            if (null !== $exercise) {
                 $exercise->setChallengeId($challengeId);
                 $this->exerciseRepository->save($exercise);
             }
         }
-    }
 }
