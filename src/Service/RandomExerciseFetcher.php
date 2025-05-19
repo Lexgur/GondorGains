@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Lexgur\GondorGains\Service;
 
-use Lexgur\GondorGains\Exception\ExerciseNotFoundException;
 use Lexgur\GondorGains\Exception\NotEnoughExercisesException;
 use Lexgur\GondorGains\Model\Exercise;
 use Lexgur\GondorGains\Model\MuscleGroup;
