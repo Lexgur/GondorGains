@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Lexgur\GondorGains\Service;
 
-use DateTimeImmutable;
 use Lexgur\GondorGains\Exception\ChallengeNotFoundException;
 use Lexgur\GondorGains\Model\Challenge;
 use Lexgur\GondorGains\Model\Exercise;
@@ -28,9 +27,6 @@ class ChallengeCreatorService
     }
 
     /**
-     * @param int $userId
-     * @param int|null $muscleGroupRotation
-     * @return Challenge
      * @throws ChallengeNotFoundException
      * @throws RandomException
      */
@@ -40,7 +36,7 @@ class ChallengeCreatorService
 
         $exercises = array_filter(
             $this->fetchExercisesForChallenge($muscleGroupRotation),
-            fn($exercise) => $exercise instanceof Exercise
+            fn ($exercise) => $exercise instanceof Exercise
         );
 
         $this->assignChallengeToExercises($challenge, $exercises);
@@ -49,7 +45,8 @@ class ChallengeCreatorService
     }
 
     /**
-     * @return (Exercise|null)[]
+     * @return (null|Exercise)[]
+     *
      * @throws RandomException
      */
     public function fetchExercisesForChallenge(?int $muscleGroupRotation = null): array
@@ -64,7 +61,7 @@ class ChallengeCreatorService
     {
         $challenge = new Challenge(
             userId: $userId,
-            startedAt: new DateTimeImmutable()
+            startedAt: new \DateTimeImmutable()
         );
 
         $savedChallenge = $this->challengeRepository->save($challenge);
@@ -77,19 +74,19 @@ class ChallengeCreatorService
     }
 
     /**
-     * @param (Exercise|null)[] $exercises
+     * @param (null|Exercise)[] $exercises
      */
     public function assignChallengeToExercises(Challenge $challenge, array $exercises): void
     {
         $challengeId = $challenge->getChallengeId();
 
-        if ($challengeId === null) {
+        if (null === $challengeId) {
             return;
         }
 
         foreach ($exercises as $exercise) {
-                $exercise->setChallengeId($challengeId);
-                $this->exerciseRepository->save($exercise);
-            }
+            $exercise->setChallengeId($challengeId);
+            $this->exerciseRepository->save($exercise);
         }
+    }
 }

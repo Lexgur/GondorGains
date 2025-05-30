@@ -32,12 +32,6 @@ class RandomExerciseFetcher
         $this->initializeRotationSequence();
     }
 
-    private function initializeRotationSequence(): void
-    {
-        $this->muscleGroupRotationSequence = array_keys(self::MUSCLE_GROUP_ROTATIONS);
-        shuffle($this->muscleGroupRotationSequence);
-    }
-
     public function getNextRotation(): int
     {
         if (empty($this->muscleGroupRotationSequence)) {
@@ -48,7 +42,8 @@ class RandomExerciseFetcher
     }
 
     /**
-     * @return array<Exercise|null>
+     * @return array<null|Exercise>
+     *
      * @throws RandomException
      */
     public function fetchRandomExercise(?int $muscleGroupRotation = null): array
@@ -73,8 +68,8 @@ class RandomExerciseFetcher
 
             if (count($availableExercises) < self::MIN_EXERCISES_PER_GROUP) {
                 throw new NotEnoughExercisesException(
-                    "Not enough exercises for muscle group {$muscleGroup->value}. " .
-                    "Minimum required: " . self::MIN_EXERCISES_PER_GROUP
+                    "Not enough exercises for muscle group {$muscleGroup->value}. "
+                    .'Minimum required: '.self::MIN_EXERCISES_PER_GROUP
                 );
             }
 
@@ -84,7 +79,7 @@ class RandomExerciseFetcher
                 min(count($availableExercises), self::MAX_EXERCISES_PER_GROUP)
             );
 
-            for ($i = 0; $i < $numberOfExercises; $i++) {
+            for ($i = 0; $i < $numberOfExercises; ++$i) {
                 $exercise = $availableExercises[$i];
                 $exerciseId = $exercise->getExerciseId();
 
@@ -96,8 +91,15 @@ class RandomExerciseFetcher
         return $selectedExercises;
     }
 
+    private function initializeRotationSequence(): void
+    {
+        $this->muscleGroupRotationSequence = array_keys(self::MUSCLE_GROUP_ROTATIONS);
+        shuffle($this->muscleGroupRotationSequence);
+    }
+
     /**
      * @param array<Exercise> $exercises
+     *
      * @return array<Exercise>
      */
     private function filterUsedExercises(array $exercises, int $muscleGroupRotation, string $muscleGroup): array
