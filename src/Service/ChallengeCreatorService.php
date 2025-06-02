@@ -11,20 +11,13 @@ use Lexgur\GondorGains\Repository\ChallengeModelRepository;
 use Lexgur\GondorGains\Repository\ExerciseModelRepository;
 use Random\RandomException;
 
-class ChallengeCreatorService
+readonly class ChallengeCreatorService
 {
-    private RandomExerciseFetcher $fetcher;
-
-    private ChallengeModelRepository $challengeRepository;
-
-    private ExerciseModelRepository $exerciseRepository;
-
-    public function __construct(RandomExerciseFetcher $fetcher, ExerciseModelRepository $exerciseModelRepository, ChallengeModelRepository $challengeModelRepository)
-    {
-        $this->fetcher = $fetcher;
-        $this->challengeRepository = $challengeModelRepository;
-        $this->exerciseRepository = $exerciseModelRepository;
-    }
+    public function __construct(
+        private RandomExerciseFetcher $fetcher,
+        private ExerciseModelRepository $exerciseRepository,
+        private ChallengeModelRepository $challengeRepository
+    ) {}
 
     /**
      * @throws ChallengeNotFoundException
@@ -74,15 +67,11 @@ class ChallengeCreatorService
     }
 
     /**
-     * @param (null|Exercise)[] $exercises
+     * @param (Exercise)[] $exercises
      */
     public function assignChallengeToExercises(Challenge $challenge, array $exercises): void
     {
         $challengeId = $challenge->getChallengeId();
-
-        if (null === $challengeId) {
-            return;
-        }
 
         foreach ($exercises as $exercise) {
             $exercise->setChallengeId($challengeId);
