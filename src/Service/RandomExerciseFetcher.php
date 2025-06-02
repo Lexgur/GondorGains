@@ -38,8 +38,11 @@ class RandomExerciseFetcher
             $this->initializeRotationSequence();
         }
 
-        return array_shift($this->muscleGroupRotationSequence);
+        $next = array_shift($this->muscleGroupRotationSequence);
+        $this->muscleGroupRotationSequence[] = $next;
+        return $next;
     }
+
 
     /**
      * @return array<null|Exercise>

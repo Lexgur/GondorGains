@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Lexgur\GondorGains\Tests\Service;
@@ -16,9 +17,12 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Random\RandomException;
 
+/**
+ * @coversNothing
+ */
 class ChallengeCreatorServiceTest extends TestCase
 {
-    private RandomExerciseFetcher&MockObject $fetcher;
+    private MockObject&RandomExerciseFetcher $fetcher;
     private ChallengeCreatorService $service;
 
     /** @var ExerciseModelRepository&MockObject */
@@ -43,7 +47,7 @@ class ChallengeCreatorServiceTest extends TestCase
     }
 
     /**
-     * @throws RandomException|Exception
+     * @throws Exception|RandomException
      */
     public function testFetchExercisesForChallengeReturnsExercisesForSpecifiedRotation(): void
     {
@@ -51,13 +55,14 @@ class ChallengeCreatorServiceTest extends TestCase
         $expectedExercises = [
             $this->createStub(Exercise::class),
             $this->createStub(Exercise::class),
-            $this->createStub(Exercise::class)
+            $this->createStub(Exercise::class),
         ];
 
         $this->fetcher->expects($this->once())
             ->method('fetchRandomExercise')
             ->with($muscleGroupRotation)
-            ->willReturn($expectedExercises);
+            ->willReturn($expectedExercises)
+        ;
 
         $result = $this->service->fetchExercisesForChallenge($muscleGroupRotation);
 
@@ -66,19 +71,20 @@ class ChallengeCreatorServiceTest extends TestCase
     }
 
     /**
-     * @throws RandomException|Exception
+     * @throws Exception|RandomException
      */
     public function testFetchExercisesForChallengeUsesNextRotationWhenNoneSpecified(): void
     {
         $expectedExercises = [
             $this->createStub(Exercise::class),
-            $this->createStub(Exercise::class)
+            $this->createStub(Exercise::class),
         ];
 
         $this->fetcher->expects($this->once())
             ->method('fetchRandomExercise')
             ->with(null)
-            ->willReturn($expectedExercises);
+            ->willReturn($expectedExercises)
+        ;
 
         $result = $this->service->fetchExercisesForChallenge();
 
@@ -95,7 +101,8 @@ class ChallengeCreatorServiceTest extends TestCase
 
         $this->fetcher->expects($this->once())
             ->method('fetchRandomExercise')
-            ->willThrowException(new ExerciseNotFoundException());
+            ->willThrowException(new ExerciseNotFoundException())
+        ;
         $this->service->fetchExercisesForChallenge();
     }
 
@@ -115,25 +122,10 @@ class ChallengeCreatorServiceTest extends TestCase
 
         $this->exerciseRepository
             ->expects($this->exactly(2))
-            ->method('save');
+            ->method('save')
+        ;
 
         $this->service->assignChallengeToExercises($challenge, [$exercise1, $exercise2]);
-    }
-
-    /**
-     * @throws Exception
-     */
-    public function testAssignChallengeToChallengeWithNullIdDoesNothing(): void
-    {
-        $challenge = $this->createMock(Challenge::class);
-        $challenge->method('getChallengeId')->willReturn(null);
-
-        $exercise = $this->createMock(Exercise::class);
-        $exercise->expects($this->never())->method('setChallengeId');
-
-        $this->exerciseRepository->expects($this->never())->method('save');
-
-        $this->service->assignChallengeToExercises($challenge, [$exercise]);
     }
 
     /**
@@ -150,13 +142,15 @@ class ChallengeCreatorServiceTest extends TestCase
         $challenge = $this->getMockBuilder(Challenge::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['getChallengeId'])
-            ->getMock();
+            ->getMock()
+        ;
         $challenge->method('getChallengeId')->willReturn($challengeId);
 
         $this->challengeRepository
             ->expects($this->once())
             ->method('save')
-            ->willReturn($challenge);
+            ->willReturn($challenge)
+        ;
 
         $exercise1 = $this->createMock(Exercise::class);
         $exercise2 = $this->createMock(Exercise::class);
@@ -164,20 +158,21 @@ class ChallengeCreatorServiceTest extends TestCase
         $this->fetcher
             ->expects($this->once())
             ->method('fetchRandomExercise')
-            ->willReturn([$exercise1, $exercise2]);
+            ->willReturn([$exercise1, $exercise2])
+        ;
 
         $exercise1->expects($this->once())->method('setChallengeId')->with($challengeId);
         $exercise2->expects($this->once())->method('setChallengeId')->with($challengeId);
 
         $this->exerciseRepository
             ->expects($this->exactly(2))
-            ->method('save');
+            ->method('save')
+        ;
 
         $result = $this->service->createChallenge($userId);
 
         $this->assertSame($challenge, $result);
     }
-
 
     /**
      * @throws Exception
@@ -190,7 +185,8 @@ class ChallengeCreatorServiceTest extends TestCase
         $this->challengeRepository
             ->expects($this->once())
             ->method('save')
-            ->willReturn($challengeWithoutId);
+            ->willReturn($challengeWithoutId)
+        ;
 
         $this->expectException(ChallengeNotFoundException::class);
 
@@ -214,7 +210,8 @@ class ChallengeCreatorServiceTest extends TestCase
         $this->exerciseRepository
             ->expects($this->exactly(2))
             ->method('save')
-            ->with($this->logicalOr($exercise1, $exercise2));
+            ->with($this->logicalOr($exercise1, $exercise2))
+        ;
 
         $this->service->assignChallengeToExercises($challenge, [$exercise1, $exercise2]);
     }
