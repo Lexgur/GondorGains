@@ -17,9 +17,6 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Random\RandomException;
 
-/**
- * @coversNothing
- */
 class ChallengeCreatorServiceTest extends TestCase
 {
     private MockObject&RandomExerciseFetcher $fetcher;
