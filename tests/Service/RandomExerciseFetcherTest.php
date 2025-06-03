@@ -105,7 +105,7 @@ class RandomExerciseFetcherTest extends TestCase
         $this->assertCount(8, $second);
     }
 
-    /** @return array[] */
+    /** @return array<string, array{int, int, int}> */
     public static function provideTestShouldReturnValidNumberOfExercisesForRotation(): array
     {
         return [
