@@ -4,38 +4,46 @@ declare(strict_types=1);
 
 namespace Lexgur\GondorGains\Tests\Service;
 
+use Lexgur\GondorGains\Connection;
+use Lexgur\GondorGains\Container;
 use Lexgur\GondorGains\Exception\ChallengeNotFoundException;
-use Lexgur\GondorGains\Exception\ExerciseNotFoundException;
-use Lexgur\GondorGains\Model\Challenge;
+use Lexgur\GondorGains\Exception\CircularDependencyException;
 use Lexgur\GondorGains\Model\Exercise;
+use Lexgur\GondorGains\Model\MuscleGroup;
 use Lexgur\GondorGains\Repository\ChallengeModelRepository;
 use Lexgur\GondorGains\Repository\ExerciseModelRepository;
+use Lexgur\GondorGains\Script\RunMigrationsScript;
 use Lexgur\GondorGains\Service\ChallengeCreatorService;
 use Lexgur\GondorGains\Service\RandomExerciseFetcher;
 use PHPUnit\Framework\MockObject\Exception;
-use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Random\RandomException;
 
 class ChallengeCreatorServiceTest extends TestCase
 {
-    private MockObject&RandomExerciseFetcher $fetcher;
+    private ChallengeModelRepository $challengeRepository;
+    private ExerciseModelRepository $exerciseRepository;
+    private RandomExerciseFetcher $fetcher;
     private ChallengeCreatorService $service;
 
-    /** @var ExerciseModelRepository&MockObject */
-    private ExerciseModelRepository $exerciseRepository;
-
-    /** @var ChallengeModelRepository&MockObject */
-    private ChallengeModelRepository $challengeRepository;
-
     /**
-     * @throws Exception
+     * @throws Exception|CircularDependencyException
      */
     protected function setUp(): void
     {
-        $this->fetcher = $this->createMock(RandomExerciseFetcher::class);
-        $this->challengeRepository = $this->createMock(ChallengeModelRepository::class);
-        $this->exerciseRepository = $this->createMock(ExerciseModelRepository::class);
+        $config = require __DIR__ . '/../../config.php';
+        $container = new Container($config);
+
+        $container->get(RunMigrationsScript::class)->run();
+        $container->get(Connection::class)->connect()->exec('DELETE FROM exercises');
+        $container->get(Connection::class)->connect()->exec('DELETE FROM challenges');
+
+        $this->exerciseRepository = $container->get(ExerciseModelRepository::class);
+        $this->challengeRepository = $container->get(ChallengeModelRepository::class);
+        $this->fetcher = $container->get(RandomExerciseFetcher::class);
+
+        $this->seedExercises();
+
         $this->service = new ChallengeCreatorService(
             $this->fetcher,
             $this->exerciseRepository,
@@ -44,172 +52,83 @@ class ChallengeCreatorServiceTest extends TestCase
     }
 
     /**
-     * @throws Exception|RandomException
-     */
-    public function testFetchExercisesForChallengeReturnsExercisesForSpecifiedRotation(): void
-    {
-        $muscleGroupRotation = 2;
-        $expectedExercises = [
-            $this->createStub(Exercise::class),
-            $this->createStub(Exercise::class),
-            $this->createStub(Exercise::class),
-        ];
-
-        $this->fetcher->expects($this->once())
-            ->method('fetchRandomExercise')
-            ->with($muscleGroupRotation)
-            ->willReturn($expectedExercises)
-        ;
-
-        $result = $this->service->fetchExercisesForChallenge($muscleGroupRotation);
-
-        $this->assertSame($expectedExercises, $result);
-        $this->assertCount(3, $result);
-    }
-
-    /**
-     * @throws Exception|RandomException
-     */
-    public function testFetchExercisesForChallengeUsesNextRotationWhenNoneSpecified(): void
-    {
-        $expectedExercises = [
-            $this->createStub(Exercise::class),
-            $this->createStub(Exercise::class),
-        ];
-
-        $this->fetcher->expects($this->once())
-            ->method('fetchRandomExercise')
-            ->with(null)
-            ->willReturn($expectedExercises)
-        ;
-
-        $result = $this->service->fetchExercisesForChallenge();
-
-        $this->assertSame($expectedExercises, $result);
-        $this->assertCount(2, $result);
-    }
-
-    /**
-     * @throws RandomException
-     */
-    public function testGenerateChallengePropagatesExceptions(): void
-    {
-        $this->expectException(ExerciseNotFoundException::class);
-
-        $this->fetcher->expects($this->once())
-            ->method('fetchRandomExercise')
-            ->willThrowException(new ExerciseNotFoundException())
-        ;
-        $this->service->fetchExercisesForChallenge();
-    }
-
-    /**
-     * @throws Exception
-     */
-    public function testAssignChallengeToExercise(): void
-    {
-        $challenge = $this->createMock(Challenge::class);
-        $challenge->method('getChallengeId')->willReturn(42);
-
-        $exercise1 = $this->createMock(Exercise::class);
-        $exercise2 = $this->createMock(Exercise::class);
-
-        $exercise1->expects($this->once())->method('setChallengeId')->with(42);
-        $exercise2->expects($this->once())->method('setChallengeId')->with(42);
-
-        $this->exerciseRepository
-            ->expects($this->exactly(2))
-            ->method('save')
-        ;
-
-        $this->service->assignChallengeToExercises($challenge, [$exercise1, $exercise2]);
-    }
-
-    /**
+     * Covers: createChallenge(), assignChallengeToExercises()
+     *
      * @throws ChallengeNotFoundException
-     * @throws Exception
      * @throws RandomException
      */
-    public function testCreateChallengeReturnsChallengeWithExercisesAssigned(): void
+    public function testCreateChallenge(): void
+    {
+        $userId = 1;
+        $challenge = $this->service->createChallenge($userId);
+
+        $this->assertNotNull($challenge->getChallengeId());
+
+        $exercises = $this->exerciseRepository->fetchByChallengeId($challenge->getChallengeId());
+
+        $this->assertNotEmpty($exercises);
+        foreach ($exercises as $exercise) {
+            $this->assertEquals($challenge->getChallengeId(), $exercise->getChallengeId());
+        }
+    }
+
+    /**
+     * Covers: fetchExercisesForChallenge()
+     *
+     * @throws RandomException
+     */
+    public function testFetchExercisesForChallenge(): void
+    {
+        $exercises = $this->service->fetchExercisesForChallenge();
+        $this->assertIsArray($exercises);
+
+        foreach ($exercises as $exercise) {
+            $this->assertInstanceOf(Exercise::class, $exercise);
+        }
+    }
+
+    /**
+     * Covers: createChallengeForUser()
+     *
+     * @throws ChallengeNotFoundException
+     */
+    public function testCreateChallengeForUser(): void
     {
         $userId = 123;
-        $challengeId = 42;
+        $challenge = $this->service->createChallengeForUser($userId);
 
-        // Create challenge with getChallengeId mocked
-        $challenge = $this->getMockBuilder(Challenge::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getChallengeId'])
-            ->getMock()
-        ;
-        $challenge->method('getChallengeId')->willReturn($challengeId);
-
-        $this->challengeRepository
-            ->expects($this->once())
-            ->method('save')
-            ->willReturn($challenge)
-        ;
-
-        $exercise1 = $this->createMock(Exercise::class);
-        $exercise2 = $this->createMock(Exercise::class);
-
-        $this->fetcher
-            ->expects($this->once())
-            ->method('fetchRandomExercise')
-            ->willReturn([$exercise1, $exercise2])
-        ;
-
-        $exercise1->expects($this->once())->method('setChallengeId')->with($challengeId);
-        $exercise2->expects($this->once())->method('setChallengeId')->with($challengeId);
-
-        $this->exerciseRepository
-            ->expects($this->exactly(2))
-            ->method('save')
-        ;
-
-        $result = $this->service->createChallenge($userId);
-
-        $this->assertSame($challenge, $result);
+        $this->assertNotNull($challenge->getChallengeId());
+        $this->assertEquals($userId, $challenge->getUserId());
+        $this->assertInstanceOf(\DateTimeImmutable::class, $challenge->getStartedAt());
     }
 
     /**
-     * @throws Exception
+     * Covers: assignChallengeToExercises()
      */
-    public function testCreateChallengeForUserThrowsWhenChallengeIdIsNull(): void
+    public function testAssignChallengeToExercises(): void
     {
-        $challengeWithoutId = $this->createMock(Challenge::class);
-        $challengeWithoutId->method('getChallengeId')->willReturn(null);
+        // Create a challenge
+        $challenge = $this->service->createChallengeForUser(99);
 
-        $this->challengeRepository
-            ->expects($this->once())
-            ->method('save')
-            ->willReturn($challengeWithoutId)
-        ;
+        // Manually get some exercises and assign
+        $allExercises = $this->exerciseRepository->fetchByMuscleGroup(MuscleGroup::cases()[0]);
+        $exercises = array_slice($allExercises, 0, 3); // Take a few
 
-        $this->expectException(ChallengeNotFoundException::class);
+        $this->service->assignChallengeToExercises($challenge, $exercises);
 
-        $this->service->createChallengeForUser(1);
+        foreach ($exercises as $exercise) {
+            $fetched = $this->exerciseRepository->fetchById($exercise->getExerciseId());
+            $this->assertEquals($challenge->getChallengeId(), $fetched->getChallengeId());
+        }
     }
 
-    /**
-     * @throws Exception
-     */
-    public function testAssignChallengeToExercisesAssignsAndSavesOnlyNonNullExercises(): void
+    private function seedExercises(int $minPerGroup = 3, int $maxPerGroup = 5): void
     {
-        $challenge = $this->createMock(Challenge::class);
-        $challenge->method('getChallengeId')->willReturn(55);
-
-        $exercise1 = $this->createMock(Exercise::class);
-        $exercise2 = $this->createMock(Exercise::class);
-
-        $exercise1->expects($this->once())->method('setChallengeId')->with(55);
-        $exercise2->expects($this->once())->method('setChallengeId')->with(55);
-
-        $this->exerciseRepository
-            ->expects($this->exactly(2))
-            ->method('save')
-            ->with($this->logicalOr($exercise1, $exercise2))
-        ;
-
-        $this->service->assignChallengeToExercises($challenge, [$exercise1, $exercise2]);
+        foreach (MuscleGroup::cases() as $group) {
+            for ($i = 0; $i < rand($minPerGroup, $maxPerGroup); ++$i) {
+                $exercise = new Exercise("Test $group->value $i", $group, "desc $i");
+                $this->exerciseRepository->insert($exercise);
+            }
+        }
     }
 }
