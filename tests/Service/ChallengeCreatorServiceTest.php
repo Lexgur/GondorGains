@@ -27,11 +27,11 @@ class ChallengeCreatorServiceTest extends TestCase
     private ChallengeCreatorService $service;
 
     /**
-     * @throws Exception|CircularDependencyException
+     * @throws CircularDependencyException|Exception
      */
     protected function setUp(): void
     {
-        $config = require __DIR__ . '/../../config.php';
+        $config = require __DIR__.'/../../config.php';
         $container = new Container($config);
 
         $container->get(RunMigrationsScript::class)->run();
@@ -52,7 +52,7 @@ class ChallengeCreatorServiceTest extends TestCase
     }
 
     /**
-     * Covers: createChallenge(), assignChallengeToExercises()
+     * Covers: createChallenge(), assignChallengeToExercises().
      *
      * @throws ChallengeNotFoundException
      * @throws RandomException
@@ -60,7 +60,7 @@ class ChallengeCreatorServiceTest extends TestCase
     public function testCreateChallenge(): void
     {
         $userId = 1;
-        $challenge = $this->service->createChallenge($userId);
+        $challenge = $this->service->createChallenge($userId, 3);
 
         $this->assertNotNull($challenge->getChallengeId());
 
@@ -73,25 +73,17 @@ class ChallengeCreatorServiceTest extends TestCase
     }
 
     /**
-     * Covers: fetchExercisesForChallenge()
-     *
      * @throws RandomException
      */
     public function testFetchExercisesForChallenge(): void
     {
         $exercises = $this->service->fetchExercisesForChallenge();
-        $this->assertIsArray($exercises);
 
         foreach ($exercises as $exercise) {
             $this->assertInstanceOf(Exercise::class, $exercise);
         }
     }
 
-    /**
-     * Covers: createChallengeForUser()
-     *
-     * @throws ChallengeNotFoundException
-     */
     public function testCreateChallengeForUser(): void
     {
         $userId = 123;
@@ -102,17 +94,12 @@ class ChallengeCreatorServiceTest extends TestCase
         $this->assertInstanceOf(\DateTimeImmutable::class, $challenge->getStartedAt());
     }
 
-    /**
-     * Covers: assignChallengeToExercises()
-     */
     public function testAssignChallengeToExercises(): void
     {
-        // Create a challenge
         $challenge = $this->service->createChallengeForUser(99);
 
-        // Manually get some exercises and assign
         $allExercises = $this->exerciseRepository->fetchByMuscleGroup(MuscleGroup::cases()[0]);
-        $exercises = array_slice($allExercises, 0, 3); // Take a few
+        $exercises = array_slice($allExercises, 0, 3);
 
         $this->service->assignChallengeToExercises($challenge, $exercises);
 
@@ -126,7 +113,7 @@ class ChallengeCreatorServiceTest extends TestCase
     {
         foreach (MuscleGroup::cases() as $group) {
             for ($i = 0; $i < rand($minPerGroup, $maxPerGroup); ++$i) {
-                $exercise = new Exercise("Test $group->value $i", $group, "desc $i");
+                $exercise = new Exercise("Test {$group->value} {$i}", $group, "desc {$i}");
                 $this->exerciseRepository->insert($exercise);
             }
         }

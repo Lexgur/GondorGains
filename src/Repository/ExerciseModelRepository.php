@@ -45,6 +45,7 @@ class ExerciseModelRepository extends BaseRepository implements ExerciseModelRep
         return Exercise::create($row);
     }
 
+    /** @return array<Exercise> */
     public function fetchByChallengeId(int $challengeId): array
     {
         $stmt = $this->connection->connect()->prepare('SELECT * FROM exercises WHERE challenge_id = :challenge_id');
@@ -79,6 +80,8 @@ class ExerciseModelRepository extends BaseRepository implements ExerciseModelRep
         $statement->bindValue(':description', $exercise->getDescription());
         $statement->bindValue(':id', $exercise->getExerciseId());
         $statement->bindValue(':challenge_id', $exercise->getChallengeId());
+
+        $statement->execute();
 
         return $this->fetchById($exercise->getExerciseId());
     }

@@ -47,9 +47,6 @@ readonly class ChallengeCreatorService
         return $this->fetcher->fetchRandomExercise($muscleGroupRotation);
     }
 
-    /**
-     * @throws ChallengeNotFoundException
-     */
     public function createChallengeForUser(int $userId): Challenge
     {
         $challenge = new Challenge(
@@ -57,13 +54,7 @@ readonly class ChallengeCreatorService
             startedAt: new \DateTimeImmutable()
         );
 
-        $savedChallenge = $this->challengeRepository->save($challenge);
-
-        if (null === $savedChallenge->getChallengeId()) {
-            throw new ChallengeNotFoundException('Failed to persist challenge.');
-        }
-
-        return $savedChallenge;
+        return $this->challengeRepository->save($challenge);
     }
 
     /**
