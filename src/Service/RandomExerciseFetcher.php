@@ -13,9 +13,9 @@ use Random\RandomException;
 class RandomExerciseFetcher
 {
     private const MUSCLE_GROUP_ROTATIONS = [
-        1 => [MuscleGroup::LEGS, MuscleGroup::SHOULDERS],
-        2 => [MuscleGroup::CHEST, MuscleGroup::BACK, MuscleGroup::ARMS, MuscleGroup::SHOULDERS],
-        3 => [MuscleGroup::CORE, MuscleGroup::BACK],
+        0 => [MuscleGroup::LEGS, MuscleGroup::SHOULDERS],
+        1 => [MuscleGroup::CHEST, MuscleGroup::BACK, MuscleGroup::ARMS, MuscleGroup::SHOULDERS],
+        2 => [MuscleGroup::CORE, MuscleGroup::BACK],
     ];
 
     private const MIN_EXERCISES_PER_GROUP = 2;
@@ -24,11 +24,13 @@ class RandomExerciseFetcher
     /** @var array<int> */
     private array $muscleGroupRotationSequence = [];
 
+    private readonly string $randomInt;
     /** @var array<int, array<string, array<int>>> */
     private array $usedExercises = [];
 
     public function __construct(private readonly ExerciseModelRepository $exerciseRepository)
     {
+        $this->randomInt = 'random_int';
         $this->initializeRotationSequence();
     }
 
@@ -77,7 +79,7 @@ class RandomExerciseFetcher
             }
 
             shuffle($availableExercises);
-            $numberOfExercises = random_int(
+            $numberOfExercises = ($this->randomInt ?? 'random_int')(
                 self::MIN_EXERCISES_PER_GROUP,
                 min(count($availableExercises), self::MAX_EXERCISES_PER_GROUP)
             );

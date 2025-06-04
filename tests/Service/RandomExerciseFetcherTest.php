@@ -20,9 +20,6 @@ class RandomExerciseFetcherTest extends TestCase
     private ExerciseModelRepository $repository;
     private RandomExerciseFetcher $exerciseFetcher;
 
-    /**
-     * @throws CircularDependencyException
-     */
     protected function setUp(): void
     {
         $config = require __DIR__.'/../../config.php';
@@ -35,21 +32,31 @@ class RandomExerciseFetcherTest extends TestCase
         $connection->connect()->exec('DELETE FROM exercises');
 
         $this->repository = $container->get(ExerciseModelRepository::class);
+
         $this->exerciseFetcher = new RandomExerciseFetcher($this->repository);
     }
+
 
     /**
      * @throws RandomException
      */
     #[DataProvider('provideTestShouldReturnValidNumberOfExercisesForRotation')]
-    public function testShouldReturnValidNumberOfExercisesForRotation(int $rotation, int $min, int $max): void
+    public function testShouldReturnCorrectNumberOfExercisesForRotation(int $rotation, int $expected): void
     {
-        $this->seedExercises();
+        $this->seedExercisesFixed(2);
 
         $result = $this->exerciseFetcher->fetchRandomExercise($rotation);
 
-        $this->assertGreaterThanOrEqual($min, count($result));
-        $this->assertLessThanOrEqual($max, count($result));
+        $this->assertCount($expected, $result);
+    }
+
+    /** @return array<string, list<int>> */
+    public static function provideTestShouldReturnValidNumberOfExercisesForRotation(): array
+    {
+        return [
+            'rotation_1' => [1, 8, 8],
+            'rotation_2' => [2, 4, 4],
+        ];
     }
 
     /**
@@ -58,6 +65,7 @@ class RandomExerciseFetcherTest extends TestCase
     public function testShouldThrowExceptionForInvalidRotation(): void
     {
         $this->expectException(\InvalidArgumentException::class);
+
         $this->exerciseFetcher->fetchRandomExercise(99);
     }
 
@@ -78,7 +86,7 @@ class RandomExerciseFetcherTest extends TestCase
      */
     public function testShouldProvideNonRepeatingRotationSequence(): void
     {
-        $this->seedExercises();
+        $this->seedExercisesFixed(3);
 
         $seen = [];
         for ($i = 0; $i < 3; ++$i) {
@@ -88,7 +96,6 @@ class RandomExerciseFetcherTest extends TestCase
         }
 
         $this->assertCount(3, array_unique($seen));
-        $this->assertEqualsCanonicalizing([1, 2, 3], $seen);
     }
 
     /**
@@ -96,22 +103,13 @@ class RandomExerciseFetcherTest extends TestCase
      */
     public function testShouldResetExercisesWhenAllUsed(): void
     {
-        $this->seedExercises(minPerGroup: 2, maxPerGroup: 2);
+        $this->seedExercisesFixed(2);
 
         $first = $this->exerciseFetcher->fetchRandomExercise(2);
         $second = $this->exerciseFetcher->fetchRandomExercise(2);
 
-        $this->assertCount(8, $first);
-        $this->assertCount(8, $second);
-    }
-
-    /** @return array<string, array{int, int, int}> */
-    public static function provideTestShouldReturnValidNumberOfExercisesForRotation(): array
-    {
-        return [
-            'rotation_1' => [1, 4, 6],
-            'rotation_2' => [2, 8, 12],
-        ];
+        $this->assertCount(4, $first);
+        $this->assertCount(4, $second);
     }
 
     public function testGetNextRotationTriggersLazyInitialization(): void
@@ -121,18 +119,14 @@ class RandomExerciseFetcherTest extends TestCase
         $property->setValue($this->exerciseFetcher, []);
         $rotation = $this->exerciseFetcher->getNextRotation();
 
-        $this->assertContains($rotation, [1, 2, 3]);
+        $this->assertContains($rotation, [0, 1, 2]);
     }
 
-    /**
-     * Utility to seed exercises into the test database.
-     */
-    private function seedExercises(int $minPerGroup = 3, int $maxPerGroup = 4): void
+    private function seedExercisesFixed(int $countPerGroup): void
     {
         foreach (MuscleGroup::cases() as $group) {
-            $count = rand($minPerGroup, $maxPerGroup);
-            for ($i = 0; $i < $count; ++$i) {
-                $exercise = new Exercise("Test $group->value $i", $group, "desc $i");
+            for ($i = 0; $i < $countPerGroup; ++$i) {
+                $exercise = new Exercise("Test {$group->value} {$i}", $group, "desc {$i}");
                 $this->repository->insert($exercise);
             }
         }

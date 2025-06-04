@@ -20,7 +20,6 @@ readonly class ChallengeCreatorService
     ) {}
 
     /**
-     * @throws ChallengeNotFoundException
      * @throws RandomException
      */
     public function createChallenge(int $userId, ?int $muscleGroupRotation = null): Challenge

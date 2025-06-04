@@ -54,13 +54,12 @@ class ChallengeCreatorServiceTest extends TestCase
     /**
      * Covers: createChallenge(), assignChallengeToExercises().
      *
-     * @throws ChallengeNotFoundException
      * @throws RandomException
      */
     public function testCreateChallenge(): void
     {
         $userId = 1;
-        $challenge = $this->service->createChallenge($userId, 3);
+        $challenge = $this->service->createChallenge($userId, 2);
 
         $this->assertNotNull($challenge->getChallengeId());
 
