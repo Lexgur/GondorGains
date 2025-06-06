@@ -6,6 +6,7 @@ namespace Lexgur\GondorGains\Controller;
 
 use Lexgur\GondorGains\Attribute\Path;
 use Lexgur\GondorGains\Exception\ForbiddenException;
+use Lexgur\GondorGains\Exception\NotEnoughExercisesException;
 use Lexgur\GondorGains\Repository\ChallengeModelRepository;
 use Lexgur\GondorGains\Service\ChallengeCreatorService;
 use Lexgur\GondorGains\Service\CurrentUser;
@@ -30,7 +31,6 @@ class CreateChallengeController extends AbstractController
 
     /**
      * @throws ForbiddenException
-     * @throws RandomException
      */
     public function __invoke(): string
     {
@@ -40,11 +40,19 @@ class CreateChallengeController extends AbstractController
 
         if ($this->isPostRequest()) {
             if ('challenge-complete' === $_POST['action']) {
-                $user = $this->currentUser->getUser();
-                $userId = $user->getUserId();
-                $challenge = $this->challengeCreator->createChallenge($userId);
-                $this->challengeRepository->save($challenge);
-                return $this->redirect('/quests');
+                try {
+                    $user = $this->currentUser->getUser();
+                    $userId = $user->getUserId();
+                    $challenge = $this->challengeCreator->createChallenge($userId);
+                    $challenge->setCompletedAt(new \DateTime());
+                    $this->challengeRepository->save($challenge);
+
+                    $this->redirect('/quests');
+                } catch (NotEnoughExercisesException|RandomException $e) {
+                    return $this->render('error.html.twig', [
+                        'message' => 'Challenge could not be created: '.$e->getMessage(),
+                    ]);
+                }
             }
         }
 
