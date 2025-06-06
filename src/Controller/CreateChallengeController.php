@@ -10,6 +10,7 @@ use Lexgur\GondorGains\Repository\ChallengeModelRepository;
 use Lexgur\GondorGains\Service\ChallengeCreatorService;
 use Lexgur\GondorGains\Service\CurrentUser;
 use Lexgur\GondorGains\TemplateProvider;
+use Random\RandomException;
 
 #[Path('/daily-quest/start')]
 class CreateChallengeController extends AbstractController
@@ -27,6 +28,10 @@ class CreateChallengeController extends AbstractController
         $this->challengeCreator = $challengeCreator;
     }
 
+    /**
+     * @throws ForbiddenException
+     * @throws RandomException
+     */
     public function __invoke(): string
     {
         if ($this->currentUser->isAnonymous()) {
@@ -39,7 +44,7 @@ class CreateChallengeController extends AbstractController
                 $userId = $user->getUserId();
                 $challenge = $this->challengeCreator->createChallenge($userId);
                 $this->challengeRepository->save($challenge);
-                $this->redirect('/quests');
+                return $this->redirect('/quests');
             }
         }
 

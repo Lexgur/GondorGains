@@ -4,16 +4,14 @@ declare(strict_types=1);
 
 namespace Lexgur\GondorGains\Repository;
 
-use Exception;
 use Lexgur\GondorGains\Exception\ChallengeNotFoundException;
 use Lexgur\GondorGains\Model\Challenge;
-use PDO;
 
 class ChallengeModelRepository extends BaseRepository implements ChallengeModelRepositoryInterface
 {
     public function save(Challenge $challenge): Challenge
     {
-        if ($challenge->getChallengeId() === null) {
+        if (null === $challenge->getChallengeId()) {
             return $this->insert($challenge);
         }
 
@@ -28,7 +26,7 @@ class ChallengeModelRepository extends BaseRepository implements ChallengeModelR
         $statement->bindValue(':completed_at', $challenge->getCompletedAt()?->format('Y-m-d H:i:s'));
         $statement->execute();
 
-        $newId = (int)$this->connection->connect()->lastInsertId();
+        $newId = (int) $this->connection->connect()->lastInsertId();
 
         return $this->fetchById($newId);
     }
@@ -37,17 +35,17 @@ class ChallengeModelRepository extends BaseRepository implements ChallengeModelR
     {
         $statement = $this->connection->connect()->prepare('SELECT * FROM `challenges` WHERE `id` = :id');
         $statement->execute([':id' => $challengeId]);
-        $row = $statement->fetch(PDO::FETCH_ASSOC);
+        $row = $statement->fetch(\PDO::FETCH_ASSOC);
 
         if (!$row) {
-            throw new ChallengeNotFoundException("Challenge with id: $challengeId does not exist");
+            throw new ChallengeNotFoundException("Challenge with id: {$challengeId} does not exist");
         }
 
         return Challenge::create([
-            'id' => (int)$row['id'],
-            'user_id' => (int)$row['user_id'],
+            'id' => (int) $row['id'],
+            'user_id' => (int) $row['user_id'],
             'started_at' => new \DateTimeImmutable($row['started_at']),
-            'completed_at' => $row['completed_at'] ? new \DateTimeImmutable($row['completed_at']) : null
+            'completed_at' => $row['completed_at'] ? new \DateTimeImmutable($row['completed_at']) : null,
         ]);
     }
 
@@ -56,23 +54,22 @@ class ChallengeModelRepository extends BaseRepository implements ChallengeModelR
     {
         $statement = $this->connection->connect()->prepare('SELECT * FROM `challenges`');
         $statement->execute();
-        $rows = $statement->fetchAll(PDO::FETCH_ASSOC);
+        $rows = $statement->fetchAll(\PDO::FETCH_ASSOC);
 
         return array_map(function ($row) {
             return Challenge::create([
-                'id' => (int)$row['id'],
-                'user_id' => (int)$row['user_id'],
+                'id' => (int) $row['id'],
+                'user_id' => (int) $row['user_id'],
                 'started_at' => new \DateTimeImmutable($row['started_at']),
-                'completed_at' => $row['completed_at'] ? new \DateTimeImmutable($row['completed_at']) : null
+                'completed_at' => $row['completed_at'] ? new \DateTimeImmutable($row['completed_at']) : null,
             ]);
         }, $rows);
     }
 
     /**
      * @throws ChallengeNotFoundException
-     * @throws Exception
+     * @throws \Exception
      */
-
     public function update(Challenge $challenge): Challenge
     {
         $statement = $this->connection->connect()->prepare('UPDATE `challenges` SET `user_id` = :user_id, `started_at` = :started_at, `completed_at` = :completed_at WHERE `id` = :id');
@@ -93,5 +90,39 @@ class ChallengeModelRepository extends BaseRepository implements ChallengeModelR
         $statement->execute();
 
         return true;
+    }
+
+    /**
+     * @throws \DateMalformedStringException
+     */
+    public function findActiveChallengeByUserId(?int $userId): ?Challenge
+    {
+        if (null === $userId) {
+            return null;
+        }
+
+        $statement = $this->connection->connect()->prepare(
+            'SELECT * FROM `challenges` 
+         WHERE `user_id` = :user_id 
+         AND `completed_at` IS NULL 
+         ORDER BY `started_at` DESC 
+         LIMIT 1'
+        );
+
+        $statement->bindValue(':user_id', $userId, \PDO::PARAM_INT);
+        $statement->execute();
+
+        $row = $statement->fetch(\PDO::FETCH_ASSOC);
+
+        if (!$row) {
+            return null;
+        }
+
+        return Challenge::create([
+            'id' => (int) $row['id'],
+            'user_id' => (int) $row['user_id'],
+            'started_at' => new \DateTimeImmutable($row['started_at']),
+            'completed_at' => $row['completed_at'] ? new \DateTimeImmutable($row['completed_at']) : null,
+        ]);
     }
 }

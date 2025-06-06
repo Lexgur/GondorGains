@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Lexgur\GondorGains\Tests;
 
-use DateTime;
 use Lexgur\GondorGains\Connection;
 use Lexgur\GondorGains\Container;
 use Lexgur\GondorGains\Exception\ChallengeNotFoundException;
@@ -13,6 +12,9 @@ use Lexgur\GondorGains\Repository\ChallengeModelRepository;
 use Lexgur\GondorGains\Script\RunMigrationsScript;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @coversNothing
+ */
 class ChallengeModelRepositoryTest extends TestCase
 {
     private Connection $database;
@@ -21,7 +23,7 @@ class ChallengeModelRepositoryTest extends TestCase
 
     public function setUp(): void
     {
-        $config = require __DIR__ . '/../config.php';
+        $config = require __DIR__.'/../config.php';
         $container = new Container($config);
         $this->database = $container->get(Connection::class);
 
@@ -37,26 +39,26 @@ class ChallengeModelRepositoryTest extends TestCase
     {
         $challenge = new Challenge(
             userId: 1,
-            startedAt: new DateTime('2025-01-01'),
-            completedAt: new DateTime('2025-01-02')
+            startedAt: new \DateTime('2025-01-01'),
+            completedAt: new \DateTime('2025-01-02')
         );
         $insertedChallenge = $this->repository->insert($challenge);
 
         $this->assertNotNull($insertedChallenge->getChallengeId());
         $this->assertEquals(1, $insertedChallenge->getUserId());
-        $this->assertEquals(new DateTime('2025-01-01'), $insertedChallenge->getStartedAt());
-        $this->assertEquals(new DateTime('2025-01-02'), $insertedChallenge->getCompletedAt());
+        $this->assertEquals(new \DateTime('2025-01-01'), $insertedChallenge->getStartedAt());
+        $this->assertEquals(new \DateTime('2025-01-02'), $insertedChallenge->getCompletedAt());
     }
 
     public function testFetchByIdReturnsChallengeWhenValidIdExists(): void
     {
         $challenge = new Challenge(
             userId: 1,
-            startedAt: new DateTime('2025-01-01'),
-            completedAt: new DateTime('2025-01-02')
+            startedAt: new \DateTime('2025-01-01'),
+            completedAt: new \DateTime('2025-01-02')
         );
         $this->repository->insert($challenge);
-        $challengeId = (int)$this->database->connect()->lastInsertId();
+        $challengeId = (int) $this->database->connect()->lastInsertId();
         $existingChallenge = $this->repository->fetchById($challengeId);
 
         $this->assertEquals($challengeId, $existingChallenge->getChallengeId());
@@ -66,29 +68,29 @@ class ChallengeModelRepositoryTest extends TestCase
     {
         $challenge = new Challenge(
             userId: 1,
-            startedAt: new DateTime('2025-01-01'),
-            completedAt: new DateTime('2025-01-02')
+            startedAt: new \DateTime('2025-01-01'),
+            completedAt: new \DateTime('2025-01-02')
         );
         $this->repository->insert($challenge);
 
         $challenge2 = new Challenge(
             userId: 1,
-            startedAt: new DateTime('2025-01-02'),
-            completedAt: new DateTime('2025-01-03')
+            startedAt: new \DateTime('2025-01-02'),
+            completedAt: new \DateTime('2025-01-03')
         );
         $this->repository->insert($challenge2);
 
         $challenge3 = new Challenge(
             userId: 1,
-            startedAt: new DateTime('2025-01-03'),
-            completedAt: new DateTime('2025-01-04')
+            startedAt: new \DateTime('2025-01-03'),
+            completedAt: new \DateTime('2025-01-04')
         );
         $this->repository->insert($challenge3);
 
         $challenge4 = new Challenge(
             userId: 1,
-            startedAt: new DateTime('2025-01-04'),
-            completedAt: new DateTime('2025-01-05')
+            startedAt: new \DateTime('2025-01-04'),
+            completedAt: new \DateTime('2025-01-05')
         );
         $this->repository->insert($challenge4);
 
@@ -102,7 +104,7 @@ class ChallengeModelRepositoryTest extends TestCase
     {
         $allChallenges = $this->repository->fetchAllChallenges();
 
-        $this->assertEquals([] ,$allChallenges);
+        $this->assertEquals([], $allChallenges);
         $this->assertCount(0, $allChallenges);
     }
 
@@ -112,8 +114,8 @@ class ChallengeModelRepositoryTest extends TestCase
 
         $challenge = new Challenge(
             userId: 1,
-            startedAt: new DateTime('2025-01-01'),
-            completedAt: new DateTime('2025-01-02')
+            startedAt: new \DateTime('2025-01-01'),
+            completedAt: new \DateTime('2025-01-02')
         );
         $this->repository->insert($challenge);
         $this->repository->fetchById(9999);
@@ -123,15 +125,15 @@ class ChallengeModelRepositoryTest extends TestCase
     {
         $challenge1 = new Challenge(
             userId: 1,
-            startedAt: new DateTime('2025-01-01'),
-            completedAt: new DateTime('2025-01-02')
+            startedAt: new \DateTime('2025-01-01'),
+            completedAt: new \DateTime('2025-01-02')
         );
         $insertedChallenge1 = $this->repository->insert($challenge1);
 
         $challenge2 = new Challenge(
             userId: 2,
-            startedAt: new DateTime('2025-02-01'),
-            completedAt: new DateTime('2025-02-02')
+            startedAt: new \DateTime('2025-02-01'),
+            completedAt: new \DateTime('2025-02-02')
         );
         $insertedChallenge2 = $this->repository->insert($challenge2);
 
@@ -152,16 +154,16 @@ class ChallengeModelRepositoryTest extends TestCase
     {
         $challenge = new Challenge(
             userId: 1,
-            startedAt: new DateTime('2025-01-01'),
-            completedAt: new DateTime('2025-01-02')
+            startedAt: new \DateTime('2025-01-01'),
+            completedAt: new \DateTime('2025-01-02')
         );
         $savedChallenge = $this->repository->save($challenge);
 
-        $savedChallenge->setCompletedAt(new DateTime('2025-01-03'));
+        $savedChallenge->setCompletedAt(new \DateTime('2025-01-03'));
         $updatedChallenge = $this->repository->save($savedChallenge);
 
         $this->assertNotNull($savedChallenge->getChallengeId());
-        $this->assertEquals(new DateTime('2025-01-03'), $updatedChallenge->getCompletedAt());
+        $this->assertEquals(new \DateTime('2025-01-03'), $updatedChallenge->getCompletedAt());
     }
 
     public function testSuccessfulChallengeDeletion(): void
@@ -170,8 +172,8 @@ class ChallengeModelRepositoryTest extends TestCase
 
         $challenge = new Challenge(
             userId: 1,
-            startedAt: new DateTime('2025-01-01'),
-            completedAt: new DateTime('2025-01-02')
+            startedAt: new \DateTime('2025-01-01'),
+            completedAt: new \DateTime('2025-01-02')
         );
 
         $insertedChallenge = $this->repository->insert($challenge);
@@ -179,5 +181,59 @@ class ChallengeModelRepositoryTest extends TestCase
 
         $this->repository->delete($challengeId);
         $this->repository->fetchById($challengeId);
+    }
+
+    /**
+     * @throws \DateMalformedStringException
+     */
+    public function testFindActiveChallengeByUserIdReturnsActiveChallenge(): void
+    {
+        $completedChallenge = new Challenge(
+            userId: 1,
+            startedAt: new \DateTime('2025-01-01'),
+            completedAt: new \DateTime('2025-01-02')
+        );
+        $this->repository->insert($completedChallenge);
+
+        $activeChallenge = new Challenge(
+            userId: 1,
+            startedAt: new \DateTime('2025-02-01'),
+            completedAt: null
+        );
+        $insertedActiveChallenge = $this->repository->insert($activeChallenge);
+
+        $otherUserActiveChallenge = new Challenge(
+            userId: 2,
+            startedAt: new \DateTime('2025-03-01'),
+            completedAt: null
+        );
+        $this->repository->insert($otherUserActiveChallenge);
+
+        $foundChallenge = $this->repository->findActiveChallengeByUserId(1);
+        $foundOtherChallenge = $this->repository->findActiveChallengeByUserId(2);
+
+        $this->assertNotNull($foundChallenge);
+        $this->assertEquals($insertedActiveChallenge->getChallengeId(), $foundChallenge->getChallengeId());
+        $this->assertNull($foundChallenge->getCompletedAt());
+
+        $this->assertNotNull($foundOtherChallenge);
+        $this->assertNull($foundOtherChallenge->getCompletedAt());
+    }
+
+    /**
+     * @throws \DateMalformedStringException
+     */
+    public function testFindActiveChallengeByUserIdReturnsNullWhenNoActiveChallenge(): void
+    {
+        $result = $this->repository->findActiveChallengeByUserId(9999);
+        $this->assertNull($result);
+    }
+
+    /**
+     * @throws \DateMalformedStringException
+     */
+    public function testFindActiveChallengeByUserIdReturnsNullWhenUserIdIsNull(): void
+    {
+        $this->assertNull($this->repository->findActiveChallengeByUserId(null));
     }
 }
