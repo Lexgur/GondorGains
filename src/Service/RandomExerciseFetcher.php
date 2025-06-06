@@ -12,115 +12,109 @@ use Random\RandomException;
 
 class RandomExerciseFetcher
 {
-    private const ROTATION_1 = 1;
-    private const ROTATION_2 = 2;
-    private const ROTATION_3 = 3;
-
-    private const ROTATIONS = [
-        self::ROTATION_1 => 2,
-        self::ROTATION_2 => 4,
-        self::ROTATION_3 => 2,
+    private const MUSCLE_GROUP_ROTATIONS = [
+        0 => [MuscleGroup::LEGS, MuscleGroup::SHOULDERS],
+        1 => [MuscleGroup::CHEST, MuscleGroup::BACK, MuscleGroup::ARMS, MuscleGroup::SHOULDERS],
+        2 => [MuscleGroup::CORE, MuscleGroup::BACK],
     ];
 
     private const MIN_EXERCISES_PER_GROUP = 2;
     private const MAX_EXERCISES_PER_GROUP = 3;
 
     /** @var array<int> */
-    private array $rotationSequence = [];
+    private array $muscleGroupRotationSequence = [];
 
-    /** @var array<string, array<int>> */
+    private readonly string $randomInt;
+    /** @var array<int, array<string, array<int>>> */
     private array $usedExercises = [];
 
     public function __construct(private readonly ExerciseModelRepository $exerciseRepository)
     {
+        $this->randomInt = 'random_int';
         $this->initializeRotationSequence();
-    }
-
-    private function initializeRotationSequence(): void
-    {
-        $this->rotationSequence = [self::ROTATION_1, self::ROTATION_2, self::ROTATION_3];
-        shuffle($this->rotationSequence);
     }
 
     public function getNextRotation(): int
     {
-        if (empty($this->rotationSequence)) {
+        if (empty($this->muscleGroupRotationSequence)) {
             $this->initializeRotationSequence();
         }
 
-        return array_shift($this->rotationSequence);
+        $next = array_shift($this->muscleGroupRotationSequence);
+        $this->muscleGroupRotationSequence[] = $next;
+        return $next;
     }
 
+
     /**
-     * @return array<int> Returns array of exercise IDs
+     * @return array<null|Exercise>
+     *
      * @throws RandomException
      */
-    public function fetchRandomExerciseIds(?int $rotation = null): array
+    public function fetchRandomExercise(?int $muscleGroupRotation = null): array
     {
-        $rotation = $rotation ?? $this->getNextRotation();
+        $muscleGroupRotation = $muscleGroupRotation ?? $this->getNextRotation();
 
-        if (!isset(self::ROTATIONS[$rotation])) {
+        if (!isset(self::MUSCLE_GROUP_ROTATIONS[$muscleGroupRotation])) {
             throw new \InvalidArgumentException('Invalid rotation number');
         }
 
-        $muscleGroups = $this->selectRandomMuscleGroups(self::ROTATIONS[$rotation]);
-        $exerciseIds = [];
+        $muscleGroups = self::MUSCLE_GROUP_ROTATIONS[$muscleGroupRotation];
+        $selectedExercises = [];
 
         foreach ($muscleGroups as $muscleGroup) {
             $exercises = $this->exerciseRepository->fetchByMuscleGroup($muscleGroup);
-            $availableExercises = $this->filterUsedExercises($exercises, $muscleGroup->value);
+            $availableExercises = $this->filterUsedExercises($exercises, $muscleGroupRotation, $muscleGroup->value);
 
             if (count($availableExercises) < self::MIN_EXERCISES_PER_GROUP) {
-                $this->usedExercises[$muscleGroup->value] = [];
+                $this->usedExercises[$muscleGroupRotation][$muscleGroup->value] = [];
                 $availableExercises = $exercises;
             }
 
             if (count($availableExercises) < self::MIN_EXERCISES_PER_GROUP) {
                 throw new NotEnoughExercisesException(
-                    "Not enough exercises for muscle group {$muscleGroup->value}. " .
-                    "Minimum required: " . self::MIN_EXERCISES_PER_GROUP
+                    "Not enough exercises for muscle group {$muscleGroup->value}. "
+                    .'Minimum required: '.self::MIN_EXERCISES_PER_GROUP
                 );
             }
 
             shuffle($availableExercises);
-            $numberOfExercises = random_int(
+            $numberOfExercises = ($this->randomInt ?? 'random_int')(
                 self::MIN_EXERCISES_PER_GROUP,
                 min(count($availableExercises), self::MAX_EXERCISES_PER_GROUP)
             );
 
-            for ($i = 0; $i < $numberOfExercises; $i++) {
-                $exerciseId = $availableExercises[$i]->getExerciseId();
-                $exerciseIds[] = $exerciseId;
-                $this->usedExercises[$muscleGroup->value][] = $exerciseId;
+            for ($i = 0; $i < $numberOfExercises; ++$i) {
+                $exercise = $availableExercises[$i];
+                $exerciseId = $exercise->getExerciseId();
+
+                $this->usedExercises[$muscleGroupRotation][$muscleGroup->value][] = $exerciseId;
+                $selectedExercises[] = $exercise;
             }
         }
 
-        return $exerciseIds;
+        return $selectedExercises;
+    }
+
+    private function initializeRotationSequence(): void
+    {
+        $this->muscleGroupRotationSequence = array_keys(self::MUSCLE_GROUP_ROTATIONS);
+        shuffle($this->muscleGroupRotationSequence);
     }
 
     /**
      * @param array<Exercise> $exercises
+     *
      * @return array<Exercise>
      */
-    private function filterUsedExercises(array $exercises, string $muscleGroup): array
+    private function filterUsedExercises(array $exercises, int $muscleGroupRotation, string $muscleGroup): array
     {
-        if (!isset($this->usedExercises[$muscleGroup])) {
-            $this->usedExercises[$muscleGroup] = [];
+        if (!isset($this->usedExercises[$muscleGroupRotation][$muscleGroup])) {
+            $this->usedExercises[$muscleGroupRotation][$muscleGroup] = [];
         }
 
-        return array_filter($exercises, function (Exercise $exercise) use ($muscleGroup) {
-            return !in_array($exercise->getExerciseId(), $this->usedExercises[$muscleGroup], true);
+        return array_filter($exercises, function (Exercise $exercise) use ($muscleGroupRotation, $muscleGroup) {
+            return !in_array($exercise->getExerciseId(), $this->usedExercises[$muscleGroupRotation][$muscleGroup], true);
         });
-    }
-
-    /**
-     * @return array<MuscleGroup>
-     */
-    private function selectRandomMuscleGroups(int $count): array
-    {
-        $allMuscleGroups = MuscleGroup::cases();
-        shuffle($allMuscleGroups);
-
-        return array_slice($allMuscleGroups, 0, $count);
     }
 }

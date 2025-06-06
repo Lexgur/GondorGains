@@ -6,6 +6,8 @@ namespace Lexgur\GondorGains\Model;
 
 class Exercise
 {
+    private ?int $challengeId = null;
+
     private ?int $exerciseId = null;
 
     private string $name;
@@ -14,12 +16,13 @@ class Exercise
 
     private string $description;
 
-    public function __construct(string $name, MuscleGroup $muscleGroup, string $description, ?int $exerciseId = null)
+    public function __construct(string $name, MuscleGroup $muscleGroup, string $description, ?int $exerciseId = null, ?int $challengeId = null)
     {
         $this->name = $name;
         $this->muscleGroup = $muscleGroup;
         $this->description = $description;
         $this->exerciseId = $exerciseId;
+        $this->challengeId = $challengeId;
     }
 
     public function getName(): string
@@ -57,12 +60,24 @@ class Exercise
         return $this->exerciseId;
     }
 
+    public function getChallengeId(): ?int
+    {
+        return $this->challengeId;
+    }
+
+    public function setChallengeId(?int $challengeId): void
+    {
+        $this->challengeId = $challengeId;
+    }
+
+
     /**
      * @param array{
      *     name: string,
      *     muscle_group: string|int|MuscleGroup,
      *     description: string,
-     *     id?: int|null
+     *     id?: int|null,
+     *     challenge_id?: int|null
      * } $data
      */
     public static function create(array $data): Exercise
@@ -77,7 +92,8 @@ class Exercise
             name: $data['name'],
             muscleGroup: $muscleGroup,
             description: $data['description'],
-            exerciseId: $data['id'] ?? null
+            exerciseId: $data['id'] ?? null,
+            challengeId: $data['challenge_id'] ?? null
         );
     }
 }

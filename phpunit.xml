@@ -16,6 +16,7 @@
       <directory>tests</directory>
       <directory>src/Migration</directory>
       <directory>src/Seeder</directory>
+      <directory>src/Script</directory>
     </exclude>
   </source>
 </phpunit>

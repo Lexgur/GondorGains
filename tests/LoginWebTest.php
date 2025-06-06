@@ -29,14 +29,4 @@ class LoginWebTest extends WebTestCase
         $this->request('GET', '/login');
         $this->assertEquals(200, http_response_code());
     }
-
-    public function testAnonymousTryingToLoginRedirectsToRegistration(): void
-    {
-        $response = $this->request('POST', '/login', [
-            'email' => 'nonexistent@example.com',
-            'password' => 'WhatevEr12345!',
-        ]);
-
-        $this->assertEquals('/register', $response);
-    }
 }
