@@ -6,8 +6,8 @@ namespace Lexgur\GondorGains\Controller;
 
 use Lexgur\GondorGains\Attribute\Path;
 use Lexgur\GondorGains\Exception\ForbiddenException;
-use Lexgur\GondorGains\Model\Challenge;
 use Lexgur\GondorGains\Repository\ChallengeModelRepository;
+use Lexgur\GondorGains\Service\ChallengeCreatorService;
 use Lexgur\GondorGains\Service\CurrentUser;
 use Lexgur\GondorGains\TemplateProvider;
 
@@ -17,11 +17,14 @@ class CreateChallengeController extends AbstractController
     private CurrentUser $currentUser;
     private ChallengeModelRepository $challengeRepository;
 
-    public function __construct(TemplateProvider $templateProvider, CurrentUser $currentUser, ChallengeModelRepository $challengeRepository)
+    private ChallengeCreatorService $challengeCreator;
+
+    public function __construct(TemplateProvider $templateProvider, CurrentUser $currentUser, ChallengeModelRepository $challengeRepository, ChallengeCreatorService $challengeCreator)
     {
         parent::__construct($templateProvider);
         $this->currentUser = $currentUser;
         $this->challengeRepository = $challengeRepository;
+        $this->challengeCreator = $challengeCreator;
     }
 
     public function __invoke(): string
@@ -34,13 +37,7 @@ class CreateChallengeController extends AbstractController
             if ('challenge-complete' === $_POST['action']) {
                 $user = $this->currentUser->getUser();
                 $userId = $user->getUserId();
-                $startedAt = new \DateTimeImmutable();
-
-                $challenge = new Challenge(
-                    userId: $userId,
-                    startedAt: $startedAt
-                );
-                $challenge->setCompletedAt(new \DateTimeImmutable());
+                $challenge = $this->challengeCreator->createChallenge($userId);
                 $this->challengeRepository->save($challenge);
                 $this->redirect('/quests');
             }
