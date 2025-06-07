@@ -6,6 +6,7 @@ namespace Lexgur\GondorGains;
 
 use Lexgur\GondorGains\Controller\ErrorController;
 use Lexgur\GondorGains\Controller\LoginUserController;
+use Lexgur\GondorGains\Service\ControllerParameterResolver;
 
 class Application
 {
@@ -16,11 +17,14 @@ class Application
 
     private Router $router;
 
+    private ControllerParameterResolver $parameterResolver;
+
     public function __construct()
     {
         $this->config = require __DIR__.'/../config.php';
         $this->container = new Container($this->config);
         $this->router = $this->container->get(Router::class);
+        $this->parameterResolver = $this->container->get(ControllerParameterResolver::class);
     }
 
     public function run(): void
@@ -38,20 +42,9 @@ class Application
                 $controller = $this->container->get($controllerClass);
             }
             http_response_code(200);
-            $reflection = new \ReflectionMethod($controller, '__invoke');
-            $invokeParams = $reflection->getParameters();
+            $invokerArgs = $this->parameterResolver->resolveParameters($controller, $params);
+            echo $controller(...$invokerArgs);
 
-            $args = [];
-            foreach ($invokeParams as $param) {
-                $name = $param->getName();
-                if (array_key_exists($name, $params)) {
-                    $args[] = $params[$name];
-                } elseif ($param->isDefaultValueAvailable()) {
-                    $args[] = $param->getDefaultValue();
-                }
-            }
-
-            echo $controller(...$args);
         } catch (\Throwable $error) {
             $errorController = $this->container->get(ErrorController::class);
             echo $errorController($error);
