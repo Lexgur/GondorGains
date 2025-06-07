@@ -53,8 +53,6 @@ class Application
 
             echo $controller(...$args);
         } catch (\Throwable $error) {
-            error_log('Exception caught: '.$error::class.' - '.$error->getMessage());
-            error_log($error->getTraceAsString());
             $errorController = $this->container->get(ErrorController::class);
             echo $errorController($error);
         }

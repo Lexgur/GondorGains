@@ -31,12 +31,15 @@ class CreateChallengeController extends AbstractController
 
     /**
      * @throws ForbiddenException
+     * @throws RandomException
      */
     public function __invoke(): string
     {
         if ($this->currentUser->isAnonymous()) {
             throw new ForbiddenException();
         }
+
+        $exercises = [];
 
         if ($this->isPostRequest()) {
             if ('challenge-complete' === $_POST['action']) {
@@ -54,8 +57,12 @@ class CreateChallengeController extends AbstractController
                     ]);
                 }
             }
+        } else {
+            $exercises = $this->challengeCreator->fetchExercisesForChallenge();
         }
 
-        return $this->render('challenge_started.html.twig');
+        return $this->render('challenge_started.html.twig', [
+            'exercises' => $exercises,
+        ]);
     }
 }

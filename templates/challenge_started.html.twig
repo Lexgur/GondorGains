@@ -6,6 +6,25 @@
     <div class="form-container">
         <p>Let's begin, Gondorian!</p>
 
+        {% if exercises is not empty %}
+            <ul class="todo-list">
+                {% for exercise in exercises %}
+                    <li>
+                        <span class="exercise-label">
+                            {{ exercise.getName() }} – <p class="exercise-description">{{ exercise.getDescription() }}</p>
+                        </span>
+
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="exercise-{{ loop.index }}">
+                            <span class="slider"></span>
+                        </label>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No exercises loaded.</p>
+        {% endif %}
+
         <form method="POST" action="/daily-quest/start">
             <button type="submit" value="challenge-complete" name="action">MARK AS DONE</button>
         </form>

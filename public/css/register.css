@@ -22,20 +22,6 @@ body {
     align-items: center;
 }
 
-.form-container::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0;
-    width: 100%;
-    height: 100%;
-    background-image: url('../images/whitetree.png');
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-    opacity: 0.2;
-    z-index: 0;
-}
-
 .form-container > * {
     position: relative;
     z-index: 1;
@@ -237,4 +223,105 @@ button:hover {
     justify-content: center;
     align-items: center;
     height: 100%;
+}
+ul.todo-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    position: relative;
+    z-index: 1;
+}
+
+ul.todo-list li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem;
+    background: #f5f5f5;
+    border-radius: 10px;
+    margin-bottom: 1rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.exercise-label {
+    color: #0b0d12;
+    font-weight: bold;
+    flex: 1;
+    margin-left: 1rem;
+    font-size: 1.1rem;
+    position: relative;
+    z-index: 2;
+}
+
+.exercise-description {
+    font-weight: 200;
+    color: #0b0d12;
+}
+
+
+.toggle-switch {
+    position: relative;
+    width: 60px;
+    height: 30px;
+    flex-shrink: 0;
+}
+
+.toggle-switch input {
+    display: none !important;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: background-color 0.4s ease;
+    border-radius: 34px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 24px;
+    width: 24px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: transform 0.4s ease;
+    border-radius: 50%;
+}
+
+.toggle-switch input:checked + .slider {
+    background-color: #4caf50;
+}
+
+.toggle-switch input:checked + .slider:before {
+    transform: translateX(30px);
+}
+
+.toggle-switch:hover .slider {
+    background-color: #aaa;
+}
+
+.toggle-switch input:checked:hover + .slider {
+    background-color: #45a049;
+}
+
+.form-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('../images/whitetree.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    opacity: 0.2;
+    z-index: -1;
 }
