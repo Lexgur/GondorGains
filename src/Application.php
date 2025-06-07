@@ -38,8 +38,23 @@ class Application
                 $controller = $this->container->get($controllerClass);
             }
             http_response_code(200);
-            echo call_user_func_array($controller, $params);
+            $reflection = new \ReflectionMethod($controller, '__invoke');
+            $invokeParams = $reflection->getParameters();
+
+            $args = [];
+            foreach ($invokeParams as $param) {
+                $name = $param->getName();
+                if (array_key_exists($name, $params)) {
+                    $args[] = $params[$name];
+                } elseif ($param->isDefaultValueAvailable()) {
+                    $args[] = $param->getDefaultValue();
+                }
+            }
+
+            echo $controller(...$args);
         } catch (\Throwable $error) {
+            error_log('Exception caught: '.$error::class.' - '.$error->getMessage());
+            error_log($error->getTraceAsString());
             $errorController = $this->container->get(ErrorController::class);
             echo $errorController($error);
         }
