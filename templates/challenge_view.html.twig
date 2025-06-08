@@ -7,15 +7,16 @@
         <p>Started At: {{ challenge.started_at|date('Y-m-d H:i') }}</p>
 
         {% if isCompleted %}
-            <p>Completed At: {{ challenge.completed_at|date('Y-m-d H:i') }}</p>
-            <p>You have done a great job, completing all {{ completionPercentage }}% of the challenges!</p>
+            <p>✅ Completed At: {{ challenge.completed_at|date('Y-m-d H:i') }}</p>
+            <p class="success-message">You have completed all the exercises! Great job, Gondorian!</p>
         {% else %}
-            <p>You tried with honour completing {{ completionPercentage }}% of the challenge. Perhaps you wish to try again today?</p>
+            <p>❌ Not completed</p>
+            <p class="encouragement-message">You gave it a valiant try. Perhaps you wish to try again today?</p>
         {% endif %}
 
         <div class="link-group">
             <a href="/quests" class="quest-link">Back</a>
-            <a href="/daily-quest/start" class="quest-link">Try again</a>
+            <a href="/daily-quest/start" class="quest-link">Try Again</a>
         </div>
     </div>
 {% endblock %}

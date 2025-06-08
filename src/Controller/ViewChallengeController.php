@@ -42,18 +42,10 @@ class ViewChallengeController extends AbstractController
         }
 
         $isCompleted = (bool) $challenge->getCompletedAt();
-        $completionPercentage = $this->calculateCompletionPercentage($challenge);
 
         return $this->render('challenge_view.html.twig', [
             'challenge' => $challenge,
             'isCompleted' => $isCompleted,
-            'completionPercentage' => $completionPercentage,
         ]);
-    }
-
-    private function calculateCompletionPercentage(Challenge $challenge): int
-    {
-        //TODO add actual logic calculation of percentage, once exercises are implemented.
-        return rand(70, 100);
     }
 }

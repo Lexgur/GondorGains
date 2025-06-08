@@ -6,8 +6,6 @@ namespace Lexgur\GondorGains\Controller;
 
 use Lexgur\GondorGains\Attribute\Path;
 use Lexgur\GondorGains\Exception\ForbiddenException;
-use Lexgur\GondorGains\Exception\NotFoundException;
-use Lexgur\GondorGains\Exception\UserNotFoundException;
 use Lexgur\GondorGains\Repository\ChallengeModelRepository;
 use Lexgur\GondorGains\Repository\UserModelRepository;
 use Lexgur\GondorGains\Service\CurrentUser;
@@ -36,27 +34,27 @@ class DashboardController extends AbstractController
 
     public function __invoke(): string
     {
-            if ($this->currentUser->isAnonymous()) {
-                throw new ForbiddenException();
-            }
-            $userId = (int) $_SESSION['id'];
-            $user = $this->userRepository->fetchById($userId);
-            $userChallenges = $this->challengeRepository->fetchAllChallenges();
+        if ($this->currentUser->isAnonymous()) {
+            throw new ForbiddenException();
+        }
+        $userId = (int) $_SESSION['id'];
+        $user = $this->userRepository->fetchById($userId);
+        $userChallenges = $this->challengeRepository->fetchAllChallenges();
 
-            $completedChallenges = array_filter($userChallenges, fn ($challenge) => $challenge->getUserId() === $userId && null !== $challenge->getCompletedAt());
-            $completedAverage = count($completedChallenges);
-            $totalQuests = count($userChallenges);
+        $completedChallenges = array_filter($userChallenges, fn ($challenge) => $challenge->getUserId() === $userId && null !== $challenge->getCompletedAt());
+        $completedAverage = count($completedChallenges);
+        $totalQuests = count($userChallenges);
 
-            return $this->render('dashboard.html.twig', [
-                'message' => sprintf(
-                    'Greetings, %s, on average you have completed %d of your %d quests!',
-                    $user->getUsername(),
-                    $completedAverage,
-                    $totalQuests
-                ),
-                'quote' => $this->randomQuote->getQuote(),
-                'begin' => $this->handleRedirect($totalQuests),
-            ]);
+        return $this->render('dashboard.html.twig', [
+            'message' => sprintf(
+                'Greetings, %s, on average you have completed %d of your %d quests!',
+                $user->getUsername(),
+                $completedAverage,
+                $totalQuests
+            ),
+            'quote' => $this->randomQuote->getQuote(),
+            'begin' => $this->handleRedirect($totalQuests),
+        ]);
     }
 
     private function handleRedirect(int $totalQuests): string
