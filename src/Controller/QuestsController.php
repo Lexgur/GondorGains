@@ -28,29 +28,43 @@ class QuestsController extends AbstractController
         $this->challengeRepository = $challengeRepository;
     }
 
+    /**
+     * @throws \DateMalformedStringException
+     * @throws ForbiddenException
+     */
     public function __invoke(): string
     {
-            if ($this->currentUser->isAnonymous()) {
-                throw new ForbiddenException();
-            }
-            $userChallenges = $this->challengeRepository->fetchAllChallenges();
-            $completedChallenges = [];
+        if ($this->currentUser->isAnonymous()) {
+            throw new ForbiddenException();
+        }
 
-            foreach ($userChallenges as $userChallenge) {
-                if (null !== $userChallenge->getCompletedAt()) {
-                    $completedChallenges[] = [
-                        'id' => $userChallenge->getChallengeId(),
-                        'started_at' => $userChallenge->getStartedAt()->format('Y-m-d H:i'),
-                        'completed_at' => $userChallenge->getCompletedAt()->format('Y-m-d H:i'),
-                    ];
-                }
-            }
+        $user = $this->currentUser->getUser();
+        $userId = $user->getUserId();
 
-            return $this->render('quests.html.twig', [
-                'quote' => $this->randomQuote->getQuote(),
-                'message' => 'List of completed quests, Gondorian:',
-                'challenges' => $completedChallenges,
-                'quest' => '/daily-quest/start',
-            ]);
+        $activeChallenge = $this->challengeRepository->findActiveChallengeByUserId($userId);
+
+        if (null !== $activeChallenge) {
+            $this->redirect('/quests');
+        }
+
+        $userChallenges = $this->challengeRepository->fetchAllChallenges();
+        $completedChallenges = [];
+
+        foreach ($userChallenges as $userChallenge) {
+            if (null !== $userChallenge->getCompletedAt()) {
+                $completedChallenges[] = [
+                    'id' => $userChallenge->getChallengeId(),
+                    'started_at' => $userChallenge->getStartedAt()->format('Y-m-d H:i'),
+                    'completed_at' => $userChallenge->getCompletedAt()->format('Y-m-d H:i'),
+                ];
+            }
+        }
+
+        return $this->render('quests.html.twig', [
+            'quote' => $this->randomQuote->getQuote(),
+            'message' => 'List of completed quests, Gondorian:',
+            'challenges' => $completedChallenges,
+            'quest' => '/daily-quest/start',
+        ]);
     }
 }
