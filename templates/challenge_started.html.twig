@@ -11,11 +11,12 @@
                 {% for exercise in exercises %}
                     <li>
                         <span class="exercise-label">
-                            {{ exercise.getName() }} – <p class="exercise-description">{{ exercise.getDescription() }}</p>
+                            {{ exercise.getName() }} –
+                            <p class="exercise-description">{{ exercise.getDescription() }}</p>
                         </span>
 
                         <label class="toggle-switch">
-                            <input type="checkbox" id="exercise-{{ loop.index }}">
+                            <input type="checkbox" class="exercise-checkbox" id="exercise-{{ loop.index }}">
                             <span class="slider"></span>
                         </label>
                     </li>
@@ -25,8 +26,25 @@
             <p>No exercises loaded.</p>
         {% endif %}
 
-        <form method="POST" action="/daily-quest/start">
-            <button type="submit" value="challenge-complete" name="action">MARK AS DONE</button>
+        <form method="POST" action="/daily-quest/start" id="challenge-form">
+            <button type="submit" value="challenge-complete" name="action" id="submit-btn" disabled>MARK AS DONE</button>
         </form>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const checkboxes = document.querySelectorAll('.exercise-checkbox');
+            const submitBtn = document.getElementById('submit-btn');
+
+            function updateButtonState() {
+                const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+                submitBtn.disabled = !allChecked;
+            }
+
+            checkboxes.forEach(cb => {
+                cb.addEventListener('change', updateButtonState);
+            });
+            updateButtonState();
+        });
+    </script>
 {% endblock %}
