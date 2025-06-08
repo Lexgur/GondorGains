@@ -6,7 +6,6 @@ namespace Lexgur\GondorGains\Tests\Service;
 
 use Lexgur\GondorGains\Connection;
 use Lexgur\GondorGains\Container;
-use Lexgur\GondorGains\Exception\ChallengeNotFoundException;
 use Lexgur\GondorGains\Exception\CircularDependencyException;
 use Lexgur\GondorGains\Model\Exercise;
 use Lexgur\GondorGains\Model\MuscleGroup;

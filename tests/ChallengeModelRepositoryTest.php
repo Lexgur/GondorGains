@@ -12,9 +12,6 @@ use Lexgur\GondorGains\Repository\ChallengeModelRepository;
 use Lexgur\GondorGains\Script\RunMigrationsScript;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @coversNothing
- */
 class ChallengeModelRepositoryTest extends TestCase
 {
     private Connection $database;
