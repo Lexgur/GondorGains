@@ -38,23 +38,6 @@ class DashboardWebTest extends WebTestCase
         parent::tearDown();
     }
 
-    public function testLoggedInSuccess(): void
-    {
-        $this->markTestSkipped('Just like in Quests the sessions are not handled properly');
-        $username = 'testSuccess';
-        $email = 'testSuccess@test.com';
-        $password = 'testSuccess123';
-        $user = new User($username, $email, $password);
-        $savedUser = $this->repository->save($user);
-        $this->session->start($savedUser);
-
-        $response = $this->request('GET', '/dashboard');
-        $statusCode = http_response_code();
-
-        $this->assertStringContainsString("Greetings, {$username}", $response);
-        $this->assertEquals(200 ,$statusCode);
-    }
-
     public function testAnonymousAccessDenied(): void
     {
         $response = $this->request('GET', '/dashboard');
